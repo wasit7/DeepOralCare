@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     
     'corsheaders',
     'rest_framework',
+    'django_extensions',
     
     'searchapp'
 ]
@@ -133,3 +134,12 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SESSION_COOKIE_NAME = "backend-sec-searchapp"
+
+NOTEBOOK_ARGUMENTS = [
+    "--ip",
+    "0.0.0.0",
+    "--allow-root",
+    "--no-browser",
+    "--notebook-dir=/backend",
+    "--config=/config/jupyter_notebook_config.json",
+]

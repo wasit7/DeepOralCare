@@ -1,13 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Sarabun";
+  src: url("./assets/fonts/Sarabun-Regular.ttf") format("truetype");
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   scroll-behavior: smooth;
+  font-family: "Sarabun";
 }
 
 body {
-  font-family: "Open Sans", sans-serif;
-  font-size: 16px;
   line-height: 1.5;
   color: #333;
   background: #f4f4f4;

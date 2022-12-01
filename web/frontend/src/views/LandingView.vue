@@ -1,5 +1,11 @@
-<script setup></script>
+<script setup>
+import navigationBar from "../components/Navigations/navigation-bar.vue";
+const logs = (val) => console.log("log Val :", val);
+</script>
 
-<template>This is Landing Page !</template>
+<template>
+  <navigation-bar />
+  <div class="container mx-auto"></div>
+</template>
 
 <style lang="scss" scoped></style>

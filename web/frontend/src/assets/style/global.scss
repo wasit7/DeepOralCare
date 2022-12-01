@@ -1,0 +1,60 @@
+@use "sass:map";
+
+$font-sizes: (
+    "title": 2rem,
+    "section": 1.4rem,
+    "body": 1rem,
+);
+
+$theme-colors: (
+    "primary": #f2ad4e,
+    "secondary": #163168,
+);
+
+h1 {
+    font-size: map.get($font-sizes, "title");
+}
+
+h2 {
+    font-size: map.get($font-sizes, "section");
+}
+
+h3 {
+    font-size: map.get($font-sizes, "body");
+}
+
+.bg-primary {
+    background-color: map.get($theme-colors, "primary");
+}
+
+.bg-secondary {
+    background-color: map.get($theme-colors, "secondary");
+}
+
+.text-white {
+    color: #fff;
+}
+
+/* Ripple effect */
+.ripple {
+    background-position: center;
+    transition: background 0.8s;
+    &:hover {
+        background: map.get($theme-colors, "primary")
+            radial-gradient(circle, transparent 1%, map.get($theme-colors, "primary") 1%) center/15000%;
+    }
+    &:active {
+        background-color: #6eb9f7;
+        background-size: 100%;
+        transition: background 0s;
+    }
+}
+
+.rounded {
+    border-radius: 24px;
+}
+
+.fixed {
+    position: fixed;
+    z-index: 999;
+}

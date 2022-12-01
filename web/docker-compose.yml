@@ -3,6 +3,7 @@ version: '3.3'
 volumes:
     media: {}
     static: {}
+    graph_db: {}
 
 services: 
     db:
@@ -10,6 +11,16 @@ services:
         image: postgres:11.3-alpine
         env_file:
             - .env
+            
+    neo4j:
+        image: bitnami/neo4j:5.2.0
+        volumes:
+            - graph_db:/bitnami
+        ports:
+            - '7474:7474'
+            - '7473:7473'
+            - '7687:7687'
+
     backend:
         container_name: ${PROJECT_NAME}-backend
         build: ./backend

@@ -1,12 +1,19 @@
 <script setup>
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
+import webIcon from "./assets/imgs/faviconIcon.png";
+
+const favicon = document.getElementById("favicon");
+favicon.href = webIcon;
+document.title = "SEC";
 </script>
 
 <template>
-  <div >
+  <div>
     <router-view />
   </div>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+
+</style>

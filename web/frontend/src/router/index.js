@@ -8,6 +8,11 @@ const routes = [
     name: "Landing",
     component: () => import("../views/LandingView.vue"),
   },
+  {
+    path: "/Search",
+    name: "Search",
+    component: () => import("../views/SearchResultView.vue"),
+  },
 ];
 
 // Create router

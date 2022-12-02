@@ -8,6 +8,7 @@ defineProps({
     default: "",
   },
   appendItem: Boolean,
+  placeholder: String,
 });
 </script>
 
@@ -29,7 +30,7 @@ defineProps({
         :class="` border border-[#163168] block w-full h-10 rounded-full shadow pl-12 ${
           appendItem ? 'pr-32 xl:pr-52' : 'pr-12'
         }  focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm`"
-        placeholder="ค้นหา"
+        :placeholder="placeholder"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
       />

@@ -45,10 +45,10 @@ defineProps({
         <div :class="`flex ${searchAble ? '' : 'flex-1'
         } items-center justify-center sm:items-stretch sm:justify-start`">
           <div class="flex gap-3 flex-shrink-0 items-center">
-            <img class="block h-13 w-auto lg:hidden" src="../../assets/imgs/SEC-logo.png" alt="Your Company" />
-            <img class="block h-13 w-auto lg:hidden" src="../../assets/imgs/SEC-TextTH-logo.png" alt="Your Company" />
-            <img class="hidden h-13 w-auto lg:block" src="../../assets/imgs/SEC-logo.png" alt="Your Company" />
-            <img class="hidden h-13 w-auto lg:block" src="../../assets/imgs/SEC-TextTH-logo.png" alt="Your Company" />
+            <img class="block h-13 w-auto lg:hidden" src="../../assets/imgs/KG-logo.png" alt="Your Company" />
+            <p class="block h-13 w-auto lg:hidden text-[32px] font-bold text-[#163168]">KG</p>
+            <img class="hidden h-13 w-auto lg:block" src="../../assets/imgs/KG-logo.png" alt="Your Company" />
+            <p class="hidden h-13 w-auto lg:block text-[32px] font-bold text-[#163168]">KG </p>
           </div>
           <!-- <div class="hidden sm:ml-6 sm:block">
             <div class="flex space-x-4">

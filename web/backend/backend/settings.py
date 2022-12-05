@@ -143,3 +143,10 @@ NOTEBOOK_ARGUMENTS = [
     "--notebook-dir=/backend",
     "--config=/config/jupyter_notebook_config.json",
 ]
+
+from py2neo import Graph
+
+GRAPH = Graph(
+    f"bolt://{os.environ.get('NEO4J_HOST','neo4j')}:{os.environ.get('NEO4J_BOLTPORT', '7687')}", 
+    auth=(os.environ.get('NEO4J_USERNAME'), os.environ.get('NEO4J_PASSWORD'))
+)

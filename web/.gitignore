@@ -11,3 +11,5 @@ env/
 .DS_Store
 .vscode/
 .env
+.ipynb_checkpoints/
+backend/notebook/data/

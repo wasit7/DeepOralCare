@@ -6,4 +6,4 @@ while ! nc -w 1 -z ${NEO4J_HOST} ${NEO4J_BOLTPORT};
 do sleep 5;
 done;
 
-python manage.py runserver 0.0.0.0:8000
+python manage.py shell_plus --notebook

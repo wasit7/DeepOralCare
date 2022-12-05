@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     
     'corsheaders',
     'rest_framework',
+    'django_extensions',
+    
+    'searchapp'
 ]
 
 MIDDLEWARE = [
@@ -130,3 +133,20 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+SESSION_COOKIE_NAME = "backend-sec-searchapp"
+
+NOTEBOOK_ARGUMENTS = [
+    "--ip",
+    "0.0.0.0",
+    "--allow-root",
+    "--no-browser",
+    "--notebook-dir=/backend",
+    "--config=/config/jupyter_notebook_config.json",
+]
+
+from py2neo import Graph
+
+GRAPH = Graph(
+    f"bolt://{os.environ.get('NEO4J_HOST','neo4j')}:{os.environ.get('NEO4J_BOLTPORT', '7687')}", 
+    auth=(os.environ.get('NEO4J_USERNAME'), os.environ.get('NEO4J_PASSWORD'))
+)

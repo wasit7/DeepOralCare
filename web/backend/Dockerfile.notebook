@@ -1,0 +1,10 @@
+FROM python:3.9-slim
+RUN apt-get update --fix-missing
+
+RUN apt install -y git netcat
+
+WORKDIR /backend
+ADD ./requirements-notebook.txt requirements-notebook.txt
+RUN pip install -r requirements-notebook.txt
+ADD . /backend/
+WORKDIR /backend

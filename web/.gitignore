@@ -12,3 +12,4 @@ env/
 .vscode/
 .env
 .ipynb_checkpoints/
+backend/notebook/data/

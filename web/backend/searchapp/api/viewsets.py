@@ -28,6 +28,10 @@ class EntityViewsets(viewsets.GenericViewSet,
         return serializers.EntitySerializer
     
     def list(self, request, *args, **kwargs):
-        data = utils.graph.get_spo(name=request.GET.get('name', ""), limit=int(request.GET.get('limit', "100")))
+        data = utils.graph.get_spo(
+            name=request.GET.get('name', ""), 
+            page_size=int(request.GET.get('page_size', "100")),
+            page=int(request.GET.get('page', "0"))
+        )
         return Response(data, status=status.HTTP_200_OK)
        

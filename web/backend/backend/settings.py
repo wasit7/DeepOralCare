@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET', None)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('STATE', None) == "dev"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -150,3 +150,5 @@ GRAPH = Graph(
     f"bolt://{os.environ.get('NEO4J_HOST','neo4j')}:{os.environ.get('NEO4J_BOLTPORT', '7687')}", 
     auth=(os.environ.get('NEO4J_USERNAME'), os.environ.get('NEO4J_PASSWORD'))
 )
+
+CSRF_TRUSTED_ORIGINS = [os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://api.graph.sec.dev.data.storemesh.com/')]

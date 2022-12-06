@@ -10,11 +10,14 @@ def _extract_value(elm):
         for k,v in elm.items()
     }
 
-def get_spo(name, limit=100):
+def get_spo(name, page=0, page_size=100):
     data = graph.query(f"""
-        match r=(s)-[p]->(o) 
-        where s.name = "{name}"
-        return s,p,o limit {limit}
+        match r=(head)-[relation]->(tail) 
+        where head.name = "{name}"
+        return head,relation,tail 
+        order by head.id
+        skip {page*page_size}
+        limit {page_size}
     """)
     return [_extract_value(elm) for elm in data]
     

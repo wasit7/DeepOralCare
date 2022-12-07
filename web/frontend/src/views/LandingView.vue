@@ -2,12 +2,14 @@
 import navigationBar from "../components/Navigation/navigation-bar.vue";
 import searchInput from "../components/input/search-input.vue";
 import dsmBtn from "../components/button/dsm-button.vue";
-import { ref } from "vue";
+import { ref, onMounted, watchEffect } from "vue";
 import { useRouter } from "vue-router";
+import inputChip from "../components/input/input-chip.vue";
 
 // TODO: State of component
 const router = useRouter();
 const search = ref("");
+const valueChip = ref(null);
 
 // TODO: Methods of component
 const logs = (val) => console.log("log Val :", val);

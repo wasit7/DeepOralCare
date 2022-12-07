@@ -9,6 +9,7 @@ defineProps({
   },
   appendItem: Boolean,
   placeholder: String,
+  chips: Boolean,
 });
 </script>
 

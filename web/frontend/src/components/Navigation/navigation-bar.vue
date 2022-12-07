@@ -55,7 +55,10 @@ const goHome = () =>
             searchAble ? '' : 'flex-1'
           } items-center justify-center sm:items-stretch sm:justify-start`"
         >
-          <div class="flex gap-3 flex-shrink-0 items-center" @click="goHome">
+          <div
+            class="flex gap-3 flex-shrink-0 items-center cursor-pointer"
+            @click="goHome"
+          >
             <img
               class="block h-13 w-auto lg:hidden"
               src="../../assets/imgs/KG-logo.png"

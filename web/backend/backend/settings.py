@@ -152,3 +152,4 @@ GRAPH = Graph(
 )
 
 CSRF_TRUSTED_ORIGINS = [os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://api.graph.sec.dev.data.storemesh.com/')]
+CORS_ALLOW_ALL_ORIGINS = True

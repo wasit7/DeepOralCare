@@ -31,7 +31,7 @@ class EntityViewsets(viewsets.GenericViewSet,
     
     def list(self, request, *args, **kwargs):
         data = utils.graph.get_spo(
-            name=request.GET.get('name', ""), 
+            name=request.GET.get('id', ""), 
             page_size=int(request.GET.get('page_size', "100")),
             page=int(request.GET.get('page', "0"))
         )
@@ -45,3 +45,6 @@ class EntityViewsets(viewsets.GenericViewSet,
             response = utils.graph.get_relation(ids=request.data.get('ids', []), hop=data.get('hop'))
             return Response(response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # @action(methods=['GET'], detail=False)
+    

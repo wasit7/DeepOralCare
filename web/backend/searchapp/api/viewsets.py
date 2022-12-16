@@ -1,7 +1,7 @@
 from rest_framework import viewsets, mixins, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from . import utils, serializers
+from . import utils, serializers, services
 from .. import models
 class SearchViewset(viewsets.GenericViewSet, 
                     mixins.ListModelMixin,
@@ -30,12 +30,16 @@ class EntityViewsets(viewsets.GenericViewSet,
         return serializers.EntitySerializer
     
     def list(self, request, *args, **kwargs):
-        data = utils.graph.get_spo(
+        spo = utils.graph.get_spo(
             name=request.GET.get('id', ""), 
             page_size=int(request.GET.get('page_size', "100")),
             page=int(request.GET.get('page', "0"))
         )
-        return Response(data, status=status.HTTP_200_OK)
+        response = {
+            'relations': spo,
+            'entitys': services.get_entity_response(spo=spo)
+        }
+        return Response(response, status=status.HTTP_200_OK)
     
     @action(methods=['POST'], detail=False)
     def relation(self, request, *args, **kwargs):
@@ -45,10 +49,7 @@ class EntityViewsets(viewsets.GenericViewSet,
             spo = utils.graph.get_relation(ids=request.data.get('ids', []), hop=data.get('hop'))
             response = {
                 'relations': spo,
-                'entitys': serializers.EntitySerializer(
-                    instance=models.Entity.objects.filter(id__in=utils.graph.unique_node_ids(spo=spo)), 
-                    many=True
-                ).data
+                'entitys': services.get_entity_response(spo=spo)
             }
             return Response(response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

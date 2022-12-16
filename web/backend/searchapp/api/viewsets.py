@@ -42,9 +42,24 @@ class EntityViewsets(viewsets.GenericViewSet,
         serializer = serializers.RelationSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
-            response = utils.graph.get_relation(ids=request.data.get('ids', []), hop=data.get('hop'))
+            spo = utils.graph.get_relation(ids=request.data.get('ids', []), hop=data.get('hop'))
+            response = {
+                'relations': spo,
+                'entitys': serializers.EntitySerializer(
+                    instance=models.Entity.objects.filter(id__in=utils.graph.unique_node_ids(spo=spo)), 
+                    many=True
+                ).data
+            }
             return Response(response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    # @action(methods=['GET'], detail=False)
+    @action(methods=['GET'], detail=False)
+    def getDetail(self, request, *args, **kwargs):
+        entities = models.Entity.objects.filter(id=request.data.get('id',""))
+        if entities.exists():
+            entity = entities.last()
+            return Response(serializers.EntitySerializer(entity).data, status=status.HTTP_200_OK)
+        return Response({
+            'msg': f"Entity {request.data.get('data','')} does not exixts!"
+        }, status=status.HTTP_400_BAD_REQUEST)
     

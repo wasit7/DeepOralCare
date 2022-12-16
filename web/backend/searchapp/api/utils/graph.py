@@ -44,3 +44,7 @@ def get_relation(ids, hop=2):
     """)
     data = data.data()
     return _extract_path_1(data)
+
+def unique_node_ids(spo):
+    data = [elm.get('head') for elm in spo] + [elm.get('tail') for elm in spo]
+    return list(set(data))

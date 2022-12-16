@@ -151,5 +151,5 @@ GRAPH = Graph(
     auth=(os.environ.get('NEO4J_USERNAME'), os.environ.get('NEO4J_PASSWORD'))
 )
 
-CSRF_TRUSTED_ORIGINS = [os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://api.graph.sec.dev.data.storemesh.com/')]
+CSRF_TRUSTED_ORIGINS = [os.environ.get('CSRF_TRUSTED_ORIGINS', 'https://api.graph.sec.dev.data.storemesh.com')]
 CORS_ALLOW_ALL_ORIGINS = True

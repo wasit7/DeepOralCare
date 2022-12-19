@@ -5,21 +5,26 @@ import { useRoute } from "vue-router";
 import dsmSlideOverlay from "../components/SlideOverlay/dsm-slideOverlay.vue";
 import searchInput from "../components/input/search-input.vue";
 import { useMainStore } from "../stores/mainStore";
+import sigmaGraph from "../components/graph/sigma-relation.vue";
 
 const route = useRoute();
 const storeMain = useMainStore();
 
 const searchQuery = ref("");
 
-
 onMounted(() => {
   console.log("mounted");
-  const queryString = route.query.key_word;
-  console.log(queryString);
-  if (queryString) {
-    storeMain.getSearch(queryString);
-    searchQuery.value = queryString;
+  const params = JSON.parse(route.params.key_word);
+  console.log("params: " + params);
+  if (params) {
+    // searchQuery.value = params;
+    storeMain.getRelation(params);
   }
+  // const queryString = route.query.key_word;
+  // console.log(queryString);
+  // if (queryString) {
+  //   storeMain.getRelation(queryString.split(","));
+  // }
 });
 </script>
 
@@ -71,6 +76,7 @@ onMounted(() => {
         </div>
       </template>
     </dsm-slide-overlay>
+    <sigma-graph />
   </div>
 </template>
 

@@ -1,26 +1,61 @@
 <script setup>
 import navigationBar from "../components/Navigation/navigation-bar.vue";
-import searchInput from "../components/input/search-input.vue";
+// import searchInput from "../components/input/search-input.vue";
+import inputMultiplechip from "../components/input/input-multiplechip.vue";
 import dsmBtn from "../components/button/dsm-button.vue";
 import { ref, onMounted, watchEffect } from "vue";
 import { useRouter } from "vue-router";
+import { useMainStore } from "../stores/mainStore";
 import inputChip from "../components/input/input-chip.vue";
+
+const storeMain = useMainStore();
 
 // TODO: State of component
 const router = useRouter();
 const search = ref("");
-const valueChip = ref(null);
+const valueChip = ref([]);
+const searchTimeout = ref(null);
 
 // TODO: Methods of component
 const logs = (val) => console.log("log Val :", val);
 
+const getPredict = (queryString) => {
+  storeMain.getSearch(queryString);
+};
+
+watchEffect(() => {
+  if (search.value) {
+    clearTimeout(searchTimeout.value);
+    searchTimeout.value = setTimeout(() => {
+      getPredict(search.value);
+    }, 500);
+  }
+});
+
 const onSearch = () => {
-  router.push({
-    name: "Search",
-    query: {
-      key_word: search.value,
-    },
-  });
+  if (search.value === "") {
+    router.push({
+      name: "Search",
+      params: {
+        key_word: JSON.stringify(valueChip.value.map((i) => i.id)),
+      },
+    });
+  } else {
+    addChip();
+  }
+};
+
+const addChip = () => {
+  if (search.value) {
+    valueChip.value.push(search.value);
+    search.value = "";
+  }
+};
+
+const removeChip = () => {
+  if (!search.value && valueChip.value.length) {
+    valueChip.value.pop();
+  }
 };
 </script>
 
@@ -34,17 +69,26 @@ const onSearch = () => {
       <h2 class="text-xl">โปรดระบุชื่อบุคคล/องค์กรที่ต้องการค้นหา</h2>
     </div>
     <div class="xl:w-2/5 w-3/4">
-      <search-input
+      <input-multiplechip
         v-model="search"
-        append-item
-        v-on:keyup.enter="onSearch"
-        :placeholder="'ex. relation: PersonA,PersonB'"
-      >
+        :chipValue="valueChip"
+        :resultList="storeMain.search_result"
+        :loading="storeMain.loading"
+        @keyup.enter="onSearch"
+        @keyup.backspace="removeChip"
+      />
+      <!-- <search-input
+        v-model="search"
+        :chipValue="valueChip"
+        v-on:keyup.enter="addChip"
+        v-on:keyup.backspace="removeChip"
+      > 
         <template v-slot:append-item>
           <dsm-btn class="xl:w-48 w-28" @click="onSearch">ค้นหา</dsm-btn>
         </template>
-      </search-input>
+     </search-input> -->
     </div>
+    <dsm-btn class="xl:w-48 w-28" @click="onSearch">ค้นหา</dsm-btn>
   </div>
 </template>
 

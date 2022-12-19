@@ -9,7 +9,7 @@ const routes = [
     component: () => import("../views/LandingView.vue"),
   },
   {
-    path: "/Search",
+    path: "/Search/:key_word",
     name: "Search",
     component: () => import("../views/SearchResultView.vue"),
   },

@@ -12,7 +12,10 @@
     "@headlessui/vue": "^1.7.4",
     "@heroicons/vue": "^2.0.13",
     "axios": "^1.2.1",
+    "graphology": "^0.25.1",
+    "graphology-layout-force": "^0.2.4",
     "pinia": "^2.0.27",
+    "sigma": "^2.4.0",
     "vue": "^3.2.41",
     "vue-router": "4"
   },

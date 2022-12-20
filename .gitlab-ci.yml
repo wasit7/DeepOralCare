@@ -34,9 +34,9 @@ deploy:
          $DSSH /bin/bash -s << EOT
          cd /home/oae-user/61-sec-search-app
          echo $CI_REPOSITORY_URL 
-         git pull origin development
-         docker compose -f ./web/docker-compose.yml up -d
-         docker compose -f .web/docker-compose.yml restart frontend 
+         sudo git pull origin development
+         sudo docker compose -f ./web/docker-compose.yml up -d
+         sudo docker compose -f .web/docker-compose.yml restart frontend 
          EOT
 
 

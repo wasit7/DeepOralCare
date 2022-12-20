@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watchEffect } from "vue";
 import navigationBar from "../components/Navigation/navigation-bar.vue";
 import { useRoute } from "vue-router";
 import dsmSlideOverlay from "../components/SlideOverlay/dsm-slideOverlay.vue";
@@ -15,12 +15,14 @@ const valueChip = ref([]);
 
 onMounted(() => {
   console.log("mounted");
-  const params = JSON.parse(route.params.key_word);
+  const params = JSON.parse(sessionStorage.getItem("item_search"));
   console.log("params: " + params);
   if (params) {
     // searchQuery.value = params;
     valueChip.value = params;
-    storeMain.getRelation(params);
+    const id_list = params.map((i) => i.id);
+
+    storeMain.getRelation(id_list);
   }
   // const queryString = route.query.key_word;
   // console.log(queryString);
@@ -58,7 +60,6 @@ onMounted(() => {
             <div>
               <p>{{ item.name }}</p>
               <p>{{ item.attribute }}</p>
-              <!-- <p>กรุงเทพมหานคร ประเทศไทย</p> -->
             </div>
           </div>
         </div>
@@ -81,7 +82,7 @@ onMounted(() => {
         </div>
       </template>
     </dsm-slide-overlay>
-    <sigma-graph />
+    <sigma-graph :graph-data="storeMain.relation_result" />
   </div>
 </template>
 

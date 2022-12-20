@@ -4,16 +4,48 @@ import Graph from "graphology";
 import getNodeProgramImage from "sigma/rendering/webgl/programs/node.image";
 import ForceSupervisor from "graphology-layout-force/worker";
 
-import { onMounted } from "vue";
+import { onMounted, onUpdated, ref, watchEffect } from "vue";
+
+const props = defineProps({
+  graphData: {
+    type: Object,
+    required: true,
+  },
+});
+
+const graph = new Graph();
+
+watchEffect(() => {
+  if (props.graphData?.nodes && props.graphData?.edges) {
+    console.log("watchEffect", props.graphData);
+    const container = document.getElementById("sigma-container");
+    props.graphData.nodes.map((node) => {
+      graph.addNode(node.id, {
+        size: 15,
+        label: node.label,
+        color: node?.color,
+      });
+    });
+    props.graphData.edges.map((edge) => {
+      graph.addEdge(edge.source, edge.target, {
+        type: "line",
+        label: edge.relation,
+        size: 5,
+      });
+    });
+
+    const renderer = new Sigma(graph, container, {
+      renderEdgeLabels: true,
+    });
+    const layout = new ForceSupervisor(graph);
+    layout.start();
+  }
+});
 
 onMounted(() => {
-  const graph = new Graph();
-  const container = document.getElementById("sigma-container");
-
   const RED = "#FA4F40";
   const BLUE = "#727EE0";
   const GREEN = "#5DB346";
-
   graph.addNode("John", {
     size: 15,
     label: "John",
@@ -128,12 +160,6 @@ onMounted(() => {
   // g.edges.forEach(function (edge) {
   //   graph.addEdge(edge.id, edge.source, edge.target, edge);
   // });
-
-  const renderer = new Sigma(graph, container, {
-    renderEdgeLabels: true,
-  });
-  const layout = new ForceSupervisor(graph);
-  layout.start();
 });
 </script>
 

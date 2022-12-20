@@ -127,15 +127,17 @@ const removeChip = () => {
             </div>
           </div> -->
         </div>
-        <div v-if="searchAble" class="xl:w-2/5">
-          <inputMultiplechip
-            :model-value="searchValue"
-            :chipValue="chipValue"
-            :resultList="resultList"
-            :loading="loading"
-            @keyup.enter="onSearch"
-            @keyup.backspace="removeChip"
-          />
+        <div v-if="searchAble" class="xl:w-2/5 relative h-full py-2">
+          <div class="absolute w-full">
+            <inputMultiplechip
+              :model-value="searchValue"
+              :chipValue="chipValue"
+              :resultList="resultList"
+              :loading="loading"
+              @keyup.enter="onSearch"
+              @keyup.backspace="removeChip"
+            />
+          </div>
         </div>
         <div
           class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"

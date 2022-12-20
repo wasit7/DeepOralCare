@@ -6,12 +6,33 @@ export const useMainStore = defineStore("main", {
     // state
     res_search: [],
     loading: false,
-    res_relation: [],
+    res_relation: {},
   }),
   getters: {
     // getters
     search_result: (state) => state.res_search,
-    relation_result: (state) => state.res_relation,
+    relation_result: (state) => {
+      const { entitys, relations } = state.res_relation;
+
+      return {
+        nodes: entitys?.map((i) => {
+          return {
+            id: i.id,
+            label: i.name,
+
+            color: "#666",
+          };
+        }),
+        edges: relations?.map((i) => {
+          return {
+            source: i.head,
+            target: i.tail,
+            relation: i.relation,
+            color: "#666",
+          };
+        }),
+      };
+    },
   },
   actions: {
     // actions

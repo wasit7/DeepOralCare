@@ -10,9 +10,9 @@ export async function Search(keyword) {
     }
 }
 
-export async function EntityData(name) {
+export async function EntityData(id) {
     try {
-        const response = await Instance.get(`${URI}/searchapp/api/entity/?name=${name}&page_size=100&page=1`)
+        const response = await Instance.get(`${URI}/searchapp/api/entity/?id=${id}&page_size=100&page=0`)
         return response;
     } catch (error) {
         console.error(error);

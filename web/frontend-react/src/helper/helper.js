@@ -3,8 +3,7 @@ const convertName = (name) => {
 }
 
 const splitAndConvertName = (name) => {
-    // return name.split('/')[3].replaceAll('_', ' ');
-    return name
+    return name.split('/')[3].replaceAll('_', ' ');
 }
 
 const showCertainAmountOfCharacters = (name) => {

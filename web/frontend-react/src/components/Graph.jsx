@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
+
+//NPM Packages
 import { MultiDirectedGraph } from "graphology";
 import { SigmaContainer, useLoadGraph, useRegisterEvents, useSigma } from "@react-sigma/core";
 import "@react-sigma/core/lib/react-sigma.min.css";
 import { useLayoutRandom } from "@react-sigma/layout-random";
+import { useLayoutCircular } from "@react-sigma/layout-circular";
+
+//Redux
+import { useDispatch } from 'react-redux';
+import { openBottom } from '../redux/layout/LayoutSlice';
 
 const DisplayGraph = (props) => {
 
@@ -11,9 +18,12 @@ const DisplayGraph = (props) => {
         const [draggedNode, setDraggedNode] = useState(null);
 
         const loadGraph = useLoadGraph();
-        const { positions, assign } = useLayoutRandom();
+        // const { positions, assign } = useLayoutRandom();
+        const { positions, assign } = useLayoutCircular();
         const registerEvents = useRegisterEvents();
         const sigma = useSigma();
+
+        const dispatch = useDispatch();
 
         useEffect(() => {
             const graph = new MultiDirectedGraph();
@@ -47,8 +57,14 @@ const DisplayGraph = (props) => {
         useEffect(() => {
             // Register the events
             registerEvents({
-                downNode: (e) => {
+                clickNode: (e) => {
                     props.fetchEntityDetail(e.node);
+                    dispatch(openBottom());
+                },
+                doubleClickNode: (e) => {
+                    props.fetchEntityData(e.node);
+                },
+                downNode: (e) => {
                     setDraggedNode(e.node);
                     sigma.getGraph().setNodeAttribute(e.node, "highlighted", true);
                 },

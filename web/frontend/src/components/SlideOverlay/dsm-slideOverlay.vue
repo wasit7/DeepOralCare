@@ -16,9 +16,9 @@ const toggleOverlay = () => {
 
 <template>
   <div
-    :class="`shadow ${overlay ? ' w-2/3 xl:w-1/4' : 'w-0 '} h-full  absolute ${
-      right ? 'right-0' : ''
-    } duration-500 `"
+    :class="`shadow ${
+      overlay ? ' w-2/3 xl:w-1/4' : 'w-0 '
+    } h-full bg-white  absolute ${right ? 'right-0' : ''} duration-500 z-30 `"
   >
     <div
       :class="` px-2 py-5 shadow absolute  top-24  cursor-pointer ${

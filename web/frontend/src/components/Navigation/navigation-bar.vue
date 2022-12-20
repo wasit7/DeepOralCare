@@ -10,7 +10,7 @@ import {
 } from "@headlessui/vue";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import userIcon from "../Icons/userIcon.vue";
-import searchInput from "../input/search-input.vue";
+import inputMultiplechip from "../input/input-multiplechip.vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
@@ -28,12 +28,41 @@ defineProps({
     type: Boolean,
     default: false,
   },
+  chipValue: Array,
+  resultList: Array,
+  loading: Boolean,
 });
 
 const goHome = () =>
   router.push({
     name: "Landing",
   });
+
+const onSearch = () => {
+  if (searchValue === "") {
+    router.push({
+      name: "Search",
+      params: {
+        key_word: JSON.stringify(chipValue.map((i) => i.id)),
+      },
+    });
+  } else {
+    addChip();
+  }
+};
+
+const addChip = () => {
+  if (searchValue) {
+    chipValue.push(searchValue);
+    searchValue = "";
+  }
+};
+
+const removeChip = () => {
+  if (!searchValue && chipValue.length) {
+    chipValue.pop();
+  }
+};
 </script>
 
 <template>
@@ -99,7 +128,14 @@ const goHome = () =>
           </div> -->
         </div>
         <div v-if="searchAble" class="xl:w-2/5">
-          <search-input :model-value="searchValue" />
+          <inputMultiplechip
+            :model-value="searchValue"
+            :chipValue="chipValue"
+            :resultList="resultList"
+            :loading="loading"
+            @keyup.enter="onSearch"
+            @keyup.backspace="removeChip"
+          />
         </div>
         <div
           class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"

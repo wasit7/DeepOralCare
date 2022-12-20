@@ -11,6 +11,7 @@ const route = useRoute();
 const storeMain = useMainStore();
 
 const searchQuery = ref("");
+const valueChip = ref([]);
 
 onMounted(() => {
   console.log("mounted");
@@ -18,6 +19,7 @@ onMounted(() => {
   console.log("params: " + params);
   if (params) {
     // searchQuery.value = params;
+    valueChip.value = params;
     storeMain.getRelation(params);
   }
   // const queryString = route.query.key_word;
@@ -33,6 +35,9 @@ onMounted(() => {
     class="fixed w-full"
     search-able
     :search-value="searchQuery"
+    :chipValue="valueChip"
+    :resultList="storeMain.search_result"
+    :loading="storeMain.loading"
   />
   <!-- TODO: Components relation Graph here -->
   <div class="w-full h-screen relative">

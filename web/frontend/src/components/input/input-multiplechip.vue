@@ -1,5 +1,6 @@
 <script setup>
 import searchIcon from "../Icons/searchIcon.vue";
+import loading from "../loading/circle-loading.vue";
 
 defineProps({
   // Props here.
@@ -20,15 +21,27 @@ defineProps({
     default: [],
   },
 });
+
+const focusInput = () => {
+  const input = document.getElementById("input-chip");
+  input.focus();
+};
 </script>
 
 <template>
   <div class="relative">
     <div
-      class="relative flex flex-wrap mt-1 rounded-full gap-2 py-1 border border-[#F2AD4E] w-full h-full shadow pl-12"
+      :class="`relative flex flex-wrap mt-1 ${
+        chipValue.length > 0
+          ? ' rounded-3xl px-4 pr-4'
+          : 'rounded-full pl-12 pr-4'
+      } gap-2 py-1 border border-[#F2AD4E] w-full h-full shadow  `"
+      @click="focusInput()"
     >
       <div
-        class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+        :class="`${
+          chipValue.length > 0 ? ' hidden' : ''
+        } pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3`"
       >
         <span class="text-gray-500 sm:text-sm"><search-icon /> </span>
       </div>
@@ -48,10 +61,11 @@ defineProps({
       <input
         type="text"
         name="text"
-        id="text"
-        :class="`  focus:outline-none`"
+        id="input-chip"
+        :class="` w-full  focus:outline-none`"
         :placeholder="placeholder"
         :value="modelValue"
+        autocomplete="off"
         @input="$emit('update:modelValue', $event.target.value)"
       />
       <div
@@ -63,10 +77,11 @@ defineProps({
     </div>
     <div
       :class="` ${
-        modelValue ? '' : ' hidden '
+        modelValue != '' ? '' : ' hidden '
       }  absolute mt-1 w-full max-h-60 overflow-auto bg-white border rounded-md z-10`"
     >
-      <div class="py-2 px-3" v-if="loading">Loading Data . . .</div>
+      <div class="py-2 px-2" v-if="loading"><loading /></div>
+
       <ul v-else-if="resultList.length > 0">
         <li
           class="py-2 px-3 hover:bg-gray-100 cursor-pointer"

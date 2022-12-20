@@ -17,6 +17,7 @@ export const useMainStore = defineStore("main", {
     // actions
     async getSearch(query) {
       this.loading = true;
+      this.res_search = [];
       const res = await axios_api.get(`/searchapp/api/search/?q=${query}`);
       this.res_search = res.data;
       if (res.data) {

@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+	font-family: "Sarabun";
+	src: url("./assets/fonts/Sarabun-Regular.ttf") format("truetype");
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	scroll-behavior: smooth;
+	font-family: "Sarabun";
+}
+
+body {
+	line-height: 1.5;
+	color: #333;
+}
+
+.background {
+	background: url('./assets/imgs/home-background.png');
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: cover;
+}
+
+.content-container {
+	height: calc(100vh - 4rem);
+}
+
+::-webkit-scrollbar {
+    @apply w-1 h-1;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-gray-100 rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply w-2 bg-orange-100 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-orange-100;
+}

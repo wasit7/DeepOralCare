@@ -37,6 +37,7 @@ services:
             - .env
     
     notebook:
+        container_name: ${PROJECT_NAME}-notebook
         build:
             context: backend
             dockerfile: Dockerfile.notebook
@@ -46,5 +47,16 @@ services:
             - ./jupyter_notebook_config.json:/config/jupyter_notebook_config.json
         ports: 
             - 8888:8888
+        env_file: 
+            - .env
+    
+    frontend:
+        container_name:  ${PROJECT_NAME}-frontend-react
+        build: ./frontend-react
+        command: sh run_frontend.sh
+        volumes: 
+            - ./frontend-react:/frontend
+        ports: 
+            - 18080:8080
         env_file: 
             - .env

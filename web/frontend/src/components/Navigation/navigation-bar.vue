@@ -22,47 +22,17 @@ const navigation = [
   { name: "Calendar", href: "#", current: false },
 ];
 
-defineProps({
-  searchValue: String,
+const props = defineProps({
   searchAble: {
     type: Boolean,
     default: false,
   },
-  chipValue: Array,
-  resultList: Array,
-  loading: Boolean,
 });
 
 const goHome = () =>
   router.push({
     name: "Landing",
   });
-
-const onSearch = () => {
-  if (searchValue === "") {
-    router.push({
-      name: "Search",
-      params: {
-        key_word: JSON.stringify(chipValue.map((i) => i.id)),
-      },
-    });
-  } else {
-    addChip();
-  }
-};
-
-const addChip = () => {
-  if (searchValue) {
-    chipValue.push(searchValue);
-    searchValue = "";
-  }
-};
-
-const removeChip = () => {
-  if (!searchValue && chipValue.length) {
-    chipValue.pop();
-  }
-};
 </script>
 
 <template>
@@ -129,14 +99,7 @@ const removeChip = () => {
         </div>
         <div v-if="searchAble" class="xl:w-2/5 relative h-full py-2">
           <div class="absolute w-full">
-            <inputMultiplechip
-              :model-value="searchValue"
-              :chipValue="chipValue"
-              :resultList="resultList"
-              :loading="loading"
-              @keyup.enter="onSearch"
-              @keyup.backspace="removeChip"
-            />
+            <slot name="search"> </slot>
           </div>
         </div>
         <div

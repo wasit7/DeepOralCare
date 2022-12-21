@@ -49,7 +49,7 @@ defineProps({
           type="text"
           name="text"
           id="text"
-          :class="` w-full h-full  `"
+          :class="` w-full h-full focus:outline-none  `"
           :placeholder="placeholder"
           :value="modelValue"
           @input="$emit('update:modelValue', $event.target.value)"

@@ -36,6 +36,7 @@ deploy:
          echo $CI_REPOSITORY_URL 
          sudo git pull origin development
          sudo docker compose -f web/docker-compose.yml up -d 
+         sudo docker compose -f web/docker-compose.yml restart frontend frontend-vue
          EOT
 
 

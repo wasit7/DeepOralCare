@@ -36,7 +36,7 @@ Axios_Instance.interceptors.response.use(
 const axios_api = {
   get: (url, body) => {
     return new Promise((resolve, reject) => {
-      Axios_Instance.get(`${baseUrl}${url}`, body)
+      Axios_Instance.get(url, body)
         .then((res) => {
           console.log("get Response: ", res);
           resolve(res);

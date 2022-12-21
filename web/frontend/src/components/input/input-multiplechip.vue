@@ -1,10 +1,10 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 import searchIcon from "../Icons/searchIcon.vue";
 import loading from "../loading/circle-loading.vue";
 import crossIcon from "../Icons/crossIcon.vue";
 
-defineProps({
+const props = defineProps({
   // Props here.
   modelValue: {
     type: String,
@@ -113,7 +113,7 @@ const focusInput = () => {
       <ul v-if="resultList.length > 0">
         <li
           class="py-2 px-3 hover:bg-gray-100 cursor-pointer"
-          v-for="(item, index) in resultList"
+          v-for="(item, index) in props.resultList"
           :key="index"
           @click="
             chipValue.push(item);

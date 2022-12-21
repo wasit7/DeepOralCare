@@ -11,7 +11,17 @@ const route = useRoute();
 const storeMain = useMainStore();
 
 const searchQuery = ref("");
+const searchEntity = ref("");
 const valueChip = ref([]);
+const panelLeft = ref(true);
+const panelRight = ref(true);
+const panelBottom = ref(true);
+
+const entityFilter = computed(() => {
+  return storeMain.entity_result?.filter((item) => {
+    return item.name.toLowerCase().includes(searchEntity.value.toLowerCase());
+  });
+});
 
 onMounted(() => {
   console.log("mounted");
@@ -30,6 +40,10 @@ onMounted(() => {
   //   storeMain.getRelation(queryString.split(","));
   // }
 });
+
+const getDetail = (id) => {
+  storeMain.getEntityDetail(id);
+};
 </script>
 
 <template>
@@ -42,30 +56,49 @@ onMounted(() => {
     :loading="storeMain.loading"
   />
   <!-- TODO: Components relation Graph here -->
-  <div class="w-full h-screen relative">
-    <dsm-slide-overlay class="pt-16">
+  <div class="w-full h-screen relative bg-slate-50">
+    <dsm-slide-overlay v-model="panelLeft" class="pt-16">
       <template v-slot:content>
         <div
           class="flex flex-col gap-3 px-10 pt-6 sticky top-0 bg-white w-full"
         >
-          <search-input :placeholder="'ค้นหารายการ'" />
+          <search-input v-model="searchEntity" :placeholder="'ค้นหารายการ'" />
           <p class="text-[22px]">รายการที่พบ</p>
         </div>
         <div class="flex flex-col">
-          <div
-            class="min-h-[75px] border-b px-10 py-4 hover:bg-gray-100"
-            v-for="(item, index) in storeMain.result_value"
-            :key="index"
+          <ul
+            class="min-h-[75px] border-b px-10 py-2 hover:bg-gray-100"
+            v-for="item in entityFilter"
+            :key="item.id"
           >
-            <div>
+            <li @click="getDetail(item.id)">
               <p>{{ item.name }}</p>
               <p>{{ item.attribute }}</p>
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
       </template>
     </dsm-slide-overlay>
-    <dsm-slide-overlay class="pt-16" right>
+    <dsm-slide-overlay
+      :class="`${
+        panelLeft && panelRight
+          ? ' w-2/4 left-1/4'
+          : panelLeft
+          ? ' left-1/4 w-full'
+          : panelRight
+          ? ' w-3/4 '
+          : ''
+      }`"
+      v-model="panelBottom"
+      bottom
+    >
+      <template v-slot:content>
+        <div class="py-6 px-10">
+          <p class="text-[22px]">รายละเอียด</p>
+        </div>
+      </template>
+    </dsm-slide-overlay>
+    <dsm-slide-overlay v-model="panelRight" class="pt-16" right>
       <template v-slot:content>
         <div class="py-6 px-10">
           <p class="text-[22px]">รายละเอียด</p>
@@ -82,6 +115,7 @@ onMounted(() => {
         </div>
       </template>
     </dsm-slide-overlay>
+
     <sigma-graph :graph-data="storeMain.relation_result" />
   </div>
 </template>

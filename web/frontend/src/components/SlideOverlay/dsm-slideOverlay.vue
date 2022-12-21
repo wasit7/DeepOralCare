@@ -2,33 +2,56 @@
 import { ref, onMounted } from "vue";
 import triangleIcon from "../Icons/triangleIcon.vue";
 
-defineProps({
+const props = defineProps({
   // Props here.
+  modelValue: {
+    type: Boolean,
+    default: true,
+  },
   right: Boolean,
+  bottom: Boolean,
 });
 
-const overlay = ref(true);
+// const overlay = ref(true);
 
-const toggleOverlay = () => {
-  overlay.value = !overlay.value;
-};
+// const toggleOverlay = () => {
+//   overlay.value = !overlay.value;
+// };
 </script>
 
 <template>
   <div
-    :class="`shadow ${
-      overlay ? ' w-2/3 xl:w-1/4' : 'w-0 '
-    } h-full bg-white  absolute ${right ? 'right-0' : ''} duration-500 z-30 `"
+    :class="` shadow-lg ${
+      modelValue
+        ? bottom
+          ? 'h-1/4 w-full'
+          : 'w-2/3 xl:w-1/4 h-full'
+        : bottom
+        ? 'h-0 w-full'
+        : 'w-0  h-full'
+    }   bg-white  fixed ${right ? 'right-0 h-full' : ''} ${
+      bottom ? ' left-0 bottom-0 ' : ''
+    } duration-500 z-30 `"
   >
     <div
-      :class="` px-2 py-5 shadow absolute  top-24  cursor-pointer ${
-        right ? ' -left-7' : '-right-7'
-      }`"
-      @click="toggleOverlay"
+      :class="` px-2 py-5 shadow absolute bg-white ${
+        bottom ? 'left-20 -top-10 w-16 h-10 ' : 'top-24'
+      }   cursor-pointer ${right ? ' -left-7' : '-right-7'}`"
+      @click="$emit('update:modelValue', !modelValue)"
     >
       <div
-        :class="`${
-          overlay ? (right ? 'rotate-180' : '') : right ? '' : 'rotate-180'
+        :class="` flex items-center justify-center  w-full h-full ${
+          modelValue
+            ? right
+              ? 'rotate-180'
+              : bottom
+              ? ' -rotate-90 '
+              : ' '
+            : right
+            ? ''
+            : bottom
+            ? 'rotate-90'
+            : 'rotate-180'
         }`"
       >
         <slot name="expandIcon"> <triangle-icon /> </slot>
@@ -36,7 +59,7 @@ const toggleOverlay = () => {
     </div>
     <div
       :class="`${
-        overlay ? ' ' : ' overflow-hidden'
+        modelValue ? ' ' : ' overflow-hidden'
       } bg-white  max-h-full  overflow-auto relative`"
     >
       <slot name="content"> content Here ! </slot>

@@ -7,10 +7,12 @@ export const useMainStore = defineStore("main", {
     res_search: [],
     loading: false,
     res_relation: {},
+    res_entityDetail: {},
   }),
   getters: {
     // getters
     search_result: (state) => state.res_search,
+    entity_result: (state) => state.res_relation.entitys,
     relation_result: (state) => {
       const { entitys, relations } = state.res_relation;
 
@@ -19,7 +21,6 @@ export const useMainStore = defineStore("main", {
           return {
             id: i.id,
             label: i.name,
-
             color: "#666",
           };
         }),
@@ -33,6 +34,7 @@ export const useMainStore = defineStore("main", {
         }),
       };
     },
+    entityDetail: (state) => state.res_entityDetail,
   },
   actions: {
     // actions
@@ -46,10 +48,16 @@ export const useMainStore = defineStore("main", {
       }
     },
     async getRelation(ids) {
-      const res = await axios_api.post("/searchapp/api/entity/relation/", {
+      const res = await axios_api.post(`/searchapp/api/entity/relation/`, {
         ids,
       });
       this.res_relation = res.data;
+    },
+    async getEntityDetail(id) {
+      const res = await axios_api.post(`/searchapp/api/entity/getDetail/`, {
+        id,
+      });
+      this.res_entityDetail = res.data;
     },
   },
 });

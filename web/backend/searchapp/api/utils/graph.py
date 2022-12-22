@@ -47,7 +47,7 @@ def serialize_path(data):
 
 def get_relation(ids, hop=2):
     if len(ids) == 1:
-        return get_spo(name=ids[0])
+        return get_spo(name=ids[0]), []
     data = graph.query(f"""
         MATCH (n) where n.name IN ["{'","'.join(ids)}"]
         WITH collect(n) as nodes

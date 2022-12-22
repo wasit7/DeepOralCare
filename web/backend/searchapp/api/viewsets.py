@@ -46,15 +46,16 @@ class EntityViewsets(viewsets.GenericViewSet,
         serializer = serializers.RelationSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
-            spo = utils.graph.get_relation(ids=request.data.get('ids', []), hop=data.get('hop'))
+            spo, path_detail = utils.graph.get_relation(ids=request.data.get('ids', []), hop=data.get('hop'))
             response = {
                 'relations': spo,
-                'entitys': services.get_entity_response(spo=spo)
+                'entitys': services.get_entity_response(spo=spo),
+                'path_detail': path_detail
             }
             return Response(response, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    @action(methods=['GET'], detail=False)
+    @action(methods=['POST'], detail=False)
     def getDetail(self, request, *args, **kwargs):
         entities = models.Entity.objects.filter(id=request.data.get('id',""))
         if entities.exists():

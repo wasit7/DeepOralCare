@@ -32,7 +32,22 @@ def _extract_path_1(data):
             })
     return output
 
+def unique_node_ids(spo):
+    data = [elm.get('head') for elm in spo] + [elm.get('tail') for elm in spo]
+    return list(set(data))
+
+def serialize_path(data):
+    output = []
+    for path in data:
+        txt = ""
+        for relation in path['path'].relationships:
+            txt += f"{relation.start_node.get('name')} {relation.get('name')} {relation.end_node.get('name')}, "
+        output.append(txt)
+    return output
+
 def get_relation(ids, hop=2):
+    if len(ids) == 1:
+        return get_spo(name=ids[0])
     data = graph.query(f"""
         MATCH (n) where n.name IN ["{'","'.join(ids)}"]
         WITH collect(n) as nodes
@@ -43,8 +58,4 @@ def get_relation(ids, hop=2):
         RETURN path
     """)
     data = data.data()
-    return _extract_path_1(data)
-
-def unique_node_ids(spo):
-    data = [elm.get('head') for elm in spo] + [elm.get('tail') for elm in spo]
-    return list(set(data))
+    return _extract_path_1(data), serialize_path(data)

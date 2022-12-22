@@ -1,0 +1,42 @@
+image: docker/compose:latest
+
+
+stages:          # List of stages for jobs, and their order of execution
+  - change
+  - deploy
+   
+
+variables:
+  SPRING_PROFILES_ACTIVE: gitlab-ci
+  DOCKER_HOST: unix:///var/run/docker.sock
+  DOCKER_DRIVER: overlay2
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+  DSSH: "ssh oae-user@192.168.24.197"
+  DEPLOY_SERVER: 192.168.24.197
+
+deploy:
+   image: gitlab/dind
+   stage: deploy
+   only:
+      refs:
+      - development
+
+   before_script:
+      - eval "$(ssh-agent -s)"
+      - echo "$SERVER_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+      - mkdir -p ~/.ssh
+      - chmod 700 ~/.ssh
+      - ssh-keyscan -H $DEPLOY_SERVER >> ~/.ssh/known_hosts
+
+   script:
+      - |
+         $DSSH /bin/bash -s << EOT
+         cd /home/oae-user/61-sec-search-app
+         echo $CI_REPOSITORY_URL 
+         git pull origin development
+         docker compose -f web/docker-compose.yml up -d
+         docker compose -f web/docker-compose.yml restart frontend frontend-vue
+         EOT
+
+

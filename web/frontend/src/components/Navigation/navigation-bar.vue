@@ -22,47 +22,17 @@ const navigation = [
   { name: "Calendar", href: "#", current: false },
 ];
 
-defineProps({
-  searchValue: String,
+const props = defineProps({
   searchAble: {
     type: Boolean,
     default: false,
   },
-  chipValue: Array,
-  resultList: Array,
-  loading: Boolean,
 });
 
 const goHome = () =>
   router.push({
     name: "Landing",
   });
-
-const onSearch = () => {
-  if (searchValue === "") {
-    router.push({
-      name: "Search",
-      params: {
-        key_word: JSON.stringify(chipValue.map((i) => i.id)),
-      },
-    });
-  } else {
-    addChip();
-  }
-};
-
-const addChip = () => {
-  if (searchValue) {
-    chipValue.push(searchValue);
-    searchValue = "";
-  }
-};
-
-const removeChip = () => {
-  if (!searchValue && chipValue.length) {
-    chipValue.pop();
-  }
-};
 </script>
 
 <template>
@@ -127,15 +97,10 @@ const removeChip = () => {
             </div>
           </div> -->
         </div>
-        <div v-if="searchAble" class="xl:w-2/5">
-          <inputMultiplechip
-            :model-value="searchValue"
-            :chipValue="chipValue"
-            :resultList="resultList"
-            :loading="loading"
-            @keyup.enter="onSearch"
-            @keyup.backspace="removeChip"
-          />
+        <div v-if="searchAble" class="xl:w-2/5 relative h-full py-2">
+          <div class="absolute w-full">
+            <slot name="search"> </slot>
+          </div>
         </div>
         <div
           class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"

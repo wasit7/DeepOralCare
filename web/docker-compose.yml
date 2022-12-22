@@ -60,3 +60,14 @@ services:
             - 18080:8080
         env_file: 
             - .env
+    
+    frontend-vue:
+        container_name:  ${PROJECT_NAME}-frontend-vue
+        build: ./frontend
+        command: sh run_frontend.sh
+        volumes: 
+            - ./frontend:/frontend
+        ports: 
+            - 8080:8080
+        env_file: 
+            - .env

@@ -34,26 +34,33 @@ watchEffect(() => {
 
 const onSearch = () => {
   if (search.value === "") {
+    sessionStorage.setItem("item_search", JSON.stringify(valueChip.value));
     router.push({
       name: "Search",
       params: {
-        key_word: JSON.stringify(valueChip.value.map((i) => i.id)),
+        key_word: valueChip.value.map((i) => i.name).join(","),
       },
     });
   } else {
-    addChip();
+    const isExist = storeMain.search_result.find(
+      (i) => i.name === search.value
+    );
+    addChip(isExist);
   }
 };
 
-const addChip = () => {
-  if (search.value) {
-    valueChip.value.push(search.value);
-    search.value = "";
+const addChip = (item) => {
+  if (item) {
+    const isExist = valueChip.value.find((i) => i.id === item.id);
+    if (!isExist) {
+      valueChip.value.push(item);
+      search.value = "";
+    }
   }
 };
 
 const removeChip = () => {
-  if (!search.value && valueChip.value.length) {
+  if (search.value === "" && valueChip.value.length) {
     valueChip.value.pop();
   }
 };

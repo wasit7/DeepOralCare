@@ -13,6 +13,7 @@ import { convertName, splitAndConvertName } from '../helper/helper';
 //Redux
 import { useSelector } from 'react-redux';
 import BottomBox from '../components/BottomBox';
+import Indicators from '../components/Indicators';
 
 function SearchResult() {
 
@@ -25,6 +26,7 @@ function SearchResult() {
 	const [entities, setEntities] = useState([]);
 	const [entitiesToShow, setEntitiesToShow] = useState([]);
 	const [entityDetail, setEntityDetail] = useState(null);
+	const [pathDetail, setPathDetail] = useState([]);
 
 	const { openLeft, openRight } = useSelector((state) => state.layout);
 
@@ -46,6 +48,19 @@ function SearchResult() {
 			let data = res.data.entitys.map(item => ({ ...item, displayName: convertName(item.name) }));
 			setEntities(data);
 			setEntitiesToShow(data);
+		}
+		if (res.data.path_detail) {
+			let detail = [];
+			res.data.path_detail.map(item => {
+				let data = item.split(' ')
+				detail = data.map(text => {
+					if (text.includes('/')) {
+						return splitAndConvertName(text)
+					}
+					return text
+				})
+			});
+			setPathDetail(detail);
 		}
 	}
 
@@ -118,9 +133,12 @@ function SearchResult() {
 							fetchEntityData={fetchEntityData}
 						/>
 				}
+				<Indicators />
 				<BottomBox>
 					<h2 className='text-[1.4rem] mb-2'>รายละเอียดความสัมพันธ์</h2>
-					<p>นาง A เป็นภรรยา นาย B ที่เป็นคณะกรรมการบริษัท ข กำจัด, นาง A เป็นคณะกรรมการบริษัท ก จำกัด (มหาชน) ที่มีการซื้อขายแลกเปลี่ยนกับ บริษัท ข จำกัด, นางA เป็นเพื่อน นาง  E ที่เป็นรองคณะกรรมการบริษัท ข จำกัด</p>
+					<p>
+						{pathDetail.map((text, index) => <span key={index} className='capitalize'>{` ${text} `}</span>)}
+					</p>
 				</BottomBox>
 			</div>
 			<RightSideBar>

@@ -18,8 +18,8 @@ const DisplayGraph = (props) => {
         const [draggedNode, setDraggedNode] = useState(null);
 
         const loadGraph = useLoadGraph();
-        // const { positions, assign } = useLayoutRandom();
-        const { positions, assign } = useLayoutCircular();
+        const { positions, assign } = useLayoutRandom();
+        // const { positions, assign } = useLayoutCircular();
         const registerEvents = useRegisterEvents();
         const sigma = useSigma();
 
@@ -125,7 +125,8 @@ const DisplayGraph = (props) => {
             <SigmaContainer
                 graph={MultiDirectedGraph}
                 settings={{
-                    renderEdgeLabels: true
+                    renderEdgeLabels: true,
+                    defaultEdgeType: 'arrow'
                 }}
                 style={{
                     height: "100%",

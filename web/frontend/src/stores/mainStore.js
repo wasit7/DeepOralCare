@@ -13,6 +13,7 @@ export const useMainStore = defineStore("main", {
     // getters
     search_result: (state) => state.res_search,
     entity_result: (state) => state.res_relation.entitys,
+    sumRelation_result: (state) => state.res_relation.path_detail,
     relation_result: (state) => {
       const { entitys, relations } = state.res_relation;
 

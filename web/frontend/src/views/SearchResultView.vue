@@ -19,6 +19,7 @@ const panelLeft = ref(true);
 const panelRight = ref(true);
 const panelBottom = ref(true);
 const searchTimeout = ref(null);
+const itemsKey = ref([]);
 
 const entityFilter = computed(() => {
   return storeMain.entity_result?.filter((item) => {
@@ -110,6 +111,30 @@ const removeChip = () => {
   </navigation-bar>
   <!-- TODO: Components relation Graph here -->
   <div class="w-full h-screen relative bg-slate-50">
+    <dsm-slide-overlay
+      :class="`${
+        panelLeft && panelRight
+          ? ' w-2/4 left-1/4'
+          : panelLeft
+          ? ' left-1/4 w-full'
+          : panelRight
+          ? ' w-3/4 '
+          : 'left-0'
+      }  `"
+      v-model="panelBottom"
+      bottom
+    >
+      <template v-slot:content>
+        <div class="py-6 px-10">
+          <p class="text-[22px]">รายละเอียดความสัมพันธ์</p>
+          <div v-for="item in storeMain.sumRelation_result" :key="item">
+            <p>
+              {{ item }}
+            </p>
+          </div>
+        </div>
+      </template>
+    </dsm-slide-overlay>
     <dsm-slide-overlay v-model="panelLeft" class="pt-16">
       <template v-slot:content>
         <div
@@ -126,39 +151,23 @@ const removeChip = () => {
           >
             <li @click="getDetail(item.id)">
               <p>{{ item.name }}</p>
-              <p>{{ item.attribute }}</p>
+              <p v-for="key in Object.keys(item.attribute)" :key="key">
+                {{ key }} {{item.attribute[key]  }}
+              </p>
             </li>
           </ul>
         </div>
       </template>
     </dsm-slide-overlay>
-    <dsm-slide-overlay
-      :class="`${
-        panelLeft && panelRight
-          ? ' w-2/4 left-1/4'
-          : panelLeft
-          ? ' left-1/4 w-full'
-          : panelRight
-          ? ' w-3/4 '
-          : ''
-      }`"
-      v-model="panelBottom"
-      bottom
-    >
-      <template v-slot:content>
-        <div class="py-6 px-10">
-          <p class="text-[22px]">รายละเอียด</p>
-        </div>
-      </template>
-    </dsm-slide-overlay>
+
     <dsm-slide-overlay v-model="panelRight" class="pt-16" right>
       <template v-slot:content>
         <div class="py-6 px-10">
           <p class="text-[22px]">รายละเอียด</p>
           <p>{{ storeMain.entityDetail.name }}</p>
-          <p>คำอธิบายรายละเอียดความสัมพันธ์ของสิ่งที่เกี่ยวข้อง</p>
-          <p>
-           {{ storeMain.entityDetail.attribute   }}
+          <!-- <p>คำอธิบายรายละเอียดความสัมพันธ์ของสิ่งที่เกี่ยวข้อง</p> -->
+          <p >
+            {{ storeMain.entityDetail.attribute }}
           </p>
         </div>
       </template>

@@ -60,7 +60,7 @@ const addChip = (item) => {
 };
 
 const removeChip = () => {
-  if (search.value === "" && valueChip.value.length) {
+  if (!search.value && valueChip.value.length) {
     valueChip.value.pop();
   }
 };

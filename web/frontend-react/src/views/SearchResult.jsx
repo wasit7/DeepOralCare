@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 //Components
 import LeftSideBar from '../components/LeftSideBar';
@@ -70,7 +70,7 @@ function SearchResult() {
 		setEntitiesToShow(data);
 	}
 
-	const fetchEntityDetail = async (id) => {
+	const fetchEntityDetail = useCallback(async (id) => {
 		const res = await EntityDetail({ id });
 		if (res === undefined) {
 			setEntityDetail(null);
@@ -79,14 +79,14 @@ function SearchResult() {
 			let data = { ...res.data, displayName: convertName(res.data.name) };
 			setEntityDetail(data);
 		}
-	}
+	}, [relations])
 
 	const showEntityDetail = () => {
 		let keys = Object.keys(entityDetail.attribute);
 		return keys.map((key, index) => <p key={index} className='text-base'>{key} {entityDetail.attribute[key]}</p>)
 	}
 
-	const fetchEntityData = async (id) => {
+	const fetchEntityData = useCallback(async (id) => {
 		const res = await EntityData(id);
 		if (res.data.relations) {
 			let data = res.data.relations.map(item => ({ ...item, head: splitAndConvertName(item.head), tail: splitAndConvertName(item.tail), originalHead: item.head, originalTail: item.tail }));
@@ -97,7 +97,7 @@ function SearchResult() {
 			setEntities([...entities, ...data]);
 			setEntitiesToShow([...entities, ...data]);
 		}
-	}
+	}, [relations])
 
 	return (
 		<section className='bg-slate-200 content-container flex overflow-hidden'>

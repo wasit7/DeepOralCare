@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { memo } from "react";
 
 //NPM Packages
 import { MultiDirectedGraph } from "graphology";
@@ -141,4 +142,4 @@ const DisplayGraph = (props) => {
     );
 };
 
-export default DisplayGraph;
+export default memo(DisplayGraph);

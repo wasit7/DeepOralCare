@@ -14,7 +14,9 @@ import Badge from './Badge';
 //Redux
 import { useSelector, useDispatch } from 'react-redux';
 import { addKeyword, removeKeyword } from '../redux/search/SearchSlice';
-import OutsideClick from './OutsideClick';
+
+//Hooks
+import OutsideClick from '../hooks/OutsideClick';
 
 function SearchBox() {
     const history = useHistory();

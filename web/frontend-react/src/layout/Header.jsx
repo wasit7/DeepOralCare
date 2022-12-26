@@ -15,7 +15,9 @@ import { addKeyword, removeKeyword } from '../redux/search/SearchSlice';
 
 //Components
 import Badge from '../components/Badge';
-import OutsideClick from '../components/OutsideClick';
+
+//Hooks
+import OutsideClick from '../hooks/OutsideClick';
 
 //Services And Helper
 import { Search } from '../services/services.search';

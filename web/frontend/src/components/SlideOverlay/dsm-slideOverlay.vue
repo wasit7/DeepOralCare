@@ -27,10 +27,10 @@ const props = defineProps({
           ? 'h-1/4 w-full'
           : 'w-2/3 xl:w-1/4 h-full'
         : bottom
-        ? 'h-0 w-full'
+        ? 'h-0 w-full '
         : 'w-0  h-full'
     }   bg-white  fixed ${right ? 'right-0 h-full' : ''} ${
-      bottom ? ' left-0 bottom-0 ' : ''
+      bottom ? '    bottom-0 ' : ''
     } duration-500 z-30 `"
   >
     <div

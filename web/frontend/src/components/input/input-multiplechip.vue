@@ -41,7 +41,7 @@ const focusInput = () => {
         chipValue.length > 0 && onFocus
           ? ' rounded-3xl px-4 pr-4 flex-wrap'
           : 'rounded-full pl-12 pr-4'
-      } gap-2 py-1 border border-[#F2AD4E] w-full h-full shadow bg-white  `"
+      } gap-2 py-1 border border-[#F2AD4E] w-full h-full shadow bg-white overflow-hidden  `"
       @click="focusInput()"
     >
       <div
@@ -72,7 +72,7 @@ const focusInput = () => {
           v-for="(chip, index) in chipValue.slice(0, 4)"
           :key="chip.id"
         >
-          <span>{{ chip.name }}</span>
+          <span class="whitespace-nowrap">{{ chip.name }}</span>
           <span
             class="cursor-pointer bg-[#F2AD4E] rounded-full w-4 h-4 flex items-center justify-center z-20"
             @click="chipValue.splice(index, 1)"

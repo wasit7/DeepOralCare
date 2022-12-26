@@ -14,6 +14,8 @@ const props = defineProps({
   },
 });
 
+const emits = defineEmits(["clickNode"]);
+
 const graph = new Graph();
 
 watchEffect(
@@ -53,9 +55,15 @@ watchEffect(
       let draggedNode = null;
       let isDragging = false;
       renderer.on("downNode", (e) => {
+        console.log("downNode", e);
         isDragging = true;
         draggedNode = e.node;
+        emits("clickNode", e.node);
         graph.setNodeAttribute(draggedNode, "highlighted", true);
+      });
+
+      renderer.getMouseCaptor().on("click", (node) => {
+        console.log("click", node);
       });
 
       // On mouse move, if the drag mode is enabled, we change the position of the draggedNode
@@ -133,6 +141,10 @@ watchEffect(
   },
   { deep: true }
 );
+
+const onclickNode = (e) => {
+  console.log("onclickNode", e);
+};
 </script>
 
 <template>

@@ -94,6 +94,10 @@ const removeChip = () => {
     valueChip.value.pop();
   }
 };
+
+const onclickNode = (id) => {
+  storeMain.getEntityDetail(id);
+};
 </script>
 
 <template>
@@ -152,7 +156,7 @@ const removeChip = () => {
             <li @click="getDetail(item.id)">
               <p>{{ item.name }}</p>
               <p v-for="key in Object.keys(item.attribute)" :key="key">
-                {{ key }} {{item.attribute[key]  }}
+                {{ key }} {{ item.attribute[key] }}
               </p>
             </li>
           </ul>
@@ -166,14 +170,17 @@ const removeChip = () => {
           <p class="text-[22px]">รายละเอียด</p>
           <p>{{ storeMain.entityDetail.name }}</p>
           <!-- <p>คำอธิบายรายละเอียดความสัมพันธ์ของสิ่งที่เกี่ยวข้อง</p> -->
-          <p >
+          <p>
             {{ storeMain.entityDetail.attribute }}
           </p>
         </div>
       </template>
     </dsm-slide-overlay>
 
-    <sigma-graph :graph-data="storeMain.relation_result" />
+    <sigma-graph
+      :graph-data="storeMain.relation_result"
+      @click-node="onclickNode"
+    />
   </div>
 </template>
 

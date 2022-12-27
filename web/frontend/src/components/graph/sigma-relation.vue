@@ -18,129 +18,152 @@ const emits = defineEmits(["clickNode"]);
 
 const graph = new Graph();
 
-watchEffect(
-  () => {
-    if (props.graphData?.nodes && props.graphData?.edges) {
-      console.log("watchEffect", props.graphData);
-      const container = document.getElementById("sigma-container");
-      props.graphData.nodes.map((node) => {
-        graph.addNode(node.id, {
-          size: 15,
+watchEffect(() => {
+  if (props.graphData?.nodes && props.graphData?.edges) {
+    const container = document.getElementById("sigma-container");
 
-          label: node.label,
-          color: node?.color,
-        });
+    console.log("watchEffect", props.graphData);
+    props.graphData.nodes.map((node) => {
+      graph.addNode(node.id, {
+        size: 15,
+
+        label: node.label,
+        color: node?.color,
       });
-      props.graphData.edges.map((edge) => {
-        graph.addEdge(edge.source, edge.target, {
-          type: "line",
-          label: edge.relation,
-          size: 5,
-        });
+    });
+    props.graphData.edges.map((edge) => {
+      graph.addEdge(edge.source, edge.target, {
+        type: "line",
+        label: edge.relation,
+        size: 5,
       });
+    });
 
-      graph.nodes().forEach((node, i) => {
-        const angle = (i * 2 * Math.PI) / graph.order;
-        graph.setNodeAttribute(node, "x", 100 * Math.cos(angle));
-        graph.setNodeAttribute(node, "y", 100 * Math.sin(angle));
-      });
+    graph.nodes().forEach((node, i) => {
+      const angle = (i * 2 * Math.PI) / graph.order;
+      graph.setNodeAttribute(node, "x", 100 * Math.cos(angle));
+      graph.setNodeAttribute(node, "y", 100 * Math.sin(angle));
+    });
+    const renderer = new Sigma(graph, container, {
+      renderEdgeLabels: true,
+      allowInvalidContainer: true,
+    });
+    const layout = new ForceSupervisor(graph, {
+      isNodeFixed: (_, attr) => attr.highlighted,
+    });
+    layout.start();
+    let draggedNode = null;
+    let isDragging = false;
+    let isHovering = null;
+    let hoveredNeighbor = null;
+    let selectedNode = null;
+    renderer.on("downNode", (e) => {
+      console.log("downNode", e);
+      isDragging = true;
+      draggedNode = e.node;
+      emits("clickNode", e.node);
+      graph.setNodeAttribute(draggedNode, "highlighted", true);
+    });
 
-      const renderer = new Sigma(graph, container, {
-        renderEdgeLabels: true,
-      });
-      const layout = new ForceSupervisor(graph, {
-        isNodeFixed: (_, attr) => attr.highlighted,
-      });
-      layout.start();
-      let draggedNode = null;
-      let isDragging = false;
-      renderer.on("downNode", (e) => {
-        console.log("downNode", e);
-        isDragging = true;
-        draggedNode = e.node;
-        emits("clickNode", e.node);
-        graph.setNodeAttribute(draggedNode, "highlighted", true);
-      });
+    renderer.getMouseCaptor().on("click", (node) => {
+      console.log("click", node);
+    });
 
-      renderer.getMouseCaptor().on("click", (node) => {
-        console.log("click", node);
-      });
+    // On mouse move, if the drag mode is enabled, we change the position of the draggedNode
+    renderer.getMouseCaptor().on("mousemovebody", (e) => {
+      if (!isDragging || !draggedNode) return;
 
-      // On mouse move, if the drag mode is enabled, we change the position of the draggedNode
-      renderer.getMouseCaptor().on("mousemovebody", (e) => {
-        if (!isDragging || !draggedNode) return;
+      // Get new position of node
+      const pos = renderer.viewportToGraph(e);
 
-        // Get new position of node
-        const pos = renderer.viewportToGraph(e);
+      graph.setNodeAttribute(draggedNode, "x", pos.x);
+      graph.setNodeAttribute(draggedNode, "y", pos.y);
 
-        graph.setNodeAttribute(draggedNode, "x", pos.x);
-        graph.setNodeAttribute(draggedNode, "y", pos.y);
+      // Prevent sigma to move camera:
+      e.preventSigmaDefault();
+      e.original.preventDefault();
+      e.original.stopPropagation();
+      // layout.stop();
+    });
 
-        // Prevent sigma to move camera:
-        e.preventSigmaDefault();
-        e.original.preventDefault();
-        e.original.stopPropagation();
-      });
+    // On mouse up, we reset the autoscale and the dragging mode
+    renderer.getMouseCaptor().on("mouseup", () => {
+      if (draggedNode) {
+        graph.removeNodeAttribute(draggedNode, "highlighted");
+      }
+      isDragging = false;
+      draggedNode = null;
+    });
 
-      // On mouse up, we reset the autoscale and the dragging mode
-      renderer.getMouseCaptor().on("mouseup", () => {
-        if (draggedNode) {
-          graph.removeNodeAttribute(draggedNode, "highlighted");
+    // Disable the autoscale at the first down interaction
+    renderer.getMouseCaptor().on("mousedown", () => {
+      if (!renderer.getCustomBBox()) renderer.setCustomBBox(renderer.getBBox());
+    });
+
+    renderer.on("enterNode", (e) => {
+      isHovering = e.node;
+      hoveredNeighbor = graph.neighbors(isHovering);
+      hoveredNeighbor.push(isHovering);
+      graph.forEachNode((node) => {
+        if (hoveredNeighbor.indexOf(node) > -1) {
+          graph.setNodeAttribute(node, "highlighted", true);
+        } else {
+          graph.setNodeAttribute(node, "highlighted", false);
         }
-        isDragging = false;
-        draggedNode = null;
       });
+    });
 
-      // Disable the autoscale at the first down interaction
-      renderer.getMouseCaptor().on("mousedown", () => {
-        if (!renderer.getCustomBBox())
-          renderer.setCustomBBox(renderer.getBBox());
+    renderer.on("leaveNode", (e) => {
+      isHovering = null;
+      hoveredNeighbor = null;
+      graph.forEachNode((node) => {
+        graph.setNodeAttribute(node, "highlighted", false);
       });
+    });
 
-      //
-      // Create node (and edge) by click
-      // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      //
+    //
+    // Create node (and edge) by click
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //
 
-      // When clicking on the stage, we add a new node and connect it to the closest node
-      renderer.on("clickStage", ({ event }) => {
-        // Sigma (ie. graph) and screen (viewport) coordinates are not the same.
-        // So we need to translate the screen x & y coordinates to the graph one by calling the sigma helper `viewportToGraph`
-        const coordForGraph = renderer.viewportToGraph({
-          x: event.x,
-          y: event.y,
-        });
+    // When clicking on the stage, we add a new node and connect it to the closest node
+    // renderer.on("clickStage", ({ event }) => {
+    // Sigma (ie. graph) and screen (viewport) coordinates are not the same.
+    // So we need to translate the screen x & y coordinates to the graph one by calling the sigma helper `viewportToGraph`
+    // const coordForGraph = renderer.viewportToGraph({
+    //   x: event.x,
+    //   y: event.y,
+    // });
 
-        // We create a new node
-        const node = {
-          ...coordForGraph,
-          size: 10,
-          color: chroma.random().hex(),
-        };
+    // We create a new node
+    // const node = {
+    //   ...coordForGraph,
+    //   size: 10,
+    //   color: chroma.random().hex(),
+    // };
 
-        // Searching the two closest nodes to auto-create an edge to it
-        const closestNodes = graph
-          .nodes()
-          .map((nodeId) => {
-            const attrs = graph.getNodeAttributes(nodeId);
-            const distance =
-              Math.pow(node.x - attrs.x, 2) + Math.pow(node.y - attrs.y, 2);
-            return { nodeId, distance };
-          })
-          .sort((a, b) => a.distance - b.distance)
-          .slice(0, 2);
+    // Searching the two closest nodes to auto-create an edge to it
+    // const closestNodes = graph
+    //   .nodes()
+    //   .map((nodeId) => {
+    //     const attrs = graph.getNodeAttributes(nodeId);
+    //     const distance =
+    //       Math.pow(node.x - attrs.x, 2) + Math.pow(node.y - attrs.y, 2);
+    //     return { nodeId, distance };
+    //   })
+    //   .sort((a, b) => a.distance - b.distance)
+    //   .slice(0, 2);
 
-        // We register the new node into graphology instance
-        const id = uuid();
-        graph.addNode(id, node);
+    // We register the new node into graphology instance
+    // const id = uuid();
+    // graph.addNode(id, node);
 
-        // We create the edges
-        closestNodes.forEach((e) => graph.addEdge(id, e.nodeId));
-      });
-    }
-  },
-  { deep: true }
-);
+    // We create the edges
+    // closestNodes.forEach((e) => graph.addEdge(id, e.nodeId));
+    // });
+    renderer.refresh();
+  }
+});
 
 const onclickNode = (e) => {
   console.log("onclickNode", e);
@@ -151,4 +174,9 @@ const onclickNode = (e) => {
   <div id="sigma-container" class="w-full h-full"></div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.sigma-container {
+  width: 100%;
+  height: 100%;
+}
+</style>

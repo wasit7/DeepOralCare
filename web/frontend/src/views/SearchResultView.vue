@@ -27,6 +27,10 @@ const entityFilter = computed(() => {
   });
 });
 
+const entityRelation = computed(() => {
+  return storeMain.relation_result;
+});
+
 onMounted(() => {
   console.log("mounted");
   const params = JSON.parse(sessionStorage.getItem("item_search"));
@@ -177,10 +181,7 @@ const onclickNode = (id) => {
       </template>
     </dsm-slide-overlay>
 
-    <sigma-graph
-      :graph-data="storeMain.relation_result"
-      @click-node="onclickNode"
-    />
+    <sigma-graph :graph-data="entityRelation" @click-node="onclickNode" />
   </div>
 </template>
 

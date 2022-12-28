@@ -34,9 +34,9 @@ const props = defineProps({
     } duration-500 z-30 `"
   >
     <div
-      :class="` px-2 py-5 shadow absolute bg-white ${
+      :class="` px-2 py-5 shadow absolute bg-white -z-10 ${
         bottom ? 'left-20 -top-10 w-16 h-10 ' : 'top-24'
-      }   cursor-pointer ${right ? ' -left-7' : '-right-7'}`"
+      }   cursor-pointer ${right ? ' -left-8' : '-right-8'}`"
       @click="$emit('update:modelValue', !modelValue)"
     >
       <div
@@ -60,7 +60,7 @@ const props = defineProps({
     <div
       :class="`${
         modelValue ? ' ' : ' overflow-hidden'
-      } bg-white  max-h-full  overflow-auto relative`"
+      } bg-white  max-h-full  overflow-auto relative `"
     >
       <slot name="content"> content Here ! </slot>
     </div>

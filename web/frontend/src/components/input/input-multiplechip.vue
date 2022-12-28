@@ -72,7 +72,10 @@ const focusInput = () => {
           v-for="(chip, index) in chipValue.slice(0, 4)"
           :key="chip.id"
         >
-          <span class="whitespace-nowrap">{{ chip.name }}</span>
+          <span
+            class="whitespace-nowrap overflow-hidden text-ellipsis max-w-[80px] hover:w-auto duration-500"
+            >{{ chip.name }}</span
+          >
           <span
             class="cursor-pointer bg-[#F2AD4E] rounded-full w-4 h-4 flex items-center justify-center z-20"
             @click="chipValue.splice(index, 1)"

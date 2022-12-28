@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, watchEffect } from "vue";
+import { ref, onMounted, computed, watchEffect, watch } from "vue";
 import navigationBar from "../components/Navigation/navigation-bar.vue";
 import { useRoute, useRouter } from "vue-router";
 import dsmSlideOverlay from "../components/SlideOverlay/dsm-slideOverlay.vue";
@@ -7,6 +7,7 @@ import searchInput from "../components/input/search-input.vue";
 import { useMainStore } from "../stores/mainStore";
 import sigmaGraph from "../components/graph/sigma-relation.vue";
 import inputMultiplechip from "../components/input/input-multiplechip.vue";
+import { trimpEllipsis } from "../resources/format";
 
 const route = useRoute();
 const router = useRouter();
@@ -29,6 +30,10 @@ const entityFilter = computed(() => {
 
 const entityRelation = computed(() => {
   return storeMain.relation_result;
+});
+
+const entityDetail = computed(() => {
+  return storeMain.entity_detail;
 });
 
 onMounted(() => {
@@ -69,6 +74,7 @@ watchEffect(() => {
 const onSearch = () => {
   if (searchQuery.value === "") {
     sessionStorage.setItem("item_search", JSON.stringify(valueChip.value));
+    storeMain.getRelation(valueChip.value.map((i) => i.id));
     router.push({
       name: "Search",
       params: {
@@ -134,8 +140,18 @@ const onclickNode = (id) => {
     >
       <template v-slot:content>
         <div class="py-6 px-10">
-          <p class="text-[22px]">รายละเอียดความสัมพันธ์</p>
-          <div v-for="item in storeMain.sumRelation_result" :key="item">
+          <p class="text-[22px]">
+            รายละเอียดความสัมพันธ์ ({{ storeMain.sumRelation_result?.length }}
+            ความสัมพันธ์)
+          </p>
+          <div
+            class="flex border-b w-full py-3"
+            v-for="(item, index) in storeMain.sumRelation_result"
+            :key="item"
+          >
+            <div class="text-center px-5">
+              {{ index + 1 }}
+            </div>
             <p>
               {{ item }}
             </p>
@@ -160,7 +176,12 @@ const onclickNode = (id) => {
             <li @click="getDetail(item.id)">
               <p>{{ item.name }}</p>
               <p v-for="key in Object.keys(item.attribute)" :key="key">
-                {{ key }} {{ item.attribute[key] }}
+                {{ key }}
+                {{
+                  typeof item.attribute[key] === "object"
+                    ? trimpEllipsis(item.attribute[key].join(", "), 20)
+                    : item.attribute[key]
+                }}
               </p>
             </li>
           </ul>
@@ -172,16 +193,48 @@ const onclickNode = (id) => {
       <template v-slot:content>
         <div class="py-6 px-10">
           <p class="text-[22px]">รายละเอียด</p>
-          <p>{{ storeMain.entityDetail.name }}</p>
+          <p>{{ entityDetail.name }}</p>
           <!-- <p>คำอธิบายรายละเอียดความสัมพันธ์ของสิ่งที่เกี่ยวข้อง</p> -->
-          <p>
-            {{ storeMain.entityDetail.attribute }}
+          <p v-for="key in entityDetail.attribute_key" :key="key">
+            {{ key }}
+            {{
+              typeof entityDetail.attribute[key] === "object"
+                ? entityDetail.attribute[key].join(", ")
+                : entityDetail.attribute[key]
+            }}
           </p>
         </div>
       </template>
     </dsm-slide-overlay>
-
     <sigma-graph :graph-data="entityRelation" @click-node="onclickNode" />
+    <div
+      :class="`absolute duration-500 ${
+        panelRight && panelBottom
+          ? ' right-1/4 bottom-1/4'
+          : panelRight
+          ? 'right-1/4 bottom-4'
+          : panelBottom
+          ? ' bottom-1/4 right-4'
+          : ' right-4 bottom-4'
+      }`"
+    >
+      <span class="flex gap-2 items-center px-3 py-2"
+        ><div class="rounded-full w-5 h-5 bg-[#5879A3]" />
+        <p>Person</p></span
+      >
+      <span class="flex gap-2 items-center px-3 py-2"
+        ><div class="rounded-full w-5 h-5 bg-[#E49244]" />
+        <p>Organization</p></span
+      >
+      <span class="flex gap-2 items-center px-3 py-2"
+        ><div class="rounded-full w-5 h-5 bg-[#A77C9F]" />
+        <p>Evidence</p></span
+      >
+      <span class="flex gap-2 items-center px-3 py-2"
+        ><div class="rounded-full w-5 h-5 bg-[#6A9E58]" />
+        <p>Transaction</p></span
+      >
+    </div>
   </div>
 </template>
 

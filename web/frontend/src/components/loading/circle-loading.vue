@@ -1,8 +1,22 @@
-<script setup></script>
+<script setup>
+const props = defineProps({
+  // Props here.
+  modelValue: {
+    type: Boolean,
+    default: true,
+  },
+  column: Boolean,
+  row: Boolean,
+});
+</script>
 
 <template>
-  <div class="title-container flex-row">
-    <div class="spinner w-9">
+  <div
+    :class="`title-container ${
+      column ? ' flex-col items-center justify-center h-full gap-4' : 'flex-row'
+    }`"
+  >
+    <div :class="`spinner ${column ? '' : 'w-9'} `">
       <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <circle class="stroke-[#F2AD4E]" cx="50" cy="50" r="46" />
       </svg>

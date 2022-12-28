@@ -32,6 +32,10 @@ const entityRelation = computed(() => {
   return storeMain.relation_result;
 });
 
+const exploreRelation = computed(() => {
+  return storeMain.explore_result;
+});
+
 const entityDetail = computed(() => {
   return storeMain.entity_detail;
 });
@@ -107,6 +111,10 @@ const removeChip = () => {
 
 const onclickNode = (id) => {
   storeMain.getEntityDetail(id);
+};
+
+const ondbClickNode = (id) => {
+  storeMain.getExplore(id);
 };
 </script>
 
@@ -206,7 +214,12 @@ const onclickNode = (id) => {
         </div>
       </template>
     </dsm-slide-overlay>
-    <sigma-graph :graph-data="entityRelation" @click-node="onclickNode" />
+    <sigma-graph
+      :graph-data="entityRelation"
+      :explore-data="exploreRelation"
+      @click-node="onclickNode"
+      @dbClickNode="ondbClickNode"
+    />
     <div
       :class="`absolute duration-500 ${
         panelRight && panelBottom

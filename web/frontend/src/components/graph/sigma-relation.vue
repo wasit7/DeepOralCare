@@ -24,7 +24,7 @@ let hoveredNode = ref(null);
 let hoveredNeighbors = ref(null);
 let selectedNode = ref(null);
 
-const emits = defineEmits(["clickNode", "dbClickNode"]);
+const emits = defineEmits(["clickNode", "rightClickNode"]);
 const graph = new Graph({ multi: true, type: "mixed" });
 
 watch(
@@ -100,8 +100,8 @@ const create_Graph = (graph) => {
   });
   layout.start();
 
-  renderer.on("doubleClickNode", (event) => {
-    emits("dbClickNode", event.node);
+  renderer.on("rightClickNode", (event) => {
+    emits("rightClickNode", event.node);
   });
 
   function setHoveredNode(node) {

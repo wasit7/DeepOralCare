@@ -113,7 +113,7 @@ const onclickNode = (id) => {
   storeMain.getEntityDetail(id);
 };
 
-const ondbClickNode = (id) => {
+const onrightClickNode = (id) => {
   storeMain.getExplore(id);
 };
 </script>
@@ -218,10 +218,10 @@ const ondbClickNode = (id) => {
       :graph-data="entityRelation"
       :explore-data="exploreRelation"
       @click-node="onclickNode"
-      @dbClickNode="ondbClickNode"
+      @right-click-node="onrightClickNode"
     />
     <div
-      :class="`absolute duration-500 ${
+      :class="`absolute duration-500 bg-white z-20 ${
         panelRight && panelBottom
           ? ' right-1/4 bottom-1/4'
           : panelRight

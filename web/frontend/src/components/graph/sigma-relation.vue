@@ -4,6 +4,7 @@ import Graph from "graphology";
 import { MultiGraph } from "graphology";
 import getNodeProgramImage from "sigma/rendering/webgl/programs/node.image";
 import ForceSupervisor from "graphology-layout-force/worker";
+
 import circleLoading from "../loading/circle-loading.vue";
 
 import { onMounted, onUpdated, ref, watch, watchEffect } from "vue";
@@ -43,7 +44,7 @@ watch(
     });
     newValue.edges.map((edge) => {
       graph.addEdge(edge.source, edge.target, {
-        type: "line",
+        type: "arrow",
         label: edge.relation,
         size: 5,
       });
@@ -52,6 +53,8 @@ watch(
       const angle = (i * 2 * Math.PI) / graph.order;
       graph.setNodeAttribute(node, "x", 100 * Math.cos(angle));
       graph.setNodeAttribute(node, "y", 100 * Math.sin(angle));
+      // graph.setNodeAttribute(node, "x", Math.random(0, 100));
+      // graph.setNodeAttribute(node, "y", Math.random(0, 100));
     });
     refresh_Graph(graph);
   },
@@ -75,7 +78,7 @@ watch(
       });
       newValue.edges.map((edge) => {
         graph.addEdge(edge.source, edge.target, {
-          type: "line",
+          type: "arrow",
           label: edge.relation,
           size: 5,
         });

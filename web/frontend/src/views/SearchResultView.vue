@@ -218,7 +218,7 @@ const onrightClickNode = (id) => {
       :graph-data="entityRelation"
       :explore-data="exploreRelation"
       @click-node="onclickNode"
-      @right-click-node="onrightClickNode"
+      @double-click-node="onrightClickNode"
     />
     <div
       :class="`absolute duration-500 bg-white z-20 ${

@@ -24,8 +24,11 @@ let hoveredNode = ref(null);
 let hoveredNeighbors = ref(null);
 let selectedNode = ref(null);
 
-const emits = defineEmits(["clickNode", "rightClickNode"]);
+const emits = defineEmits(["clickNode", "doubleClickNode"]);
 const graph = new Graph({ multi: true, type: "mixed" });
+const layout = new ForceSupervisor(graph, {
+  isNodeFixed: (_, attr) => attr.highlighted,
+});
 
 watch(
   () => props.graphData,
@@ -82,6 +85,7 @@ watch(
         graph.setNodeAttribute(node, "x", 100 * Math.cos(angle));
         graph.setNodeAttribute(node, "y", 100 * Math.sin(angle));
       });
+      layout.start();
     }
   },
   { deep: true }
@@ -95,14 +99,8 @@ const create_Graph = (graph) => {
     renderEdgeLabels: true,
     allowInvalidContainer: true,
   });
-  const layout = new ForceSupervisor(graph, {
-    isNodeFixed: (_, attr) => attr.highlighted,
-  });
-  layout.start();
 
-  renderer.on("rightClickNode", (event) => {
-    emits("rightClickNode", event.node);
-  });
+  layout.start();
 
   function setHoveredNode(node) {
     if (node) {
@@ -187,6 +185,12 @@ const create_Graph = (graph) => {
 
   renderer.on("leaveNode", () => {
     setHoveredNode(null);
+  });
+
+  renderer.on("doubleClickNode", (e) => {
+    e.preventSigmaDefault();
+    const { node } = e;
+    emits("doubleClickNode", node);
   });
 };
 

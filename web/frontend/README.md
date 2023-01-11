@@ -1,7 +1,33 @@
-# Vue 3 + Vite
+# This in SEC Used by Vite VUE3
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## Your can see the Folder & Files details in src folder
 
-## Recommended IDE Setup
+- Project libraries
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+* Sigma.js for graph
+* tailwind CSS for styling the components
+* Pinia for state management
+* vue router@4
+
+## You can use This command to run project
+
+Installation
+
+```
+yarn install
+
+```
+
+run project
+
+```
+yarn dev
+
+```
+
+build project
+
+```
+yarn build
+
+```

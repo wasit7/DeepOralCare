@@ -9,6 +9,7 @@ import circleLoading from "../loading/circle-loading.vue";
 
 import { onMounted, onUpdated, ref, watch, watchEffect } from "vue";
 
+//  props
 const props = defineProps({
   graphData: {
     type: Object,
@@ -16,6 +17,8 @@ const props = defineProps({
   },
   exploreData: Object,
 });
+
+// state
 
 const graphLoading = ref(true);
 let draggedNode = ref(null);
@@ -27,6 +30,7 @@ let selectedNode = ref(null);
 
 const emits = defineEmits(["clickNode", "doubleClickNode"]);
 const graph = new Graph({ multi: true, type: "mixed" });
+// TODO: Layout can fix here
 const layout = new ForceSupervisor(graph, {
   isNodeFixed: (_, attr) => attr.highlighted,
 });

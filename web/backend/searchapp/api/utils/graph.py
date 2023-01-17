@@ -1,4 +1,5 @@
 from django.conf import settings
+from .model_choices import mapping_relation_name
 
 graph = getattr(settings, 'GRAPH', None)
 if graph == None:
@@ -27,7 +28,7 @@ def _extract_path_1(data):
         for relation in elm.relationships:
             output.append({
                 'head': relation.start_node.get('name'),
-                'relation': relation.get('name'),
+                'relation': mapping_relation_name.get(relation.get('name'), ""),
                 'tail': relation.end_node.get('name')
             })
     return output
@@ -41,7 +42,7 @@ def serialize_path(data):
     for path in data:
         txt = ""
         for relation in path['path'].relationships:
-            txt += f"{relation.start_node.get('name')} {relation.get('name')} {relation.end_node.get('name')}, "
+            txt += f"{relation.start_node.get('name')} {mapping_relation_name.get(relation.get('name'), '')} {relation.end_node.get('name')}, "
         output.append(txt)
     return output
 

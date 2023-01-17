@@ -1,1 +1,1 @@
-from . import pgsearch, graph
+from . import pgsearch, graph, model_choices

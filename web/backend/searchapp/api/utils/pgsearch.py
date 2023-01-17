@@ -1,8 +1,6 @@
-from django.contrib.postgres.search import SearchVector
+from django.contrib.postgres.search import TrigramSimilarity
 
 def search(model, fields, word):
-    # data = model.objects.annotate(search=SearchVector(*fields)).filter(search=word)[:1000]
-    data = model.objects.filter(name__icontains=word)
-    if data.count() > 1000:
-        data = model.objects.filter(name__iexact=word)
+    
+    data = model.objects.annotate(similarity=TrigramSimilarity(*fields, word)).filter(similarity__gt=0.3).order_by('-similarity')
     return data[:100]

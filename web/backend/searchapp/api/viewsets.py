@@ -31,7 +31,7 @@ class EntityViewsets(viewsets.GenericViewSet,
     
     def list(self, request, *args, **kwargs):
         spo = utils.graph.get_spo(
-            name=request.GET.get('id', ""), 
+            id=request.GET.get('id', ""), 
             page_size=int(request.GET.get('page_size', "100")),
             page=int(request.GET.get('page', "0"))
         )

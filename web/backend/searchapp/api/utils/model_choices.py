@@ -3,6 +3,7 @@ ENTITY_KINDS = (
     ('organization', 'organization'),
     ('evidence', 'evidence'),
     ('transaction', 'transaction'),
+    ('asset', 'asset'),
     ('-', '-')
 )
 

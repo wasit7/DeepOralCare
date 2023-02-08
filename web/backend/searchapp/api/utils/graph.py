@@ -7,14 +7,14 @@ if graph == None:
 
 def _extract_value(elm):
     return {
-        k: v.get('name',"")
+        k: v.get('id', v.get('name'))
         for k,v in elm.items()
     }
 
-def get_spo(name, page=0, page_size=100):
+def get_spo(id, page=0, page_size=100):
     data = graph.query(f"""
         match r=(head)-[relation]->(tail) 
-        where head.name = "{name}"
+        where head.id = "{id}" or tail.id = "{id}"
         return head,relation,tail 
         order by head.id
         skip {page*page_size}
@@ -27,9 +27,9 @@ def _extract_path_1(data):
     for elm in [x.get('path') for x in data]:
         for relation in elm.relationships:
             output.append({
-                'head': relation.start_node.get('name'),
-                'relation': mapping_relation_name.get(relation.get('name'), ""),
-                'tail': relation.end_node.get('name')
+                'head': relation.start_node.get('id'),
+                'relation': relation.get('name'),
+                'tail': relation.end_node.get('id')
             })
     return output
 
@@ -42,15 +42,15 @@ def serialize_path(data):
     for path in data:
         txt = ""
         for relation in path['path'].relationships:
-            txt += f"{relation.start_node.get('name')} {mapping_relation_name.get(relation.get('name'), '')} {relation.end_node.get('name')}, "
+            txt += f"{relation.start_node.get('name')} {relation.get('name'), ''} {relation.end_node.get('name')}, "
         output.append(txt)
     return output
 
 def get_relation(ids, hop=2):
     if len(ids) == 1:
-        return get_spo(name=ids[0]), []
+        return get_spo(id=ids[0]), []
     data = graph.query(f"""
-        MATCH (n) where n.name IN ["{'","'.join(ids)}"]
+        MATCH (n) where n.id IN ["{'","'.join(ids)}"]
         WITH collect(n) as nodes
         UNWIND nodes as n
         UNWIND nodes as m

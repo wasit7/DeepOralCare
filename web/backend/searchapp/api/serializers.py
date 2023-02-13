@@ -2,10 +2,13 @@ from rest_framework import serializers
 from .. import models
 
 class EntitySerializer(serializers.ModelSerializer):
+    update_profile = serializers.SerializerMethodField('get_update_profile')
     class Meta:
         model = models.Entity
-        fields = '__all__'
-
+        
+    def get_update_profile(self, obj):
+        return [elm.attribute for elm in models.UpdateEntity.objects.filter(entity=obj)]
+    
 class EntitySearchSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Entity

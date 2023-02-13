@@ -51,17 +51,6 @@ services:
             - .env
     
     frontend:
-        container_name:  ${PROJECT_NAME}-frontend-react
-        build: ./frontend-react
-        command: sh run_frontend.sh
-        volumes: 
-            - ./frontend-react:/frontend
-        ports: 
-            - 18080:8080
-        env_file: 
-            - .env
-    
-    frontend-vue:
         container_name:  ${PROJECT_NAME}-frontend-vue
         build: ./frontend
         command: sh run_frontend.sh

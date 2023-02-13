@@ -6,3 +6,7 @@ class Entity(models.Model):
     name = models.CharField(max_length=300)
     kind = models.CharField(max_length=15, choices=utils.model_choices.ENTITY_KINDS, default='-')
     attribute = models.JSONField()
+    
+class UpdateEntity(models.Model):
+    entity = models.CharField(max_length=300)
+    attribute =  models.JSONField()

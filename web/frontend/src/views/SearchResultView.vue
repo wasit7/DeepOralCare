@@ -182,15 +182,16 @@ const onrightClickNode = (id) => {
             :key="item.id"
           >
             <li @click="getDetail(item.id)">
-              <p>{{ item.name }}</p>
-              <p v-for="key in Object.keys(item.attribute)" :key="key">
+              <p>{{ item.name }}</p> 
+              <p>{{ item.kind }}</p> 
+              <!-- <p v-for="key in Object.keys(item.attribute)" :key="key">
                 {{ key }}
                 {{
                   typeof item.attribute[key] === "object"
                     ? trimpEllipsis(item.attribute[key].join(", "), 20)
                     : item.attribute[key]
                 }}
-              </p>
+              </p> -->
             </li>
           </ul>
         </div>

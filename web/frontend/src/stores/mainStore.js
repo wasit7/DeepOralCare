@@ -3,7 +3,7 @@ import { axios_api } from "../api";
 
 const type_Color = {
   "person": "#5879A3",
-  "company": "#E49244",
+  "organization": "#E49244",
   "evidence": "#A77C9F",
   "transaction": "#6A9E58",
   "-": "#BCBCBC"
@@ -106,7 +106,7 @@ export const useMainStore = defineStore("main", {
           return {
             id: i.id,
             label: i.name,
-            color: type_Color[i.id.split("/")[0]],
+            color: type_Color[i.kind],
           };
         });
         edges = relations.map((i) => {

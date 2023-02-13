@@ -58,7 +58,7 @@ const focusInput = () => {
           v-for="(chip, index) in chipValue"
           :key="chip.id"
         >
-          <span>{{ chip.name }}</span>
+          <span>{{ chip.name }} ({{ chip.id }})</span>
           <span
             class="cursor-pointer bg-[#F2AD4E] rounded-full w-4 h-4 flex items-center justify-center z-20"
             @click="chipValue.splice(index, 1)"
@@ -74,7 +74,7 @@ const focusInput = () => {
         >
           <span
             class="whitespace-nowrap overflow-hidden text-ellipsis max-w-[80px] hover:w-auto duration-500"
-            >{{ chip.name }}</span
+            >{{ chip.name }} ({{ chip.id }})</span
           >
           <span
             class="cursor-pointer bg-[#F2AD4E] rounded-full w-4 h-4 flex items-center justify-center z-20"
@@ -123,7 +123,7 @@ const focusInput = () => {
             $emit('update:modelValue', '');
           "
         >
-          {{ item.name }}
+          {{ item.name }} ({{ item.id }})
         </li>
       </ul>
       <div v-else>

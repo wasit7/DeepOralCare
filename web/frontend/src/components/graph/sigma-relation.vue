@@ -77,7 +77,7 @@ watch(
         // check old node in graphData before add new node
         if (!props.graphData.nodes.find((n) => n.id === node.id)) {
           graph.addNode(node.id, {
-            size: 15,
+            size: 18,
             label: node.label,
             color: node?.color,
           });

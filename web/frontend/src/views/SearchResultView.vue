@@ -10,6 +10,7 @@ import sigmaGraph from "../components/graph/sigma-relation.vue";
 import inputMultiplechip from "../components/input/input-multiplechip.vue";
 import { trimpEllipsis } from "../resources/format";
 import RightPanel from "../components/Panel/RightPanel.vue";
+import circleLoading from "../components/loading/circle-loading.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -23,7 +24,7 @@ const panelRight = ref(true);
 const panelBottom = ref(true);
 const searchTimeout = ref(null);
 const itemsKey = ref([]);
-const loadingResult = ref(false);
+const pageLoading = ref(false);
 const selectResultID = ref(null);
 const selectResultData = ref(null);
 
@@ -89,10 +90,15 @@ const resetSelectResult = () => {
   selectResultID.value = null;
 };
 
-const onSearch = () => {
+const onSearch = async () => {
+  pageLoading.value = true;
+  // Remove focus from input after use search
+  // TODO: Refactor move it in to input-multiplechip component
+  document.getElementById("input-chip").blur();
+  console.log("S1 trick:");
   if (searchQuery.value === "") {
     sessionStorage.setItem("item_search", JSON.stringify(valueChip.value));
-    storeMain.getRelation(valueChip.value.map((i) => i.id));
+    await storeMain.getRelation(valueChip.value.map((i) => i.id));
     router.push({
       name: "Search",
       params: {
@@ -100,11 +106,12 @@ const onSearch = () => {
       },
     });
   } else {
-    const isExist = storeMain.search_result.find(
+    const isExist = await storeMain.search_result.find(
       (i) => i.name === searchQuery.value
     );
     addChip(isExist);
   }
+  pageLoading.value = false;
 };
 
 const addChip = (item) => {
@@ -147,6 +154,12 @@ const onrightClickNode = (id) => {
   </navigation-bar>
   <!-- TODO: Components relation Graph here -->
   <div class="w-full h-screen relative bg-slate-50">
+    <div
+      v-if="pageLoading"
+      class="w-full h-screen absolute bg-slate-700/70 z-40"
+    >
+      <circle-loading column />
+    </div>
     <dsm-slide-overlay
       :class="`${
         panelLeft && panelRight

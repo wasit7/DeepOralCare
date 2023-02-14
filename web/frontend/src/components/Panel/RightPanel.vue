@@ -4,7 +4,6 @@ import { ref, watch } from "vue";
 import circleLoading from "../loading/circle-loading.vue";
 import dsmSlideOverlay from "../SlideOverlay/dsm-slideOverlay.vue";
 import findMatchLabel from "../../utils/matchLabelName.js";
-findMatchLabel();
 
 const props = defineProps({
   modelValue: {
@@ -33,14 +32,11 @@ const resolveUpdateList = async (data) => {
 watch(
   () => props.resultData,
   async (newValue, oldValue) => {
-    // Note: `newValue` will be equal to `oldValue` here
-    // *unless* state.someObject has been replaced
     updateList.value = [];
     selectUpdate.value = 0;
     if (newValue) {
       isLoading.value = true;
       await resolveUpdateList(newValue.update_profile);
-      console.log("P1 prop:", newValue);
       setTimeout(() => {
         isLoading.value = false;
       }, 240);
@@ -48,10 +44,6 @@ watch(
   },
   { deep: true }
 );
-
-// onUpdate(() => {
-//   console.log("U1");
-// });
 </script>
 
 <template>

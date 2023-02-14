@@ -93,7 +93,7 @@ const focusInput = () => {
         type="text"
         name="text"
         id="input-chip"
-        :class="`   focus:outline-none`"
+        class="w-full focus:outline-none"
         :placeholder="placeholder"
         :value="modelValue"
         autocomplete="off"

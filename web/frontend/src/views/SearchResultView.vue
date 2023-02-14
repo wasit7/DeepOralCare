@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, computed, watchEffect, watch } from "vue";
+
 import navigationBar from "../components/Navigation/navigation-bar.vue";
 import { useRoute, useRouter } from "vue-router";
 import dsmSlideOverlay from "../components/SlideOverlay/dsm-slideOverlay.vue";
@@ -8,6 +9,7 @@ import { useMainStore } from "../stores/mainStore";
 import sigmaGraph from "../components/graph/sigma-relation.vue";
 import inputMultiplechip from "../components/input/input-multiplechip.vue";
 import { trimpEllipsis } from "../resources/format";
+import RightPanel from "../components/Panel/RightPanel.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -21,6 +23,8 @@ const panelRight = ref(true);
 const panelBottom = ref(true);
 const searchTimeout = ref(null);
 const itemsKey = ref([]);
+const loadingResult = ref(false);
+const selectResultID = ref(null);
 
 const entityFilter = computed(() => {
   return storeMain.entity_result?.filter((item) => {
@@ -59,6 +63,7 @@ onMounted(() => {
 });
 
 const getDetail = (id) => {
+  selectResultID.value = id;
   storeMain.getEntityDetail(id);
 };
 
@@ -68,6 +73,7 @@ const getPredict = (queryString) => {
 
 watchEffect(() => {
   if (searchQuery.value) {
+    selectResultID.value = null;
     clearTimeout(searchTimeout.value);
     searchTimeout.value = setTimeout(() => {
       getPredict(searchQuery.value);
@@ -140,7 +146,7 @@ const onrightClickNode = (id) => {
           : panelLeft
           ? ' left-1/4 w-full'
           : panelRight
-          ? ' w-3/4 '
+          ? ' w-1/4 '
           : 'left-0'
       }  `"
       v-model="panelBottom"
@@ -167,6 +173,7 @@ const onrightClickNode = (id) => {
         </div>
       </template>
     </dsm-slide-overlay>
+
     <dsm-slide-overlay v-model="panelLeft" class="pt-16">
       <template v-slot:content>
         <div
@@ -178,12 +185,13 @@ const onrightClickNode = (id) => {
         <div class="flex flex-col">
           <ul
             class="min-h-[75px] border-b px-10 py-2 hover:bg-gray-100"
+            :class="{ 'bg-gray-300': selectResultID === item.id }"
             v-for="item in entityFilter"
             :key="item.id"
           >
             <li @click="getDetail(item.id)">
-              <p>{{ item.name }}</p> 
-              <p>{{ item.kind }}</p> 
+              <p>{{ item.name }}</p>
+              <p>{{ item.kind }}</p>
               <!-- <p v-for="key in Object.keys(item.attribute)" :key="key">
                 {{ key }}
                 {{
@@ -198,23 +206,9 @@ const onrightClickNode = (id) => {
       </template>
     </dsm-slide-overlay>
 
-    <dsm-slide-overlay v-model="panelRight" class="pt-16" right>
-      <template v-slot:content>
-        <div class="py-6 px-10">
-          <p class="text-[22px]">รายละเอียด</p>
-          <p>{{ entityDetail.name }}</p>
-          <!-- <p>คำอธิบายรายละเอียดความสัมพันธ์ของสิ่งที่เกี่ยวข้อง</p> -->
-          <p v-for="key in entityDetail.attribute_key" :key="key">
-            {{ key }}
-            {{
-              typeof entityDetail.attribute[key] === "object"
-                ? entityDetail.attribute[key].join(", ")
-                : entityDetail.attribute[key]
-            }}
-          </p>
-        </div>
-      </template>
-    </dsm-slide-overlay>
+    <!-- Right panel -->
+    <RightPanel v-model="panelRight" />
+
     <sigma-graph
       :graph-data="entityRelation"
       :explore-data="exploreRelation"

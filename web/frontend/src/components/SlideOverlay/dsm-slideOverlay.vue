@@ -25,7 +25,7 @@ const props = defineProps({
       modelValue
         ? bottom
           ? 'h-1/4 w-full'
-          : 'w-2/3 xl:w-1/4 h-full'
+          : 'w-1/3 xl:w-1/4 h-full'
         : bottom
         ? 'h-0 w-full '
         : 'w-0  h-full'

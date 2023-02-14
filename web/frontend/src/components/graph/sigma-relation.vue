@@ -19,7 +19,6 @@ const props = defineProps({
 });
 
 // state
-
 const graphLoading = ref(true);
 let draggedNode = ref(null);
 let isDragging = ref(false);
@@ -28,12 +27,16 @@ let hoveredNode = ref(null);
 let hoveredNeighbors = ref(null);
 let selectedNode = ref(null);
 
+// Configure graph
+const CONFIG_GRAPH = {
+  maxIterations: 400,
+  isNodeFixed: (_, attr) => attr.highlighted,
+};
+
 const emits = defineEmits(["clickNode", "doubleClickNode"]);
 const graph = new Graph({ multi: true, type: "mixed" });
 // TODO: Layout can fix here
-const layout = new ForceSupervisor(graph, {
-  isNodeFixed: (_, attr) => attr.highlighted,
-});
+const layout = new ForceSupervisor(graph, CONFIG_GRAPH);
 
 watch(
   () => props.graphData,

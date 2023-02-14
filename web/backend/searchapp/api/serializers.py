@@ -5,9 +5,10 @@ class EntitySerializer(serializers.ModelSerializer):
     update_profile = serializers.SerializerMethodField('get_update_profile')
     class Meta:
         model = models.Entity
-        
+        fields = [f.name for f in models.Entity._meta.fields] + ['update_profile']
+
     def get_update_profile(self, obj):
-        return [elm.attribute for elm in models.UpdateEntity.objects.filter(entity=obj)]
+        return [elm.attribute for elm in models.UpdateEnantity.objects.filter(entity=obj.id)]
     
 class EntitySearchSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,4 +17,4 @@ class EntitySearchSerializer(serializers.ModelSerializer):
 
 class RelationSerializer(serializers.Serializer):
     ids = serializers.ListField(child=serializers.PrimaryKeyRelatedField(queryset=models.Entity.objects.all()))
-    hop = serializers.IntegerField(default=2)
+    hop = serializers.IntegerField(default=5)

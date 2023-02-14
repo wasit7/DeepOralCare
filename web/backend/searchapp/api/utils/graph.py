@@ -42,7 +42,7 @@ def serialize_path(data):
     for path in data:
         txt = ""
         for relation in path['path'].relationships:
-            txt += f"{relation.start_node.get('name')} {relation.get('name'), ''} {relation.end_node.get('name')}, "
+            txt += f"{relation.start_node.get('name')} {relation.get('name', '')} {relation.end_node.get('name')}, "
         output.append(txt)
     return output
 

@@ -131,12 +131,18 @@ const removeChip = () => {
   }
 };
 
-const onclickNode = (id) => {
+const onclickNode = async (id) => {
   storeMain.getEntityDetail(id);
+  selectResultID.value = id;
+  selectResultData.value = await storeMain.getEntityDetail(id);
 };
 
-const onrightClickNode = (id) => {
-  storeMain.getExplore(id);
+const onrightClickNode = async (id) => {
+  pageLoading.value = true;
+  await storeMain.getExplore(id);
+  setTimeout(() => {
+    pageLoading.value = false;
+  }, 240);
 };
 </script>
 
@@ -176,10 +182,14 @@ const onrightClickNode = (id) => {
     >
       <template v-slot:content>
         <div class="py-6 px-10">
-          <p class="text-[22px]">
-            รายละเอียดความสัมพันธ์ ({{ storeMain.sumRelation_result?.length }}
-            ความสัมพันธ์)
-          </p>
+          <div class="pt-4 px-10 pb-3 sticky top-0 bg-white shadow-sm">
+            <p class="text-[22px]">
+              รายละเอียดความสัมพันธ์ ({{
+                storeMain.sumRelation_result?.length
+              }}
+              ความสัมพันธ์)
+            </p>
+          </div>
           <div
             class="flex border-b w-full py-3"
             v-for="(item, index) in storeMain.sumRelation_result"

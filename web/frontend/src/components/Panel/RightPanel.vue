@@ -51,7 +51,7 @@ watch(
     right
   >
     <template v-slot:content>
-      <div class="w-full min-h-full overflow-auto">
+      <div class="w-full max-h-full overflow-auto">
         <div class="pt-4 px-10 pb-3 sticky top-0 bg-white shadow-sm">
           <p class="text-[22px]">รายละเอียด</p>
         </div>

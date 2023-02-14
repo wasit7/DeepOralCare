@@ -25,7 +25,7 @@ const props = defineProps({
       modelValue
         ? bottom
           ? 'h-1/4 w-full'
-          : 'w-1/3 xl:w-1/4 h-full'
+          : 'w-1/3 md:w-1/4 h-full'
         : bottom
         ? 'h-0 w-full '
         : 'w-0  h-full'
@@ -40,7 +40,7 @@ const props = defineProps({
       @click="$emit('update:modelValue', !modelValue)"
     >
       <div
-        :class="` flex items-center justify-center  w-full h-full ${
+        :class="` flex items-center justify-center w-full h-full ${
           modelValue
             ? right
               ? 'rotate-180'
@@ -60,7 +60,7 @@ const props = defineProps({
     <div
       :class="`${
         modelValue ? ' ' : ' overflow-hidden'
-      } bg-white  h-full  overflow-auto relative  flex flex-col`"
+      } bg-white  min-h-full  overflow-auto relative  flex flex-col`"
     >
       <slot name="content"> content Here ! </slot>
     </div>

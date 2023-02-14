@@ -92,10 +92,11 @@ const resetSelectResult = () => {
 
 const onSearch = async () => {
   pageLoading.value = true;
+
   // Remove focus from input after use search
   // TODO: Refactor move it in to input-multiplechip component
   document.getElementById("input-chip").blur();
-  console.log("S1 trick:");
+
   if (searchQuery.value === "") {
     sessionStorage.setItem("item_search", JSON.stringify(valueChip.value));
     await storeMain.getRelation(valueChip.value.map((i) => i.id));
@@ -167,7 +168,7 @@ const onrightClickNode = (id) => {
           : panelLeft
           ? ' left-1/4 w-full'
           : panelRight
-          ? ' w-1/4 '
+          ? ' w-full'
           : 'left-0'
       }  `"
       v-model="panelBottom"

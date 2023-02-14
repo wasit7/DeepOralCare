@@ -8,7 +8,7 @@ class EntitySerializer(serializers.ModelSerializer):
         fields = [f.name for f in models.Entity._meta.fields] + ['update_profile']
 
     def get_update_profile(self, obj):
-        return [elm.attribute for elm in models.UpdateEnantity.objects.filter(entity=obj.id)]
+        return [elm.attribute for elm in models.UpdateEntity.objects.filter(entity=obj.id)]
     
 class EntitySearchSerializer(serializers.ModelSerializer):
     class Meta:

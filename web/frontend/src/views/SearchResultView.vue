@@ -25,6 +25,7 @@ const searchTimeout = ref(null);
 const itemsKey = ref([]);
 const loadingResult = ref(false);
 const selectResultID = ref(null);
+const selectResultData = ref(null);
 
 const entityFilter = computed(() => {
   return storeMain.entity_result?.filter((item) => {
@@ -62,9 +63,10 @@ onMounted(() => {
   // }
 });
 
-const getDetail = (id) => {
+const getDetail = async (id) => {
   selectResultID.value = id;
-  storeMain.getEntityDetail(id);
+  selectResultData.value = await storeMain.getEntityDetail(id);
+  console.log("Select:", selectResultData.value);
 };
 
 const getPredict = (queryString) => {
@@ -73,13 +75,19 @@ const getPredict = (queryString) => {
 
 watchEffect(() => {
   if (searchQuery.value) {
-    selectResultID.value = null;
+    resetSelectResult();
     clearTimeout(searchTimeout.value);
     searchTimeout.value = setTimeout(() => {
       getPredict(searchQuery.value);
     }, 500);
   }
 });
+
+const resetSelectResult = () => {
+  // Reset user select detail state
+  selectResultData.value = null;
+  selectResultID.value = null;
+};
 
 const onSearch = () => {
   if (searchQuery.value === "") {
@@ -207,7 +215,7 @@ const onrightClickNode = (id) => {
     </dsm-slide-overlay>
 
     <!-- Right panel -->
-    <RightPanel v-model="panelRight" />
+    <RightPanel v-model="panelRight" :result-data="selectResultData" />
 
     <sigma-graph
       :graph-data="entityRelation"

@@ -37,12 +37,14 @@ watch(
     // *unless* state.someObject has been replaced
     updateList.value = [];
     selectUpdate.value = 0;
-    isLoading.value = true;
-    await resolveUpdateList(newValue.update_profile);
-    console.log("P1 prop:", newValue);
-    setTimeout(() => {
-      isLoading.value = false;
-    }, 240);
+    if (newValue) {
+      isLoading.value = true;
+      await resolveUpdateList(newValue.update_profile);
+      console.log("P1 prop:", newValue);
+      setTimeout(() => {
+        isLoading.value = false;
+      }, 240);
+    }
   },
   { deep: true }
 );

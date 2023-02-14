@@ -92,6 +92,7 @@ const resetSelectResult = () => {
 
 const onSearch = async () => {
   pageLoading.value = true;
+  storeMain.loading = true;
 
   // Remove focus from input after use search
   // TODO: Refactor move it in to input-multiplechip component
@@ -112,6 +113,8 @@ const onSearch = async () => {
     );
     addChip(isExist);
   }
+
+  storeMain.loading = false;
   pageLoading.value = false;
 };
 

@@ -80,7 +80,7 @@ const removeChip = () => {
         v-model="search"
         :chipValue="valueChip"
         :resultList="storeMain.search_result"
-        :loading="storeMain.loading"
+        :loading-state="storeMain.loading"
         @keyup.enter="onSearch"
         @keyup.backspace="removeChip"
       />

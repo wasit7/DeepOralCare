@@ -153,7 +153,7 @@ const onrightClickNode = async (id) => {
         v-model="searchQuery"
         :chipValue="valueChip"
         :resultList="storeMain.search_result"
-        :loading="storeMain.loading"
+        :loading-state="storeMain.loading"
         @keyup.enter="onSearch"
         @keyup.backspace="removeChip"
       />
@@ -184,9 +184,7 @@ const onrightClickNode = async (id) => {
         <div class="py-6 px-10">
           <div class="pt-4 px-10 pb-3 sticky top-0 bg-white shadow-sm">
             <p class="text-[22px]">
-              รายละเอียดความสัมพันธ์ ({{
-                storeMain.sumRelation_result?.length
-              }}
+              รายละเอียดความสัมพันธ์ ({{ storeMain.sumRelation_result?.length }}
               ความสัมพันธ์)
             </p>
           </div>

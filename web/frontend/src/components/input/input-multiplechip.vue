@@ -14,7 +14,7 @@ const props = defineProps({
   chipValue: Array,
   result: Array,
   appendItem: Boolean,
-  loading: {
+  loadingState: {
     type: Boolean,
     default: false,
   },
@@ -127,7 +127,7 @@ const focusInput = () => {
         </li>
       </ul>
       <div v-else>
-        <loading v-if="loading" />
+        <loading v-if="loadingState" />
         <p v-else class="text-left px-3 py-2">No result found</p>
       </div>
     </div>

@@ -80,20 +80,10 @@ const removeChip = () => {
         v-model="search"
         :chipValue="valueChip"
         :resultList="storeMain.search_result"
-        :loading="storeMain.loading"
+        :loading-state="storeMain.loading"
         @keyup.enter="onSearch"
         @keyup.backspace="removeChip"
       />
-      <!-- <search-input
-        v-model="search"
-        :chipValue="valueChip"
-        v-on:keyup.enter="addChip"
-        v-on:keyup.backspace="removeChip"
-      > 
-        <template v-slot:append-item>
-          <dsm-btn class="xl:w-48 w-28" @click="onSearch">ค้นหา</dsm-btn>
-        </template>
-     </search-input> -->
     </div>
     <dsm-btn class="xl:w-48 w-28" @click="onSearch">ค้นหา</dsm-btn>
   </div>

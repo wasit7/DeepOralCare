@@ -7,7 +7,7 @@ import ForceSupervisor from "graphology-layout-force/worker";
 
 import circleLoading from "../loading/circle-loading.vue";
 
-import { onMounted, onUpdated, ref, watch, watchEffect } from "vue";
+import { onMounted, onUpdated, ref, reactive, watch, watchEffect } from "vue";
 
 //  props
 const props = defineProps({
@@ -19,7 +19,6 @@ const props = defineProps({
 });
 
 // state
-
 const graphLoading = ref(true);
 let draggedNode = ref(null);
 let isDragging = ref(false);
@@ -28,11 +27,29 @@ let hoveredNode = ref(null);
 let hoveredNeighbors = ref(null);
 let selectedNode = ref(null);
 
+/* 
+  Configure graph
+  Document https://graphology.github.io/standard-library/layout-force.html
+*/
+const CONFIG_GRAPH = {
+  maxIterations: 120,
+  isNodeFixed: (_, attr) => attr.highlighted,
+  settings: {
+    attraction: 0.00014, // default 0.0005
+    repulsion: 0.629, // default 0.1
+    gravity: 0.002, // default 0.0001
+    inertia: 0.5, // default 0.6
+    maxMove: 70, // default 200
+  },
+};
+
 const emits = defineEmits(["clickNode", "doubleClickNode"]);
 const graph = new Graph({ multi: true, type: "mixed" });
 // TODO: Layout can fix here
-const layout = new ForceSupervisor(graph, {
-  isNodeFixed: (_, attr) => attr.highlighted,
+const layout = ref();
+
+onMounted(() => {
+  layout.value = new ForceSupervisor(graph, CONFIG_GRAPH);
 });
 
 watch(
@@ -74,7 +91,7 @@ watch(
         // check old node in graphData before add new node
         if (!props.graphData.nodes.find((n) => n.id === node.id)) {
           graph.addNode(node.id, {
-            size: 15,
+            size: 18,
             label: node.label,
             color: node?.color,
           });
@@ -85,6 +102,7 @@ watch(
           type: "arrow",
           label: edge.relation,
           size: 5,
+          weight: 100,
         });
       });
       graph.nodes().forEach((node, i) => {
@@ -92,22 +110,23 @@ watch(
         graph.setNodeAttribute(node, "x", 100 * Math.cos(angle));
         graph.setNodeAttribute(node, "y", 100 * Math.sin(angle));
       });
-      layout.start();
+      layout.value.start();
     }
   },
   { deep: true }
 );
 
-const create_Graph = (graph) => {
+const create_Graph = async (graph) => {
   graphLoading.value = false;
+  console.log("G1:", graph);
 
   const container = document.getElementById("sigma-container");
   const renderer = new Sigma(graph, container, {
     renderEdgeLabels: true,
     allowInvalidContainer: true,
+    stagePadding: 180,
   });
-
-  layout.start();
+  layout.value.start();
 
   function setHoveredNode(node) {
     if (node) {
@@ -168,7 +187,7 @@ const create_Graph = (graph) => {
     e.preventSigmaDefault();
     e.original.preventDefault();
     e.original.stopPropagation();
-    layout.start();
+    layout.value.start();
   });
 
   // On mouse up, we reset the autoscale and the dragging mode
@@ -178,7 +197,7 @@ const create_Graph = (graph) => {
     }
     isDragging.value = false;
     draggedNode.value = null;
-    layout.stop();
+    layout.value.stop();
   });
 
   // Disable the autoscale at the first down interaction
@@ -202,6 +221,8 @@ const create_Graph = (graph) => {
 };
 
 const refresh_Graph = (graph) => {
+  layout.value.kill();
+  layout.value = new ForceSupervisor(graph, CONFIG_GRAPH);
   var g = document.querySelector("#sigma-container");
   var p = g.parentNode;
   p.removeChild(g);

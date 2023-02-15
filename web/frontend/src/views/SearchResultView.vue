@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, computed, watchEffect, watch } from "vue";
+
 import navigationBar from "../components/Navigation/navigation-bar.vue";
 import { useRoute, useRouter } from "vue-router";
 import dsmSlideOverlay from "../components/SlideOverlay/dsm-slideOverlay.vue";
@@ -8,6 +9,8 @@ import { useMainStore } from "../stores/mainStore";
 import sigmaGraph from "../components/graph/sigma-relation.vue";
 import inputMultiplechip from "../components/input/input-multiplechip.vue";
 import { trimpEllipsis } from "../resources/format";
+import RightPanel from "../components/Panel/RightPanel.vue";
+import circleLoading from "../components/loading/circle-loading.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -21,6 +24,9 @@ const panelRight = ref(true);
 const panelBottom = ref(true);
 const searchTimeout = ref(null);
 const itemsKey = ref([]);
+const pageLoading = ref(false);
+const selectResultID = ref(null);
+const selectResultData = ref(null);
 
 const entityFilter = computed(() => {
   return storeMain.entity_result?.filter((item) => {
@@ -58,8 +64,10 @@ onMounted(() => {
   // }
 });
 
-const getDetail = (id) => {
-  storeMain.getEntityDetail(id);
+const getDetail = async (id) => {
+  selectResultID.value = id;
+  selectResultData.value = await storeMain.getEntityDetail(id);
+  console.log("Select:", selectResultData.value);
 };
 
 const getPredict = (queryString) => {
@@ -68,6 +76,7 @@ const getPredict = (queryString) => {
 
 watchEffect(() => {
   if (searchQuery.value) {
+    resetSelectResult();
     clearTimeout(searchTimeout.value);
     searchTimeout.value = setTimeout(() => {
       getPredict(searchQuery.value);
@@ -75,10 +84,23 @@ watchEffect(() => {
   }
 });
 
-const onSearch = () => {
+const resetSelectResult = () => {
+  // Reset user select detail state
+  selectResultData.value = null;
+  selectResultID.value = null;
+};
+
+const onSearch = async () => {
+  pageLoading.value = true;
+  storeMain.loading = true;
+
+  // Remove focus from input after use search
+  // TODO: Refactor move it in to input-multiplechip component
+  document.getElementById("input-chip").blur();
+
   if (searchQuery.value === "") {
     sessionStorage.setItem("item_search", JSON.stringify(valueChip.value));
-    storeMain.getRelation(valueChip.value.map((i) => i.id));
+    await storeMain.getRelation(valueChip.value.map((i) => i.id));
     router.push({
       name: "Search",
       params: {
@@ -86,11 +108,14 @@ const onSearch = () => {
       },
     });
   } else {
-    const isExist = storeMain.search_result.find(
+    const isExist = await storeMain.search_result.find(
       (i) => i.name === searchQuery.value
     );
     addChip(isExist);
   }
+
+  storeMain.loading = false;
+  pageLoading.value = false;
 };
 
 const addChip = (item) => {
@@ -109,12 +134,18 @@ const removeChip = () => {
   }
 };
 
-const onclickNode = (id) => {
+const onclickNode = async (id) => {
   storeMain.getEntityDetail(id);
+  selectResultID.value = id;
+  selectResultData.value = await storeMain.getEntityDetail(id);
 };
 
-const onrightClickNode = (id) => {
-  storeMain.getExplore(id);
+const onrightClickNode = async (id) => {
+  pageLoading.value = true;
+  await storeMain.getExplore(id);
+  setTimeout(() => {
+    pageLoading.value = false;
+  }, 240);
 };
 </script>
 
@@ -125,7 +156,7 @@ const onrightClickNode = (id) => {
         v-model="searchQuery"
         :chipValue="valueChip"
         :resultList="storeMain.search_result"
-        :loading="storeMain.loading"
+        :loading-state="storeMain.loading"
         @keyup.enter="onSearch"
         @keyup.backspace="removeChip"
       />
@@ -133,6 +164,12 @@ const onrightClickNode = (id) => {
   </navigation-bar>
   <!-- TODO: Components relation Graph here -->
   <div class="w-full h-screen relative bg-slate-50">
+    <div
+      v-if="pageLoading"
+      class="w-full h-screen absolute bg-slate-700/70 z-40"
+    >
+      <circle-loading column />
+    </div>
     <dsm-slide-overlay
       :class="`${
         panelLeft && panelRight
@@ -140,7 +177,7 @@ const onrightClickNode = (id) => {
           : panelLeft
           ? ' left-1/4 w-full'
           : panelRight
-          ? ' w-3/4 '
+          ? ' w-full'
           : 'left-0'
       }  `"
       v-model="panelBottom"
@@ -148,10 +185,12 @@ const onrightClickNode = (id) => {
     >
       <template v-slot:content>
         <div class="py-6 px-10">
-          <p class="text-[22px]">
-            รายละเอียดความสัมพันธ์ ({{ storeMain.sumRelation_result?.length }}
-            ความสัมพันธ์)
-          </p>
+          <div class="pt-4 px-10 pb-3 sticky top-0 bg-white shadow-sm">
+            <p class="text-[22px]">
+              รายละเอียดความสัมพันธ์ ({{ storeMain.sumRelation_result?.length }}
+              ความสัมพันธ์)
+            </p>
+          </div>
           <div
             class="flex border-b w-full py-3"
             v-for="(item, index) in storeMain.sumRelation_result"
@@ -167,6 +206,7 @@ const onrightClickNode = (id) => {
         </div>
       </template>
     </dsm-slide-overlay>
+
     <dsm-slide-overlay v-model="panelLeft" class="pt-16">
       <template v-slot:content>
         <div
@@ -178,12 +218,13 @@ const onrightClickNode = (id) => {
         <div class="flex flex-col">
           <ul
             class="min-h-[75px] border-b px-10 py-2 hover:bg-gray-100"
+            :class="{ 'bg-gray-300': selectResultID === item.id }"
             v-for="item in entityFilter"
             :key="item.id"
           >
             <li @click="getDetail(item.id)">
-              <p>{{ item.name }}</p> 
-              <p>{{ item.kind }}</p> 
+              <p>{{ item.name }}</p>
+              <p>{{ item.kind }}</p>
               <!-- <p v-for="key in Object.keys(item.attribute)" :key="key">
                 {{ key }}
                 {{
@@ -198,23 +239,9 @@ const onrightClickNode = (id) => {
       </template>
     </dsm-slide-overlay>
 
-    <dsm-slide-overlay v-model="panelRight" class="pt-16" right>
-      <template v-slot:content>
-        <div class="py-6 px-10">
-          <p class="text-[22px]">รายละเอียด</p>
-          <p>{{ entityDetail.name }}</p>
-          <!-- <p>คำอธิบายรายละเอียดความสัมพันธ์ของสิ่งที่เกี่ยวข้อง</p> -->
-          <p v-for="key in entityDetail.attribute_key" :key="key">
-            {{ key }}
-            {{
-              typeof entityDetail.attribute[key] === "object"
-                ? entityDetail.attribute[key].join(", ")
-                : entityDetail.attribute[key]
-            }}
-          </p>
-        </div>
-      </template>
-    </dsm-slide-overlay>
+    <!-- Right panel -->
+    <RightPanel v-model="panelRight" :result-data="selectResultData" />
+
     <sigma-graph
       :graph-data="entityRelation"
       :explore-data="exploreRelation"

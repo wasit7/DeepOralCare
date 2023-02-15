@@ -2,11 +2,11 @@ import { defineStore } from "pinia";
 import { axios_api } from "../api";
 
 const type_Color = {
-  "person": "#5879A3",
-  "organization": "#E49244",
-  "evidence": "#A77C9F",
-  "transaction": "#6A9E58",
-  "-": "#BCBCBC"
+  person: "#5879A3",
+  organization: "#E49244",
+  evidence: "#A77C9F",
+  transaction: "#6A9E58",
+  "-": "#BCBCBC",
 };
 
 export const useMainStore = defineStore("main", {
@@ -158,10 +158,15 @@ export const useMainStore = defineStore("main", {
       this.res_relation = res.data;
     },
     async getEntityDetail(id) {
-      const res = await axios_api.post(`/searchapp/api/entity/getDetail/`, {
-        id,
-      });
+      console.log("call");
+      const res = await axios_api
+        .post(`/searchapp/api/entity/getDetail/`, {
+          id,
+        })
+        .then((res) => res);
+      console.log("R1 s:", res);
       this.res_entityDetail = res.data;
+      return res.data;
     },
     async getExplore(id) {
       const res = await axios_api.get(

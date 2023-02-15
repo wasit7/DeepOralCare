@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watchEffect } from "vue";
+import { ref, reactive } from "vue";
 import searchIcon from "../Icons/searchIcon.vue";
 import loading from "../loading/circle-loading.vue";
 import crossIcon from "../Icons/crossIcon.vue";
@@ -11,10 +11,13 @@ const props = defineProps({
     default: "",
   },
   placeholder: String,
-  chipValue: Array,
+  chipValue: {
+    type: Array,
+    default: [],
+  },
   result: Array,
   appendItem: Boolean,
-  loading: {
+  loadingState: {
     type: Boolean,
     default: false,
   },
@@ -31,6 +34,12 @@ const focusInput = () => {
   const input = document.getElementById("input-chip");
   input.focus();
   onFocus.value = true;
+};
+
+const removeDuplicate = (id) => {
+  let check = Object.values(props.chipValue).find((item) => item.id == id);
+  console.log("c:", check);
+  return check === undefined ? true : false;
 };
 </script>
 
@@ -93,7 +102,7 @@ const focusInput = () => {
         type="text"
         name="text"
         id="input-chip"
-        :class="`   focus:outline-none`"
+        class="w-full focus:outline-none"
         :placeholder="placeholder"
         :value="modelValue"
         autocomplete="off"
@@ -114,20 +123,21 @@ const focusInput = () => {
       }  absolute mt-1 w-full max-h-60 overflow-auto bg-white border rounded-md z-10`"
     >
       <ul v-if="resultList.length > 0">
-        <li
-          class="py-2 px-3 hover:bg-gray-100 cursor-pointer"
-          v-for="(item, index) in props.resultList"
-          :key="index"
-          @click="
-            chipValue.push(item);
-            $emit('update:modelValue', '');
-          "
-        >
-          {{ item.name }} ({{ item.id }})
+        <li v-for="(item, index) in props.resultList" :key="index">
+          <div
+            class="py-2 px-3 hover:bg-gray-100 cursor-pointer"
+            v-if="removeDuplicate(item.id)"
+            @click="
+              chipValue.push(item);
+              $emit('update:modelValue', '');
+            "
+          >
+            {{ item.name }} ({{ item.id }})
+          </div>
         </li>
       </ul>
-      <div v-else>
-        <loading v-if="loading" />
+      <div v-else class="py-2">
+        <loading v-if="loadingState" />
         <p v-else class="text-left px-3 py-2">No result found</p>
       </div>
     </div>

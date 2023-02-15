@@ -97,7 +97,7 @@ const goHome = () =>
             </div>
           </div> -->
         </div>
-        <div v-if="searchAble" class="xl:w-2/5 relative h-full py-2">
+        <div v-if="searchAble" class="xl:w-2/5 relative h-full w-1/2 py-2">
           <div class="absolute w-full">
             <slot name="search"> </slot>
           </div>

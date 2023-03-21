@@ -27,6 +27,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  appName: {
+    type: String,
+    default: "YOUR_APP_NAME"
+  },
+  appLogo: {
+    type: Object,
+    required: true
+  }
 });
 
 const goHome = () =>
@@ -59,24 +67,24 @@ const goHome = () =>
             @click="goHome"
           >
             <img
-              class="block h-13 w-auto lg:hidden"
-              src="../../assets/imgs/KG-logo.png"
+              class="block  w-auto lg:hidden"
+              :src="appLogo"
               alt="Your Company"
             />
             <p
               class="block h-13 w-auto lg:hidden text-[32px] font-bold text-[#163168]"
             >
-              KG
+              {{ appName }}
             </p>
             <img
-              class="hidden h-13 w-auto lg:block"
-              src="../../assets/imgs/KG-logo.png"
+              class="hidden w-auto lg:block"
+              :src="appLogo"
               alt="Your Company"
             />
             <p
               class="hidden h-13 w-auto lg:block text-[32px] font-bold text-[#163168]"
             >
-              KG
+              {{ appName }}
             </p>
           </div>
           <!-- <div class="hidden sm:ml-6 sm:block">

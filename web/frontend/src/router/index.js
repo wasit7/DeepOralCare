@@ -6,12 +6,12 @@ const routes = [
   {
     path: "/",
     name: "Landing",
-    component: () => import("../views/LandingView.vue"),
+    component: () => import("../views/ExplorerView.vue"),
   },
   {
     path: "/Search/:key_word",
     name: "Search",
-    component: () => import("../views/SearchResultView.vue"),
+    component: () => import("../views/ExplorerView.vue"),
   },
 ];
 

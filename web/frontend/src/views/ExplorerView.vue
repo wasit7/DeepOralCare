@@ -12,6 +12,9 @@ import { trimpEllipsis } from "../resources/format";
 import RightPanel from "../components/Panel/RightPanel.vue";
 import circleLoading from "../components/loading/circle-loading.vue";
 
+// Components
+import SearchBox from "../components/input/SearchBox.vue";
+
 const route = useRoute();
 const router = useRouter();
 const storeMain = useMainStore();
@@ -95,7 +98,6 @@ const onSearch = async () => {
   storeMain.loading = true;
 
   // Remove focus from input after use search
-  // TODO: Refactor move it in to input-multiplechip component
   document.getElementById("input-chip").blur();
 
   if (searchQuery.value === "") {
@@ -150,7 +152,7 @@ const onrightClickNode = async (id) => {
 </script>
 
 <template>
-  <navigation-bar class="fixed w-full" search-able app-name="CA search" :app-logo="Logo">
+  <navigation-bar class="fixed w-full" :search-able="false" app-name="CA search" :app-logo="Logo">
     <template v-slot:search>
       <input-multiplechip
         v-model="searchQuery"
@@ -170,50 +172,23 @@ const onrightClickNode = async (id) => {
     >
       <circle-loading column />
     </div>
-    <dsm-slide-overlay
-      :class="`${
-        panelLeft && panelRight
-          ? ' w-2/4 left-1/4'
-          : panelLeft
-          ? ' left-1/4 w-full'
-          : panelRight
-          ? ' w-full'
-          : 'left-0'
-      }  `"
-      v-model="panelBottom"
-      bottom
-    >
-      <template v-slot:content>
-        <div class="py-6 px-10">
-          <div class="pt-4 px-10 pb-3 sticky top-0 bg-white shadow-sm">
-            <p class="text-[22px]">
-              รายละเอียดความสัมพันธ์ ({{ storeMain.sumRelation_result?.length }}
-              ความสัมพันธ์)
-            </p>
-          </div>
-          <div
-            class="flex border-b w-full py-3"
-            v-for="(item, index) in storeMain.sumRelation_result"
-            :key="item"
-          >
-            <div class="text-center px-5">
-              {{ index + 1 }}
-            </div>
-            <p>
-              {{ item }}
-            </p>
-          </div>
-        </div>
-      </template>
-    </dsm-slide-overlay>
 
     <dsm-slide-overlay v-model="panelLeft" class="pt-16">
       <template v-slot:content>
         <div
           class="flex flex-col gap-3 px-10 pt-6 sticky top-0 bg-white w-full"
         >
-          <search-input v-model="searchEntity" :placeholder="'ค้นหารายการ'" />
-          <p class="text-[22px]">รายการที่พบ</p>
+          <!-- <search-input v-model="searchEntity" :placeholder="'ค้นหารายการ'" /> -->
+          <SearchBox
+            label="มะเร็ง (Disease)"
+            placeholder="oral cavity cancer"
+          />
+
+          <SearchBox
+              label="Exposure"
+              placeholder="arsenic"
+            />
+          <!-- <p class="text-[22px]">รายการที่พบ</p> -->
         </div>
         <div class="flex flex-col">
           <ul

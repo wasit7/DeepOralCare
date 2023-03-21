@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, computed, watchEffect, watch } from "vue";
-
+import Logo from "../assets/imgs/CA-AppLogo.png";
 import navigationBar from "../components/Navigation/navigation-bar.vue";
 import { useRoute, useRouter } from "vue-router";
 import dsmSlideOverlay from "../components/SlideOverlay/dsm-slideOverlay.vue";
@@ -150,7 +150,7 @@ const onrightClickNode = async (id) => {
 </script>
 
 <template>
-  <navigation-bar class="fixed w-full" search-able>
+  <navigation-bar class="fixed w-full" search-able app-name="CA search" :app-logo="Logo">
     <template v-slot:search>
       <input-multiplechip
         v-model="searchQuery"

@@ -67,23 +67,19 @@ const goHome = () =>
             @click="goHome"
           >
             <img
-              class="block  w-auto lg:hidden"
+              class="block  h-8 w-auto lg:hidden"
               :src="appLogo"
               alt="Your Company"
             />
-            <p
-              class="block h-13 w-auto lg:hidden text-[32px] font-bold text-[#163168]"
-            >
+            <p class="block h-13 w-auto lg:hidden text-xl font-bold text-[#163168]">
               {{ appName }}
             </p>
             <img
-              class="hidden w-auto lg:block"
+              class="hidden h-8 w-auto lg:block"
               :src="appLogo"
               alt="Your Company"
             />
-            <p
-              class="hidden h-13 w-auto lg:block text-[32px] font-bold text-[#163168]"
-            >
+            <p class="hidden h-13 w-auto lg:block text-xl font-bold text-[#163168]">
               {{ appName }}
             </p>
           </div>

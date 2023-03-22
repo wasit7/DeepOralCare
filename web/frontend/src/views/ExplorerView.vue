@@ -15,6 +15,9 @@ import circleLoading from "../components/loading/circle-loading.vue";
 // Components
 import SearchBox from "../components/input/SearchBox.vue";
 
+// Icons
+import searchIcon from "../components/Icons/searchIcon.vue";
+
 const route = useRoute();
 const router = useRouter();
 const storeMain = useMainStore();
@@ -152,6 +155,7 @@ const onrightClickNode = async (id) => {
 </script>
 
 <template>
+  <!-- Navigation -->
   <navigation-bar class="fixed w-full" :search-able="false" app-name="CA search" :app-logo="Logo">
     <template v-slot:search>
       <input-multiplechip
@@ -164,7 +168,8 @@ const onrightClickNode = async (id) => {
       />
     </template>
   </navigation-bar>
-  <!-- TODO: Components relation Graph here -->
+
+  <!-- Graph Explorer -->
   <div class="w-full h-screen relative bg-slate-50">
     <div
       v-if="pageLoading"
@@ -173,48 +178,27 @@ const onrightClickNode = async (id) => {
       <circle-loading column />
     </div>
 
-    <dsm-slide-overlay v-model="panelLeft" class="pt-16">
+
+    <!-- Panel: Left -->
+    <dsm-slide-overlay v-model="panelLeft" class="pt-16 w-full h-full">
       <template v-slot:content>
-        <div
-          class="flex flex-col gap-3 px-10 pt-6 sticky top-0 bg-white w-full"
-        >
-          <!-- <search-input v-model="searchEntity" :placeholder="'ค้นหารายการ'" /> -->
+        <div class="flex flex-col gap-3 px-5 pt-6 sticky top-0 bg-white w-full" >
           <SearchBox
             label="มะเร็ง (Disease)"
             placeholder="oral cavity cancer"
           />
 
           <SearchBox
-              label="Exposure"
-              placeholder="arsenic"
-            />
-          <!-- <p class="text-[22px]">รายการที่พบ</p> -->
-        </div>
-        <div class="flex flex-col">
-          <ul
-            class="min-h-[75px] border-b px-10 py-2 hover:bg-gray-100"
-            :class="{ 'bg-gray-300': selectResultID === item.id }"
-            v-for="item in entityFilter"
-            :key="item.id"
-          >
-            <li @click="getDetail(item.id)">
-              <p>{{ item.name }}</p>
-              <p>{{ item.kind }}</p>
-              <!-- <p v-for="key in Object.keys(item.attribute)" :key="key">
-                {{ key }}
-                {{
-                  typeof item.attribute[key] === "object"
-                    ? trimpEllipsis(item.attribute[key].join(", "), 20)
-                    : item.attribute[key]
-                }}
-              </p> -->
-            </li>
-          </ul>
+            label="ความเสี่ยง (Exposure)"
+            placeholder="arsenic"
+          />
+          
+          <button type="button" class="focus:outline-none text-white bg-[#FFB11D] hover:bg-[#F28606] font-medium rounded-md text-sm mt-1 px-5 py-1.5 dark:focus:ring-yellow-900">Explore</button>
         </div>
       </template>
     </dsm-slide-overlay>
 
-    <!-- Right panel -->
+    <!-- Panel: Right -->
     <RightPanel v-model="panelRight" :result-data="selectResultData" />
 
     <sigma-graph

@@ -12,6 +12,7 @@
     "@headlessui/vue": "^1.7.4",
     "@heroicons/vue": "^2.0.13",
     "axios": "^1.2.1",
+    "flowbite": "^1.6.4",
     "graphology": "^0.25.1",
     "graphology-layout-force": "^0.2.4",
     "graphology-layout-forceatlas2": "^0.10.1",

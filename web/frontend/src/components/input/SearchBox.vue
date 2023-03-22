@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref, watchEffect } from "vue";
 
-import searchIcon from "../Icons/searchIcon.vue";
+import SearchIcon from "../Icons/searchIcon.vue";
 
 const props = defineProps({
     label: {
@@ -16,30 +16,46 @@ const props = defineProps({
         type: String,
         default: "",
     },
+    icon: {
+        required: false
+    },
+    borderColor: {
+        type: String,
+        default: "#FFB11D"
+    },
+    focusBorderColor: {
+        type: String,
+        default: "#F28606"
+    },
+    
 });
 </script>
 
 <template>
-    <div class="flex flex-col justify-start gap-1 w-full">
+    <div class="form-input-group">
         <p class="text-base"> {{ props.label }} </p>
-        <div id="input-group" class="flex felx-row justify-start gap-y-2">
-            <!-- <span class="text-gray-500 sm:text-sm"> -->
-                <!-- icon
-                <search-icon colors="#194456" /> -->
-            <!-- </span> -->
-            <input
-                type="text"
-                name="disease"
-                id="text"
+        <label for="simple-search" class="sr-only">{{ props.placeholder }}</label>
+        <div class="relative w-full">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <svg 
+                    aria-hidden="true" 
+                    class="w-5 h-5 text-gray-300 dark:text-gray-400" 
+                    fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+                </svg>
+            </div>
+            <input 
+                required
+                type="text" 
+                id="simple-search" 
                 class="
-                    w-full h-full 
-                    border-solid border-2 border-[#3b8f85]
-                    p-1 rounded-md 
-                    placeholder:text-sm placeholder:text-gray-300
-                    focus:outline-none focus:border-[#194456]"
-                :placeholder="props.placeholder"
-                :value="props.modelValue"
-                @input="$emit('update:modelValue', $event.target.value)"
+                    block w-full pl-10 p-1.5 rounded-md
+                    bg-gray-50 
+                    text-gray-700 text-sm
+                    border border-solid border-[#FFB11D]
+                    focus:outline-none focus:border-[#F28606]
+                    "
+                :placeholder="props.placeholder" 
             />
         </div>
     </div>

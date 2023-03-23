@@ -5,8 +5,8 @@ from .api import utils
 # Create your models here.
 
 class Label(models.Model):
-    name = models.CharField(max_length=500)
-    attribute = models.JSONField()
+    name = models.CharField(max_length=500, unique=True)
+    attribute = models.JSONField(null=True)
     
     def __str__(self):
         return self.name

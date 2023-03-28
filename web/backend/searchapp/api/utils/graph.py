@@ -49,14 +49,14 @@ def serialize_path(data):
 def get_relation(ids, hop=2):
     if len(ids) == 1:
         return get_spo(id=ids[0]), []
-    data = graph.query(f"""
+    query = graph.query(f"""
         MATCH (n) where n.id IN ["{'","'.join(ids)}"]
         WITH collect(n) as nodes
         UNWIND nodes as n
         UNWIND nodes as m
         WITH * WHERE id(n) < id(m)
-        MATCH path = (n)-[r *..{hop}]-(m)
+        MATCH path = shortestpath((n)-[r *..{hop}]-(m))
         RETURN path
     """)
-    data = data.data()
+    data = query.data()
     return _extract_path_1(data), serialize_path(data)

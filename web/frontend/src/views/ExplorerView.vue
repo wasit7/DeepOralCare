@@ -169,7 +169,7 @@ const onrightClickNode = async (id) => {
 const onExplore = async () => {
   const { id: diseaseId } = searchDisease.value;
   const { id: exposureId } = searchExposure.value;
-  console.log(`searching relationship`, searchDisease, searchExposure);
+  console.log(`searching relationship`, diseaseId, exposureId);
   await storeMain.getRelation([diseaseId, exposureId]);
 };
 

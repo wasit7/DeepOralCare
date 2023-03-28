@@ -1,13 +1,8 @@
 import { defineStore } from "pinia";
 import { axios_api } from "../api";
+import NODE_LABEL_COLOR from '../utils'
 
-const type_Color = {
-  person: "#5879A3",
-  organization: "#E49244",
-  evidence: "#A77C9F",
-  transaction: "#6A9E58",
-  "-": "#BCBCBC",
-};
+const type_Color = NODE_LABEL_COLOR;
 
 export const useMainStore = defineStore("main", {
   state: () => ({
@@ -34,7 +29,7 @@ export const useMainStore = defineStore("main", {
           return {
             id: i.id,
             label: i.name,
-            color: type_Color[i.kind],
+            color: type_Color[i.label],
           };
         });
         edges = relations.map((i) => {
@@ -106,7 +101,7 @@ export const useMainStore = defineStore("main", {
           return {
             id: i.id,
             label: i.name,
-            color: type_Color[i.kind],
+            color: type_Color[i.label],
           };
         });
         edges = relations.map((i) => {
@@ -150,6 +145,8 @@ export const useMainStore = defineStore("main", {
       if (res.data) {
         this.loading = false;
       }
+      
+      return res.data;
     },
     async getRelation(ids) {
       const res = await axios_api.post(`/searchapp/api/entity/relation/`, {

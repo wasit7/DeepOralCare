@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, watchEffect, watch } from "vue";
+import { ref, reactive, onMounted, computed, watchEffect, watch } from "vue";
 import Logo from "../assets/imgs/CA-AppLogo.png";
 import navigationBar from "../components/Navigation/navigation-bar.vue";
 import { useRoute, useRouter } from "vue-router";
@@ -33,6 +33,19 @@ const itemsKey = ref([]);
 const pageLoading = ref(false);
 const selectResultID = ref(null);
 const selectResultData = ref(null);
+
+const searchDisease = ref({ id: "", name: "" });
+const searchExposure = ref({ id: "", name: "" });
+const resultDisease = ref(null);
+const resultExposure = ref(null);
+const searchLoading = reactive({
+  disease: false,
+  exposure: false,
+});
+const searchInputTimeout = reactive({
+  disease: null,
+  exposure: null,
+});
 
 const entityFilter = computed(() => {
   return storeMain.entity_result?.filter((item) => {
@@ -152,11 +165,57 @@ const onrightClickNode = async (id) => {
     pageLoading.value = false;
   }, 240);
 };
+
+const onExplore = async () => {
+  const { id: diseaseId } = searchDisease.value;
+  const { id: exposureId } = searchExposure.value;
+  console.log(`searching relationship`, searchDisease, searchExposure);
+  await storeMain.getRelation([diseaseId, exposureId]);
+};
+
+const onSelection = (entity, entitySelected) => {
+  entity.id = entitySelected.id;
+  entity.name = entitySelected.name;
+  console.log(entity);
+};
+
+const onSearchEntity = async (searchObj) => {
+  await storeMain.getSearch(searchObj.name);
+  const results = storeMain.search_result;
+  return results;
+};
+
+watch(searchDisease.value, (newValue) => {
+  console.log("watch disease");
+  clearTimeout(searchInputTimeout.disease);
+  searchLoading.disease = true;
+  searchInputTimeout.disease = setTimeout(async () => {
+    console.log("search");
+    resultDisease.value = await onSearchEntity(searchDisease.value);
+    searchLoading.disease = false;
+  }, 700);
+});
+
+watch(searchExposure.value, (newValue) => {
+  console.log("watch exposure", searchExposure);
+  clearTimeout(searchInputTimeout.exposure);
+  searchLoading.exposure = true;
+  searchInputTimeout.exposure = setTimeout(async () => {
+    console.log("search");
+    resultExposure.value = await onSearchEntity(searchExposure.value);
+    searchLoading.exposure = false;
+  }, 700);
+});
 </script>
 
 <template>
   <!-- Navigation -->
-  <navigation-bar class="fixed w-full" :search-able="false" app-name="CA search" :app-logo="Logo">
+  <navigation-bar
+    class="fixed w-full"
+    app-name="CA search"
+    :search-able="false"
+    :app-logo="Logo"
+  >
     <template v-slot:search>
       <input-multiplechip
         v-model="searchQuery"
@@ -178,22 +237,36 @@ const onrightClickNode = async (id) => {
       <circle-loading column />
     </div>
 
-
     <!-- Panel: Left -->
     <dsm-slide-overlay v-model="panelLeft" class="pt-16 w-full h-full">
-      <template v-slot:content>
-        <div class="flex flex-col gap-3 px-5 pt-6 sticky top-0 bg-white w-full" >
+      <template class="h-3/5" v-slot:content>
+        <div class="flex flex-col gap-3 px-5 pt-6 sticky top-0 bg-white w-full">
           <SearchBox
-            label="มะเร็ง (Disease)"
-            placeholder="oral cavity cancer"
+            label="Disease"
+            placeholder="touge cancer"
+            v-model="searchDisease"
+            :is-loading="searchLoading.disease"
+            @on-search="searchDisease.name = $event"
+            @on-select-result="onSelection(searchDisease, $event)"
+            :dropdowns="resultDisease"
+          />
+          <SearchBox
+            label="Exposure"
+            placeholder="tobacco tar"
+            v-model="searchExposure"
+            :is-loading="searchLoading.exposure"
+            @on-search="searchExposure.name = $event"
+            @on-select-result="onSelection(searchExposure, $event)"
+            :dropdowns="resultExposure"
           />
 
-          <SearchBox
-            label="ความเสี่ยง (Exposure)"
-            placeholder="arsenic"
-          />
-          
-          <button type="button" class="focus:outline-none text-white bg-[#FFB11D] hover:bg-[#F28606] font-medium rounded-md text-sm mt-1 px-5 py-1.5 dark:focus:ring-yellow-900">Explore</button>
+          <button
+            type="button"
+            @click="onExplore"
+            class="focus:outline-none text-white bg-[#FFB11D] hover:bg-[#F28606] font-medium rounded-md text-sm mt-1 px-5 py-1.5"
+          >
+            Explore
+          </button>
         </div>
       </template>
     </dsm-slide-overlay>
@@ -208,7 +281,7 @@ const onrightClickNode = async (id) => {
       @double-click-node="onrightClickNode"
     />
     <div
-      :class="`absolute duration-500 bg-white z-20 ${
+      :class="`absolute duration-500 bg-white z-20 p-3 ${
         panelRight && panelBottom
           ? ' right-1/4 bottom-1/4'
           : panelRight
@@ -218,22 +291,23 @@ const onrightClickNode = async (id) => {
           : ' right-4 bottom-4'
       }`"
     >
-      <span class="flex gap-2 items-center px-3 py-2"
-        ><div class="rounded-full w-5 h-5 bg-[#5879A3]" />
-        <p>Person</p></span
-      >
-      <span class="flex gap-2 items-center px-3 py-2"
-        ><div class="rounded-full w-5 h-5 bg-[#E49244]" />
-        <p>Organization</p></span
-      >
-      <span class="flex gap-2 items-center px-3 py-2"
-        ><div class="rounded-full w-5 h-5 bg-[#A77C9F]" />
-        <p>Evidence</p></span
-      >
-      <span class="flex gap-2 items-center px-3 py-2"
-        ><div class="rounded-full w-5 h-5 bg-[#6A9E58]" />
-        <p>Transaction</p></span
-      >
+      <h1 class="text-red-600">TODO: UPDATE PRIMEKG LABELS</h1>
+      <span class="flex gap-2 items-center px-3 py-2">
+        <div class="rounded-full w-5 h-5 bg-[#5879A3]" />
+        <p>Person</p>
+      </span>
+      <span class="flex gap-2 items-center px-3 py-2">
+        <div class="rounded-full w-5 h-5 bg-[#E49244]" />
+        <p>Organization</p>
+      </span>
+      <span class="flex gap-2 items-center px-3 py-2">
+        <div class="rounded-full w-5 h-5 bg-[#A77C9F]" />
+        <p>Evidence</p>
+      </span>
+      <span class="flex gap-2 items-center px-3 py-2">
+        <div class="rounded-full w-5 h-5 bg-[#6A9E58]" />
+        <p>Transaction</p>
+      </span>
     </div>
   </div>
 </template>

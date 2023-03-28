@@ -60,7 +60,7 @@ const props = defineProps({
     <div
       :class="`${
         modelValue ? ' ' : ' overflow-hidden'
-      } bg-white  max-h-full  overflow-auto relative  flex flex-col`"
+      } bg-white  h-full  overflow-auto relative  flex flex-col`"
     >
       <slot name="content"> content Here ! </slot>
     </div>

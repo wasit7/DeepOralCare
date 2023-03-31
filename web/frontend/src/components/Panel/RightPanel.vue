@@ -1,10 +1,14 @@
 <script setup>
-import { ref, watch } from "vue";
+import { storeToRefs } from "pinia";
+import { ref, watch, computed } from "vue";
+
+import { useMainStore } from "../../stores/mainStore";
 
 import circleLoading from "../loading/circle-loading.vue";
 import dsmSlideOverlay from "../SlideOverlay/dsm-slideOverlay.vue";
 import findMatchLabel from "../../utils/matchLabelName.js";
 
+const mainStore = useMainStore();
 const props = defineProps({
   resultData: {
     type: Object || null,
@@ -17,6 +21,10 @@ const isLoading = ref(false);
 const updateList = ref([]);
 const selectUpdate = ref(0);
 
+const store = storeToRefs(mainStore);
+const labelOverviews = computed(() => mainStore.overview_data.labels);
+// const relationshipOverview = mainStore.relationship_overview;
+
 const resolveUpdateList = async (data) => {
   await data.forEach((item, index) => {
     updateList.value.push({
@@ -25,6 +33,12 @@ const resolveUpdateList = async (data) => {
     });
   });
 };
+
+watch(store, ()=> {
+  console.log('M1:',store.value)
+  // console.log('M1.3:', mainStore.label_overview);
+  // console.log('M1.4:', mainStore.overview_data);
+}, { deep: true })
 
 watch(
   () => props.resultData,
@@ -51,7 +65,7 @@ watch(
     right
   >
     <template v-slot:content>
-      <div class="w-full max-h-full overflow-auto">
+      <div class="w-full h-full overflow-auto">
         <div class="pt-4 px-10 pb-3 sticky top-0 bg-white shadow-sm">
           <p class="text-[22px]">รายละเอียด</p>
         </div>
@@ -62,7 +76,7 @@ watch(
           <circle-loading column />
         </div>
         <div v-else class="min-h-full py-6 px-10 flex flex-col gap-3 flex-grow">
-          <div class="flex-grow flex flex-col pb-6">
+          <div class="flex flex-col pb-6">
             <div v-if="resultData" class="flex flex-col">
               <p class="font-semibold">ชื่อ: {{ resultData.name }}</p>
               <p class="font-semibold">ประเภท: {{ resultData.kind }}</p>
@@ -77,32 +91,39 @@ watch(
                 </div>
               </div>
 
-              <div class="mt-3">
-                <p class="w-full border text-center font-semibold">
-                  Update profile ({{ resultData.update_profile.length }})
-                </p>
-                <select class="w-full border" v-model="selectUpdate">
-                  <!-- <option disabled value="">Please select one</option> -->
-                  <option v-for="item in updateList" :value="item.index">
-                    {{ item.label }}
-                  </option>
-                </select>
-                <div
-                  v-for="(value, key) in resultData.update_profile[
-                    selectUpdate
-                  ]"
-                  class="flex justify-between border-collapse"
-                >
-                  <p class="w-5/12 p-1 border">{{ findMatchLabel(key) }}:</p>
-                  <p class="w-7/12 p-1 border break-all">{{ value }}</p>
-                </div>
-              </div>
               <!-- {{ resultData }} -->
+              <!-- <div class="flex-col">
+                <p class="text-lg">Overview</p>
+                <span class="text-grey-300 text-sm">Node Labels</span>
+                <span class="text-grey-300 text-sm">Relationship Types</span>
+              </div> -->
             </div>
 
-            <span v-else class="m-auto opacity-70">
+            <span v-else class="text-sm my-10 opacity-70">
               - เลือกหัวข้อในรายการที่พบ เพื่อดูรายละเอียด -
             </span>
+          </div>
+          <div class="flex-col mb-auto">
+            <p class="text-lg">Overview</p>
+            <p class="text-grey-300 text-sm">Node Labels</p>
+            <div
+              class="nodes-group inline-block my-0.5"
+              v-for="(label, index) in labelOverviews"
+              :key="index"
+            >
+              <div
+                v-if="label.count > 0 || label.name == 'ALL'"
+                :style="{ backgroundColor: label.color}"
+                :class="`inline-block text-xs text-white font-medium mr-2 py-1 px-3 rounded-full`"
+                >{{ label.name }} ({{ label.count }}) </div
+              >
+            </div>
+
+            <p class="text-grey-300 text-sm">Relationship Types</p>
+            <span
+              class="bg-gray-500 text-white text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300"
+              >Dark</span
+            >
           </div>
         </div>
       </div>

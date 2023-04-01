@@ -280,35 +280,6 @@ watch(searchExposure.value, (newValue) => {
       @click-node="onclickNode"
       @double-click-node="onrightClickNode"
     />
-    <div
-      :class="`absolute duration-500 bg-white z-20 p-3 ${
-        panelRight && panelBottom
-          ? ' right-1/4 bottom-1/4'
-          : panelRight
-          ? 'right-1/4 bottom-4'
-          : panelBottom
-          ? ' bottom-1/4 right-4'
-          : ' right-4 bottom-4'
-      }`"
-    >
-      <h1 class="text-red-600">TODO: UPDATE PRIMEKG LABELS</h1>
-      <span class="flex gap-2 items-center px-3 py-2">
-        <div class="rounded-full w-5 h-5 bg-[#5879A3]" />
-        <p>Person</p>
-      </span>
-      <span class="flex gap-2 items-center px-3 py-2">
-        <div class="rounded-full w-5 h-5 bg-[#E49244]" />
-        <p>Organization</p>
-      </span>
-      <span class="flex gap-2 items-center px-3 py-2">
-        <div class="rounded-full w-5 h-5 bg-[#A77C9F]" />
-        <p>Evidence</p>
-      </span>
-      <span class="flex gap-2 items-center px-3 py-2">
-        <div class="rounded-full w-5 h-5 bg-[#6A9E58]" />
-        <p>Transaction</p>
-      </span>
-    </div>
   </div>
 </template>
 

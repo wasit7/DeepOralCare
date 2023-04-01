@@ -27,7 +27,7 @@ export const useMainStore = defineStore("main", {
       labels: {
         "ALL": { 
           name: "ALL",
-          color: "#D9D9D9",
+          color: "#A0A0A0",
           count: 0
         },
         "Gene/Protein": {
@@ -82,10 +82,9 @@ export const useMainStore = defineStore("main", {
         },
       },
       relationships: {
-        "ALL": {
-          color: "#D9D9D9",
-          count: 0
-        },
+          color: "#A0A0A0",
+          count: 0,
+          names: ["*"]
       }
     }
   }),
@@ -95,7 +94,7 @@ export const useMainStore = defineStore("main", {
     entity_result: (state) => state.res_relation.entitys,
     sumRelation_result: (state) => state.res_relation.path_detail,
     label_overview: (state) => { console.log('M1.2:', overview_data); return state.overview_data.labels},
-    label_overview: (state) => state.overview_data.relationships,
+    relation_overview: (state) => state.overview_data.relationships,
     relation_result: (state) => {
       const { entitys, relations } = state.res_relation;
 
@@ -104,12 +103,8 @@ export const useMainStore = defineStore("main", {
 
       if (entitys && relations) {
         nodes = entitys.map((i) => {
-          if (state.overview_data.labels.hasOwnProperty(i.label)) {
-            state.overview_data.labels["ALL"].count += 1;
-            state.overview_data.labels[i.label].count += 1;
-            
-          }// Returns true
-
+          state.overview_data.labels["ALL"].count += 1;
+          state.overview_data.labels[i.label].count += 1;
           return {
             id: i.id,
             label: i.name,
@@ -117,11 +112,8 @@ export const useMainStore = defineStore("main", {
           };
         });
         edges = relations.map((i) => {
-          if (state.overview_data.relationships.hasOwnProperty(i.relation)) {
-            state.overview_data.relationships["ALL"].count += 1;
-            state.overview_data.relationships[i.relation].count += 1;
-          }// Returns true
-
+          state.overview_data.relationships.count += 1;
+          state.overview_data.relationships.names.push(i.relation)
           return {
             source: i.head,
             target: i.tail,
@@ -129,6 +121,7 @@ export const useMainStore = defineStore("main", {
             color: "#666",
           };
         });
+        state.overview_data.relationships.names = [... new Set(state.overview_data.relationships.names)];
       }
 
       // missing entitys check
@@ -150,23 +143,6 @@ export const useMainStore = defineStore("main", {
       });
 
       return { nodes, edges };
-      // return {
-      //   nodes: entitys?.map((i) => {
-      //     return {
-      //       id: i.id,
-      //       label: i.name,
-      //       color: COLOR_BY_NODE_LABEL[i.id.split("/")[0]],
-      //     };
-      //   }),
-      //   edges: relations?.map((i) => {
-      //     return {
-      //       source: i.head,
-      //       target: i.tail,
-      //       relation: i.relation,
-      //       color: "#666",
-      //     };
-      //   }),
-      // };
     },
     entity_detail: (state) => {
       if (!state.res_entityDetail.attribute) {

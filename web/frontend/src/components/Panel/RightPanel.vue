@@ -23,7 +23,9 @@ const selectUpdate = ref(0);
 
 const store = storeToRefs(mainStore);
 const labelOverviews = computed(() => mainStore.overview_data.labels);
-// const relationshipOverview = mainStore.relationship_overview;
+const relationshipOverviews = computed(
+  () => mainStore.overview_data.relationships
+);
 
 const resolveUpdateList = async (data) => {
   await data.forEach((item, index) => {
@@ -34,11 +36,15 @@ const resolveUpdateList = async (data) => {
   });
 };
 
-watch(store, ()=> {
-  console.log('M1:',store.value)
-  // console.log('M1.3:', mainStore.label_overview);
-  // console.log('M1.4:', mainStore.overview_data);
-}, { deep: true })
+watch(
+  store,
+  () => {
+    console.log("M1:", store.value);
+    // console.log('M1.3:', mainStore.label_overview);
+    // console.log('M1.4:', mainStore.overview_data);
+  },
+  { deep: true }
+);
 
 watch(
   () => props.resultData,
@@ -103,27 +109,48 @@ watch(
               - เลือกหัวข้อในรายการที่พบ เพื่อดูรายละเอียด -
             </span>
           </div>
-          <div class="flex-col mb-auto">
+          <div class="flex flex-col justify-start gap-2 mb-auto">
             <p class="text-lg">Overview</p>
-            <p class="text-grey-300 text-sm">Node Labels</p>
-            <div
-              class="nodes-group inline-block my-0.5"
-              v-for="(label, index) in labelOverviews"
-              :key="index"
-            >
+            <div class="node-group">
+              <p class="text-grey-300 text-sm">Node Labels</p>
               <div
-                v-if="label.count > 0 || label.name == 'ALL'"
-                :style="{ backgroundColor: label.color}"
-                :class="`inline-block text-xs text-white font-medium mr-2 py-1 px-3 rounded-full`"
-                >{{ label.name }} ({{ label.count }}) </div
+                class="inline-block my-0.5"
+                v-for="(label, index) in labelOverviews"
+                :key="index"
               >
+                <div
+                  v-if="label.count > 0 || label.name == 'ALL'"
+                  :style="{ backgroundColor: label.color }"
+                  :class="`inline-block text-xs text-white font-medium mr-2 py-1 px-3 rounded-full`"
+                >
+                  {{ label.name }} ({{ label.count }})
+                </div>
+              </div>
             </div>
 
-            <p class="text-grey-300 text-sm">Relationship Types</p>
-            <span
-              class="bg-gray-500 text-white text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300"
-              >Dark</span
-            >
+            <div class="relationship-group">
+              <p class="text-grey-300 text-sm">Relationship Types</p>
+              <div
+                class="inline-block my-0.5"
+                v-for="(label, index) in relationshipOverviews.names"
+                :key="index"
+              >
+                <div
+                  v-if="index !== 0"
+                  :style="{ backgroundColor: relationshipOverviews.color }"
+                  :class="`inline-block text-xs text-white font-medium mr-2 py-1 px-3 rounded-sm`"
+                >
+                  {{ label }}
+                </div>
+                <div
+                  v-if="index === 0"
+                  :style="{ backgroundColor: relationshipOverviews.color }"
+                  :class="`inline-block text-xs text-white font-medium mr-2 py-1 px-3 rounded-sm`"
+                >
+                  {{ label }} ({{ relationshipOverviews.count }})
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

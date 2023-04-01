@@ -84,7 +84,7 @@ export const useMainStore = defineStore("main", {
       relationships: {
           color: "#A0A0A0",
           count: 0,
-          names: ["*"]
+          names: ["ALL"]
       }
     }
   }),

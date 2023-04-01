@@ -85,7 +85,7 @@ watch(
           <div class="flex flex-col pb-6">
             <div v-if="resultData" class="flex flex-col">
               <p class="font-semibold">ชื่อ: {{ resultData.name }}</p>
-              <p class="font-semibold">ประเภท: {{ resultData.kind }}</p>
+              <p class="font-semibold">ประเภท: {{ resultData.label }}</p>
               <div class="mt-2">
                 <p class="w-full border text-center font-semibold">Attribute</p>
                 <div

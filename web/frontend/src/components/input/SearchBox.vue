@@ -65,6 +65,12 @@ const onSelectResult = (result) => {
   emit('onSelectResult', result);
   inputFocus.value = false;
 }
+
+const onBlur = () => {
+  setTimeout(() => {
+    inputFocus.value = false;
+  }, 100);
+}
 </script>
 
 <template>
@@ -72,7 +78,7 @@ const onSelectResult = (result) => {
   <div class="form-input-group relative">
     <p class="text-base">{{ props.label }}</p>
     <label for="simple-search" class="sr-only">{{ props.placeholder }}</label>
-    <div class="relative w-full z-0">
+    <div class="relative w-full z-1">
       <div
         class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
       >
@@ -94,6 +100,7 @@ const onSelectResult = (result) => {
         @input="onSearch($event.target.value)"
         :value="modelValue.name"
         required
+        @blur="onBlur"
         type="text"
         id="simple-search"
         class="z-1 block w-full pl-10 p-1.5 rounded-md bg-gray-50 text-gray-700 text-sm border border-[#FFB11D] focus:outline-none focus:border-[#F28606] focus:ring-2 placeholder:text-gray-300"
@@ -103,8 +110,8 @@ const onSelectResult = (result) => {
     <div
       id="dropdown"
       :class="`${
-        inputFocus ? 'block' : 'hidden'
-      } absolute z-1 bg-white divide-y divide-gray-100 rounded-b-lg shadow w-full h-auto overflow-scroll dark:bg-gray-700`"
+        inputFocus ? 'block ' : 'hidden'
+      } absolute z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow w-full max-h-80 overflow-scroll dark:bg-gray-700`"
     >
       <ul
         v-if="isLoading && !!dropdowns"

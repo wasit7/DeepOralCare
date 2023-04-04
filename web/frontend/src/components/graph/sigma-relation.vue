@@ -41,11 +41,11 @@ const CONFIG_GRAPH = {
   maxIterations: 120,
   isNodeFixed: (_, attr) => attr.highlighted,
   settings: {
-    attraction: 0.00014, // default 0.0005
-    repulsion: 0.629, // default 0.1
+    attraction: 0.1, // default 0.0005
+    repulsion: 0.1, // default 0.1
     gravity: 0.002, // default 0.0001
-    inertia: 0.5, // default 0.6
-    maxMove: 70, // default 200
+    inertia: 0.3, // default 0.6
+    maxMove: 200, // default 200
   },
 };
 
@@ -73,15 +73,15 @@ watch(
       graph.addEdge(edge.source, edge.target, {
         type: "arrow",
         label: edge.relation,
-        size: 5,
+        size: 2,
       });
     });
     graph.nodes().forEach((node, i) => {
       const angle = (i * 2 * Math.PI) / graph.order;
-      graph.setNodeAttribute(node, "x", 100 * Math.cos(angle));
-      graph.setNodeAttribute(node, "y", 100 * Math.sin(angle));
-      // graph.setNodeAttribute(node, "x", Math.random(0, 100));
-      // graph.setNodeAttribute(node, "y", Math.random(0, 100));
+      // graph.setNodeAttribute(node, "x", 100 * Math.cos(angle));
+      // graph.setNodeAttribute(node, "y", 100 * Math.sin(angle));
+      graph.setNodeAttribute(node, "x", Math.random(0, 100));
+      graph.setNodeAttribute(node, "y", Math.random(0, 100));
     });
     refresh_Graph(graph);
   },

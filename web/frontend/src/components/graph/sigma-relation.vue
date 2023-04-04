@@ -9,6 +9,7 @@ import circleLoading from "../loading/circle-loading.vue";
 
 import { onMounted, onUpdated, ref, reactive, watch, watchEffect } from "vue";
 
+
 //  props
 const props = defineProps({
   graphData: {
@@ -342,15 +343,6 @@ const refresh_Graph = async (graph) => {
         searchInputFocus ? 'block ' : 'hidden'
       } absolute z-10 m-auto top-38 left-0 right-0 bg-white divide-y divide-gray-100 rounded-b-lg shadow w-4/12 max-h-80 overflow-scroll`"
     >
-      <!-- <ul
-        v-if="!!nodeFilter"
-        class="py-2 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-200"
-        aria-labelledby="dropdown-button"
-      >
-      <li class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-        loading ...
-      </li>
-      </ul> -->
       <ul
         v-for="(node, index) in nodeFilter" :key="node.id"
         class="py-0 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-200"
@@ -359,8 +351,11 @@ const refresh_Graph = async (graph) => {
         <li @click="onSelected(node)">
           <button
             type="button"
-            class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+            class="inline-flex content-center items-baseline gap-x-3 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           >
+            <span 
+              :style="{ backgroundColor: node.color}"
+              :class="`flex w-3 h-3 rounded-full`"></span>
             {{ node.label }}
           </button>
         </li>

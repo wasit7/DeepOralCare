@@ -31,6 +31,7 @@ const searchInputFocus = ref(false);
 const searchHightlightNode = ref('');
 const selectedNodeHightlight = ref({});
 const nodeFilter = ref([]);
+const sigmaRenderer = ref(null);
 /* 
   Configure graph
   Document https://graphology.github.io/standard-library/layout-force.html
@@ -222,6 +223,8 @@ const create_Graph = async (graph) => {
     const { node } = e;
     emits("doubleClickNode", node);
   });
+
+  sigmaRenderer.value = renderer;
 };
 
 const onBlur = () => {
@@ -241,16 +244,31 @@ const onSearch = (value) => {
 const onSelected = (node) => {
   selectedNodeHightlight.value = node;
   searchHightlightNode.value = node.label
-  console.log(`set camera for `, selectedNodeHightlight.value);
-
 }
 
-const onHightlightNode = () => {
+const onNodeCameraHighlight = async () => {
   // setCamera
-  // searchHightlightNode.value = 1
+  const renderer = sigmaRenderer.value;
+  const node = selectedNodeHightlight.value;
+  // console.log(`set camera for `, node.id);
+  console.log(sigmaRenderer.value);
+  graph.setNodeAttribute(node.id, "cameraHightlightNode", true);
+  const cameraHightlightNode = renderer.getNodeDisplayData(node.id);
+
+  if (cameraHightlightNode)
+      renderer.getCamera().animate(
+        { ...cameraHightlightNode, ratio: 0.05 },
+        {
+          duration: 600,
+        },
+      );
+
+    return () => {
+      graph.setNodeAttribute(node.id, "cameraHightlightNode", false);
+    };
 }
 
-const refresh_Graph = (graph) => {
+const refresh_Graph = async (graph) => {
   layout.value.kill();
   layout.value = new ForceSupervisor(graph, CONFIG_GRAPH);
   var g = document.querySelector("#sigma-container");
@@ -261,7 +279,8 @@ const refresh_Graph = (graph) => {
   c.setAttribute("class", "w-full h-full relative");
   p.appendChild(c);
 
-  create_Graph(graph);
+  const renderer = await create_Graph(graph);
+  return renderer
 };
 </script>
 
@@ -307,7 +326,7 @@ const refresh_Graph = (graph) => {
             required
           />
           <button
-            @click="onHightlightNode"
+            @click="onNodeCameraHighlight"
             type="button"
             class="text-white absolute right-2.5 bottom-1.5 bg-secondary-light hover:bg-secondary focus:ring-4 focus:outline-none focus:ring-secondary-light font-light rounded-lg text-xs px-2 py-1"
           >

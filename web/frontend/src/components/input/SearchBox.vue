@@ -69,7 +69,7 @@ const onSelectResult = (result) => {
 const onBlur = () => {
   setTimeout(() => {
     inputFocus.value = false;
-  }, 100);
+  }, 200);
 }
 </script>
 

@@ -77,11 +77,11 @@ watch(
         </div>
         <div
           v-if="isLoading"
-          class="min-h-full py-6 px-10 flex flex-col gap-3 flex-grow"
+          class="min-h-full py-6 px-4 flex flex-col gap-3 flex-grow"
         >
           <circle-loading column />
         </div>
-        <div v-else class="min-h-full py-6 px-10 flex flex-col gap-3 flex-grow">
+        <div v-else class="min-h-full py-6 px-5 flex flex-col gap-3 flex-grow">
           <div class="flex flex-col pb-6">
             <div v-if="resultData" class="flex flex-col">
               <p class="font-semibold">ชื่อ: {{ resultData.name }}</p>

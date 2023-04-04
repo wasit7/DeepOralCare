@@ -228,7 +228,7 @@ const refresh_Graph = (graph) => {
   p.removeChild(g);
   var c = document.createElement("div");
   c.setAttribute("id", "sigma-container");
-  c.setAttribute("class", "w-full h-full");
+  c.setAttribute("class", "w-full h-full relative");
   p.appendChild(c);
 
   create_Graph(graph);
@@ -236,7 +236,7 @@ const refresh_Graph = (graph) => {
 </script>
 
 <template>
-  <div class="relative">
+  <div class="relative z-50">
     <circle-loading v-if="graphLoading" column />
     <div class="search-node absolute w-4/12 m-auto left-0 right-0 top-28">
       
@@ -256,7 +256,7 @@ const refresh_Graph = (graph) => {
     </div>
 
   </div>
-  <div id="sigma-container" class="w-full h-full"></div>
+  <div id="sigma-container"></div>
 </template>
 
 <style lang="scss" scoped>

@@ -12,7 +12,11 @@ module.exports = {
       'secondary-light': '#ffb11d',
       'background': '#dde3e5',
     },
-    extend: {},
+    extend: {
+      spacing: {
+        '38': '152px'
+      }
+    },
   },
   plugins: [
     require("flowbite/plugin"),

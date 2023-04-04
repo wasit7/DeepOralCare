@@ -19,7 +19,7 @@ const props = defineProps({
 });
 
 // state
-const graphLoading = ref(true);
+const graphLoading = ref(false);
 let draggedNode = ref(null);
 let isDragging = ref(false);
 let isHovering = ref(false);
@@ -101,7 +101,7 @@ watch(
         graph.addEdge(edge.source, edge.target, {
           type: "arrow",
           label: edge.relation,
-          size: 5,
+          size: 2,
           weight: 100,
         });
       });
@@ -236,8 +236,26 @@ const refresh_Graph = (graph) => {
 </script>
 
 <template>
-  <circle-loading v-if="graphLoading" column />
+  <div class="relative">
+    <circle-loading v-if="graphLoading" column />
+    <div class="search-node absolute w-4/12 m-auto left-0 right-0 top-28">
+      
+    <form>   
+        <label for="default-search" class="mb-2 text-xs font-medium text-gray-900 sr-only dark:text-white">
+          search in nodes
+        </label>
+        <div class="relative">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <input type="search" id="default-search" class="block w-full p-2.5 pl-10 text-xs text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-secondary-light focus:border-secondary-light dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="search in nodes" required>
+            <button type="submit" class="text-white absolute right-2.5 bottom-1.5 bg-secondary-light hover:bg-secondary focus:ring-4 focus:outline-none focus:ring-blue-300 font-light rounded-lg text-xs px-2 py-1 ">Search</button>
+        </div>
+    </form>
 
+    </div>
+
+  </div>
   <div id="sigma-container" class="w-full h-full"></div>
 </template>
 

@@ -27,6 +27,10 @@ let hoveredNode = ref(null);
 let hoveredNeighbors = ref(null);
 let selectedNode = ref(null);
 
+const searchInputFocus = ref(false);
+const searchHightlightNode = ref('');
+const selectedNodeHightlight = ref({});
+const nodeFilter = ref([]);
 /* 
   Configure graph
   Document https://graphology.github.io/standard-library/layout-force.html
@@ -220,6 +224,32 @@ const create_Graph = async (graph) => {
   });
 };
 
+const onBlur = () => {
+  setTimeout(() => {
+    searchInputFocus.value = false
+  }, 150);
+}
+
+const onSearch = (value) => {
+  searchInputFocus.value = true;
+  searchHightlightNode.value = value
+  console.log(value, searchHightlightNode.value);
+  nodeFilter.value = props.graphData.nodes.filter( (node) => node.label.includes(searchHightlightNode.value));
+  console.log(nodeFilter.value);
+}
+
+const onSelected = (node) => {
+  selectedNodeHightlight.value = node;
+  searchHightlightNode.value = node.label
+  console.log(`set camera for `, selectedNodeHightlight.value);
+
+}
+
+const onHightlightNode = () => {
+  // setCamera
+  // searchHightlightNode.value = 1
+}
+
 const refresh_Graph = (graph) => {
   layout.value.kill();
   layout.value = new ForceSupervisor(graph, CONFIG_GRAPH);
@@ -239,22 +269,85 @@ const refresh_Graph = (graph) => {
   <div class="relative z-50">
     <circle-loading v-if="graphLoading" column />
     <div class="search-node absolute w-4/12 m-auto left-0 right-0 top-28">
-      
-    <form>   
-        <label for="default-search" class="mb-2 text-xs font-medium text-gray-900 sr-only dark:text-white">
+      <form>
+        <label
+          for="default-search"
+          class="mb-2 text-xs font-medium text-gray-900 sr-only dark:text-white"
+        >
           search in nodes
         </label>
         <div class="relative">
-            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            </div>
-            <input type="search" id="default-search" class="block w-full p-2.5 pl-10 text-xs text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-secondary-light focus:border-secondary-light dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="search in nodes" required>
-            <button type="submit" class="text-white absolute right-2.5 bottom-1.5 bg-secondary-light hover:bg-secondary focus:ring-4 focus:outline-none focus:ring-blue-300 font-light rounded-lg text-xs px-2 py-1 ">Search</button>
+          <div
+            class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+          >
+            <svg
+              aria-hidden="true"
+              class="w-5 h-5 text-gray-500 dark:text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+          </div>
+          <input
+            type="search"
+            @input="onSearch($event.target.value)"
+            @blur="onBlur"
+            v-model="searchHightlightNode"
+            id="default-search"
+            class="block w-full p-2.5 pl-10 text-xs text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-secondary-light focus:border-secondary-light dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+            placeholder="search in nodes"
+            required
+          />
+          <button
+            @click="onHightlightNode"
+            type="button"
+            class="text-white absolute right-2.5 bottom-1.5 bg-secondary-light hover:bg-secondary focus:ring-4 focus:outline-none focus:ring-secondary-light font-light rounded-lg text-xs px-2 py-1"
+          >
+            Search
+          </button>
         </div>
-    </form>
-
+      </form>
     </div>
 
+    <div
+      id="dropdown"
+      :class="`${
+        searchInputFocus ? 'block ' : 'hidden'
+      } absolute z-10 m-auto top-38 left-0 right-0 bg-white divide-y divide-gray-100 rounded-b-lg shadow w-4/12 max-h-80 overflow-scroll`"
+    >
+      <!-- <ul
+        v-if="!!nodeFilter"
+        class="py-2 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-200"
+        aria-labelledby="dropdown-button"
+      >
+      <li class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+        loading ...
+      </li>
+      </ul> -->
+      <ul
+        v-for="(node, index) in nodeFilter" :key="node.id"
+        class="py-0 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-200"
+        aria-labelledby="dropdown-button"
+      >
+        <li @click="onSelected(node)">
+          <button
+            type="button"
+            class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          >
+            {{ node.label }}
+          </button>
+        </li>
+
+      </ul>
+    </div>
   </div>
   <div id="sigma-container"></div>
 </template>

@@ -45,6 +45,7 @@ const props = defineProps({
 });
 
 const inputFocus = ref(false);
+const isTyping = ref(false);
 
 const onSearchDisease = async () => {
   console.log(`onSearchDiseaseWork`);
@@ -71,6 +72,8 @@ const onBlur = () => {
     inputFocus.value = false;
   }, 200);
 }
+
+const onKeyup = () => setTimeout(() =>  isTyping.value = false, 250);
 </script>
 
 <template>
@@ -98,9 +101,11 @@ const onBlur = () => {
       </div>
       <input
         @input="onSearch($event.target.value)"
+        @blur="onBlur"
+        @keydown="isTyping = true"
+        @keyup="onKeyup"
         :value="modelValue.name"
         required
-        @blur="onBlur"
         type="text"
         id="simple-search"
         class="z-1 block w-full pl-10 p-1.5 rounded-md bg-gray-50 text-gray-700 text-sm border border-[#FFB11D] focus:outline-none focus:border-[#F28606] focus:ring-2 placeholder:text-gray-300"
@@ -114,24 +119,24 @@ const onBlur = () => {
       } absolute z-10 bg-white divide-y divide-gray-100 rounded-b-lg shadow w-full max-h-80 overflow-scroll dark:bg-gray-700`"
     >
       <ul
-        v-if="isLoading && !!dropdowns"
+        v-if="(isLoading && !!dropdowns) || isTyping"
         class="py-2 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-200"
         aria-labelledby="dropdown-button"
       >
-      <li class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-        loading ...
+      <li class="inline-flex w-full px-8 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+        seaching ...
       </li>
       </ul>
       <ul
         v-else
         v-for="(item, index) in dropdowns" :key="item.id"
-        class="py-2 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-200"
+        class="py-0 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-200"
         aria-labelledby="dropdown-button"
       >
         <li @click="onSelectResult(item)">
           <button
             type="button"
-            class="inline-flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+            class="inline-flex w-full px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           >
             {{ item.name }}
           </button>

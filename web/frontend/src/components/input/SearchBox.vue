@@ -1,8 +1,9 @@
 <script setup>
 import { onMounted, ref, watchEffect } from "vue";
+import { NODE_LABEL_COLOR } from "../../utils";
 
 // import SearchIcon from "../Icons/searchIcon.vue";
-const emit = defineEmits(['onSearch', 'onSelectResult'])
+const emit = defineEmits(["onSearch", "onSelectResult"]);
 const props = defineProps({
   label: {
     type: String,
@@ -58,22 +59,22 @@ const onSearchDisease = async () => {
 const onSearch = (value) => {
   inputFocus.value = true;
   // console.log(value);
-  emit('onSearch', value)
-}
+  emit("onSearch", value);
+};
 
 const onSelectResult = (result) => {
   console.log(result);
-  emit('onSelectResult', result);
+  emit("onSelectResult", result);
   inputFocus.value = false;
-}
+};
 
 const onBlur = () => {
   setTimeout(() => {
     inputFocus.value = false;
   }, 200);
-}
+};
 
-const onKeyup = () => setTimeout(() =>  isTyping.value = false, 250);
+const onKeyup = () => setTimeout(() => (isTyping.value = false), 250);
 </script>
 
 <template>
@@ -123,25 +124,31 @@ const onKeyup = () => setTimeout(() =>  isTyping.value = false, 250);
         class="py-2 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-200"
         aria-labelledby="dropdown-button"
       >
-      <li class="inline-flex w-full px-8 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-        seaching ...
-      </li>
+        <li
+          class="inline-flex w-full px-8 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+        >
+          seaching ...
+        </li>
       </ul>
       <ul
         v-else
-        v-for="(item, index) in dropdowns" :key="item.id"
+        v-for="(item, index) in dropdowns"
+        :key="item.id"
         class="py-0 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-200"
         aria-labelledby="dropdown-button"
       >
         <li @click="onSelectResult(item)">
           <button
             type="button"
-            class="inline-flex w-full px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+            class="inline-flex content-center items-baseline gap-x-3 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           >
+            <span
+              :style="{ backgroundColor: NODE_LABEL_COLOR[item.label] }"
+              :class="`flex w-3 h-3 rounded-full`"
+            ></span>
             {{ item.name }}
           </button>
         </li>
-
       </ul>
     </div>
   </div>

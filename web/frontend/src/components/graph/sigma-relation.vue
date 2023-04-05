@@ -41,11 +41,12 @@ const CONFIG_GRAPH = {
   maxIterations: 120,
   isNodeFixed: (_, attr) => attr.highlighted,
   settings: {
-    attraction: 0.1, // default 0.0005
+    attraction: 0.0005, // default 0.0005
     repulsion: 0.1, // default 0.1
-    gravity: 0.002, // default 0.0001
+    gravity: 0.0001, // default 0.0001
     inertia: 0.3, // default 0.6
-    maxMove: 200, // default 200
+    maxMove: 70, // default 200
+    draggedNode: true
   },
 };
 

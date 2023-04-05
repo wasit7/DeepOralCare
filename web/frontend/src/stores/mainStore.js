@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { axios_api } from "../api";
-import NODE_LABEL_COLOR from '../utils'
+// import NODE_LABEL_COLOR from '../utils'
 
 const COLOR_BY_NODE_LABEL = {
   "Gene/Protein": "#61B045",

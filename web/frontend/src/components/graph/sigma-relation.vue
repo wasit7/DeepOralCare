@@ -289,7 +289,7 @@ const refresh_Graph = async (graph) => {
 <template>
   <div class="relative z-50">
     <circle-loading v-if="graphLoading" column />
-    <div class="search-node absolute w-4/12 m-auto left-0 right-0 top-28">
+    <div class="search-node absolute w-4/12 m-auto left-0 right-0 top-20">
       <form>
         <label
           for="default-search"
@@ -320,10 +320,11 @@ const refresh_Graph = async (graph) => {
           <input
             type="search"
             @input="onSearch($event.target.value)"
+            @focus="searchInputFocus = true"
             @blur="onBlur"
             v-model="searchHightlightNode"
             id="default-search"
-            class="block w-full p-2.5 pl-10 text-xs text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-secondary-light focus:border-secondary-light dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+            :class="`block w-full p-2.5 pl-10 text-xs text-gray-900 border border-gray-300 bg-gray-50 focus:ring-secondary-light focus:border-secondary-light dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white ${!searchInputFocus ? 'rounded-lg' : 'rounded-t-lg'}`"
             placeholder="search in nodes"
             required
           />
@@ -342,7 +343,7 @@ const refresh_Graph = async (graph) => {
       id="dropdown"
       :class="`${
         searchInputFocus ? 'block ' : 'hidden'
-      } absolute z-10 m-auto top-38 left-0 right-0 bg-white divide-y divide-gray-100 rounded-b-lg shadow w-4/12 max-h-80 overflow-scroll`"
+      } absolute z-10 m-auto top-30 left-0 right-0 bg-white divide-y divide-gray-100 rounded-b-lg shadow w-4/12 max-h-80 overflow-scroll`"
     >
       <ul
         v-for="(node, index) in nodeFilter" :key="node.id"

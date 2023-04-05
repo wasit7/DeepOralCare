@@ -72,8 +72,8 @@ watch(
   >
     <template v-slot:content>
       <div class="w-full h-full overflow-auto">
-        <div class="pt-4 px-10 pb-3 sticky top-0 bg-white shadow-sm">
-          <p class="text-[22px]">รายละเอียด</p>
+        <div class="pt-8 px-4 pb-3 sticky top-0 bg-white shadow-sm">
+          <p class="text-xl">Description</p>
         </div>
         <div
           v-if="isLoading"
@@ -81,35 +81,42 @@ watch(
         >
           <circle-loading column />
         </div>
-        <div v-else class="min-h-full py-6 px-5 flex flex-col gap-3 flex-grow">
+        <div v-else class="py-3 px-5 flex flex-col gap-3">
           <div class="flex flex-col pb-6">
             <div v-if="resultData" class="flex flex-col">
-              <p class="font-semibold">ชื่อ: {{ resultData.name }}</p>
-              <p class="font-semibold">ประเภท: {{ resultData.label }}</p>
-              <div class="mt-2">
-                <p class="w-full border text-center font-semibold">Attribute</p>
-                <div
-                  v-for="(value, key) in resultData.attribute"
-                  class="flex justify-between border-collapse"
+              <div class="relative overflow-x-auto">
+                <table
+                  class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
                 >
-                  <p class="w-5/12 p-1 border">{{ findMatchLabel(key) }}:</p>
-                  <p class="w-7/12 p-1 border break-all">{{ value }}</p>
-                </div>
+                  <tbody
+                    class="text-xs text-gray-900 uppercase dark:text-gray-400"
+                  >
+                    <tr>
+                      <th scope="col" class="-px-1 py-2">ID : </th>
+                      <td scope="col" class="px-1 py-2">{{ resultData.id }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="col" class="-px-1 py-2">Name : </th>
+                      <td scope="col" class="px-1 py-2">{{ resultData.name }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="col" class="-px-1 py-2">Label : </th>
+                      <td scope="col" class="px-1 py-2">{{ resultData.label }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="col" class="-px-1 py-2">Source : </th>
+                      <td scope="col" class="px-1 py-2">{{ resultData.attribute?.source }}</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-
-              <!-- {{ resultData }} -->
-              <!-- <div class="flex-col">
-                <p class="text-lg">Overview</p>
-                <span class="text-grey-300 text-sm">Node Labels</span>
-                <span class="text-grey-300 text-sm">Relationship Types</span>
-              </div> -->
             </div>
 
             <span v-else class="text-sm my-10 opacity-70">
-              - เลือกหัวข้อในรายการที่พบ เพื่อดูรายละเอียด -
+              - single-click on node for more detail -
             </span>
           </div>
-          <div class="flex flex-col justify-start gap-2 mb-auto">
+          <div class="flex flex-col gap-2 mb-auto">
             <p class="text-lg">Overview</p>
             <div class="node-group">
               <p class="text-grey-300 text-sm">Node Labels</p>

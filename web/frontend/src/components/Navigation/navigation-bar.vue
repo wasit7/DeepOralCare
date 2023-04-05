@@ -51,7 +51,7 @@ const goHome = () =>
           } items-center justify-center sm:items-stretch sm:justify-start`"
         >
           <div
-            class="flex gap-3 flex-shrink-0 items-center cursor-pointer"
+            class="flex gap-3 flex-shrink-0 items-center"
             @click="goHome"
           >
             <img

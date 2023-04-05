@@ -263,7 +263,7 @@ watch(searchExposure.value, (newValue) => {
           <button
             type="button"
             @click="onExplore"
-            class="focus:outline-none text-white bg-[#FFB11D] hover:bg-[#F28606] font-medium rounded-md text-sm mt-1 px-5 py-1.5"
+            class="focus:outline-none text-white bg-primary-light hover:bg-primary font-medium rounded-md text-sm mt-1 px-5 py-1.5"
           >
             Explore
           </button>

@@ -108,7 +108,7 @@ const onKeyup = () => setTimeout(() =>  isTyping.value = false, 250);
         required
         type="text"
         id="simple-search"
-        class="z-1 block w-full pl-10 p-1.5 rounded-md bg-gray-50 text-gray-700 text-sm border border-[#FFB11D] focus:outline-none focus:border-[#F28606] focus:ring-2 placeholder:text-gray-300"
+        class="z-1 block w-full pl-10 p-1.5 rounded-md bg-gray-50 text-gray-700 text-sm border border-primary-light focus:outline-none focus:border-primary-light focus:ring-2 focus:ring-primary placeholder:text-gray-300"
         :placeholder="props.placeholder"
       />
     </div>

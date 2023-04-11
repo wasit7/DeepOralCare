@@ -169,8 +169,9 @@ const onrightClickNode = async (id) => {
 const onExplore = async () => {
   const { id: diseaseId } = searchDisease.value;
   const { id: exposureId } = searchExposure.value;
-  console.log(`searching relationship`, diseaseId, exposureId);
-  await storeMain.getRelation([diseaseId, exposureId]);
+  const ids = [diseaseId, exposureId].filter( (elem) => !!elem);
+  console.log(`searching relationship between ${diseaseId} and ${exposureId} (${ids.length})`);
+  await storeMain.getRelation(ids);
 };
 
 const onSelection = (entity, entitySelected) => {

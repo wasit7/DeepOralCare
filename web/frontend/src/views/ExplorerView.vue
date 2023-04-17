@@ -138,6 +138,7 @@ const onSearch = async () => {
 };
 
 const onclickNode = async (id) => {
+  console.log(`[G6.onclickNode] id: ${id}`);
   storeMain.getEntityDetail(id);
   selectResultID.value = id;
   selectResultData.value = await storeMain.getEntityDetail(id);
@@ -172,22 +173,18 @@ const onSearchEntity = async (searchObj) => {
 };
 
 watch(searchDisease.value, (newValue) => {
-  console.log("watch disease");
   clearTimeout(searchInputTimeout.disease);
   searchLoading.disease = true;
   searchInputTimeout.disease = setTimeout(async () => {
-    console.log("search");
     resultDisease.value = await onSearchEntity(searchDisease.value);
     searchLoading.disease = false;
   }, 700);
 });
 
 watch(searchExposure.value, (newValue) => {
-  console.log("watch exposure", searchExposure);
   clearTimeout(searchInputTimeout.exposure);
   searchLoading.exposure = true;
   searchInputTimeout.exposure = setTimeout(async () => {
-    console.log("search");
     resultExposure.value = await onSearchEntity(searchExposure.value);
     searchLoading.exposure = false;
   }, 700);
@@ -264,6 +261,7 @@ watch(searchExposure.value, (newValue) => {
       :nodes="entityRelation.nodes"
       :edges="entityRelation.edges"
       :data="entityRelation"
+      @click-node="onclickNode"
     />
 
     <!-- <sigma-graph

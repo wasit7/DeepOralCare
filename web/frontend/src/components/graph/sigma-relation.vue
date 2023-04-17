@@ -8,6 +8,11 @@ import ForceSupervisor from "graphology-layout-force/worker";
 import circleLoading from "../loading/circle-loading.vue";
 
 import { onMounted, onUpdated, ref, reactive, watch, watchEffect } from "vue";
+import { storeToRefs } from "pinia";
+import { useMainStore } from "../../stores/mainStore";
+
+const mainStore = useMainStore();
+// const overview_data = storeToRefs(mainStore)
 
 
 //  props

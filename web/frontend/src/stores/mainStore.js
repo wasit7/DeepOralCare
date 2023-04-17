@@ -233,8 +233,7 @@ export const useMainStore = defineStore("main", {
     },
     async getExplore(id) {
       const res = await axios_api.get(
-        `/searchapp/api/entity/?id=${id}&page_size=100&page=0
-`
+        `/searchapp/api/entity/?id=${id}&page_size=20&page=0`
       );
       this.res_explore = res.data;
     },

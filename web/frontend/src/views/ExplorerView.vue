@@ -14,6 +14,7 @@ import circleLoading from "../components/loading/circle-loading.vue";
 
 // Components
 import SearchBox from "../components/input/SearchBox.vue";
+import DagreGraph from "../components/graph/DagreGraph.vue"
 
 // Icons
 import searchIcon from "../components/Icons/searchIcon.vue";
@@ -134,22 +135,6 @@ const onSearch = async () => {
 
   storeMain.loading = false;
   pageLoading.value = false;
-};
-
-const addChip = (item) => {
-  if (item) {
-    const isExist = valueChip.value.find((i) => i.id === item.id);
-    if (!isExist) {
-      valueChip.value.push(item);
-      searchQuery.value = "";
-    }
-  }
-};
-
-const removeChip = () => {
-  if (!searchQuery.value && valueChip.value.length) {
-    valueChip.value.pop();
-  }
 };
 
 const onclickNode = async (id) => {
@@ -275,12 +260,17 @@ watch(searchExposure.value, (newValue) => {
     <!-- Panel: Right -->
     <RightPanel v-model="panelRight" :result-data="selectResultData" />
 
-    <sigma-graph
+    <DagreGraph 
+      :nodes="entityRelation.nodes"
+      :edges="entityRelation.edges"
+    />
+
+    <!-- <sigma-graph
       :graph-data="entityRelation"
       :explore-data="exploreRelation"
       @click-node="onclickNode"
       @double-click-node="onrightClickNode"
-    />
+    /> -->
   </div>
 </template>
 

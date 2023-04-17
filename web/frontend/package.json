@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@antv/g6": "^4.8.9",
     "@headlessui/vue": "^1.7.4",
     "@heroicons/vue": "^2.0.13",
     "axios": "^1.2.1",

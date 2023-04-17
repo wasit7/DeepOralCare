@@ -263,6 +263,7 @@ watch(searchExposure.value, (newValue) => {
     <DagreGraph 
       :nodes="entityRelation.nodes"
       :edges="entityRelation.edges"
+      :data="entityRelation"
     />
 
     <!-- <sigma-graph

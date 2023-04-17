@@ -100,6 +100,8 @@ export const useMainStore = defineStore("main", {
 
       let nodes = [];
       let edges = [];
+      state.overview_data.labels["ALL"].count = 0;
+      state.overview_data.relationships.count = 0;;
 
       if (entitys && relations) {
         nodes = entitys.map((i) => {
@@ -118,6 +120,7 @@ export const useMainStore = defineStore("main", {
             source: i.head,
             target: i.tail,
             relation: i.relation,
+            label: i.relation,
             color: "#666",
           };
         });

@@ -77,11 +77,6 @@ onMounted(() => {
 
     storeMain.getRelation(id_list);
   }
-  // const queryString = route.query.key_word;
-  // console.log(queryString);
-  // if (queryString) {
-  //   storeMain.getRelation(queryString.split(","));
-  // }
 });
 
 const getDetail = async (id) => {

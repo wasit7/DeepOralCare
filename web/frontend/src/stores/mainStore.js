@@ -25,7 +25,7 @@ export const useMainStore = defineStore("main", {
     res_entityDetail: {},
     overview_data: {
       labels: {
-        "ALL": { 
+        "ALL": {
           name: "ALL",
           color: "#A0A0A0",
           count: 0
@@ -82,9 +82,9 @@ export const useMainStore = defineStore("main", {
         },
       },
       relationships: {
-          color: "#A0A0A0",
-          count: 0,
-          names: ["ALL"]
+        color: "#A0A0A0",
+        count: 0,
+        names: ["ALL"]
       }
     }
   }),
@@ -93,7 +93,7 @@ export const useMainStore = defineStore("main", {
     search_result: (state) => state.res_search,
     entity_result: (state) => state.res_relation.entitys,
     sumRelation_result: (state) => state.res_relation.path_detail,
-    label_overview: (state) => { console.log('M1.2:', overview_data); return state.overview_data.labels},
+    label_overview: (state) => { console.log('M1.2:', overview_data); return state.overview_data.labels; },
     relation_overview: (state) => state.overview_data.relationships,
     relation_result: (state) => {
       const { entitys, relations } = state.res_relation;
@@ -110,12 +110,17 @@ export const useMainStore = defineStore("main", {
           return {
             id: i.id,
             label: i.name,
-            color: COLOR_BY_NODE_LABEL[i.label],
+            // color: COLOR_BY_NODE_LABEL[i.label],
+            style: {
+              fill: COLOR_BY_NODE_LABEL[i.label],
+              stroke: COLOR_BY_NODE_LABEL[i.label],
+              fontSize: 10
+            }
           };
         });
         edges = relations.map((i) => {
           state.overview_data.relationships.count += 1;
-          state.overview_data.relationships.names.push(i.relation)
+          state.overview_data.relationships.names.push(i.relation);
           return {
             source: i.head,
             target: i.tail,
@@ -213,7 +218,7 @@ export const useMainStore = defineStore("main", {
       if (res.data) {
         this.loading = false;
       }
-      
+
       return res.data;
     },
     async getRelation(ids) {

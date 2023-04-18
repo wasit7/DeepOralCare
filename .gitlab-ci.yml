@@ -12,8 +12,8 @@ variables:
   DOCKER_DRIVER: overlay2
   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_BUILD_REF_SLUG
   CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
-  DSSH: "ssh oae-user@192.168.24.197"
-  DEPLOY_SERVER: 192.168.24.197
+  DSSH: "ssh serveradmin@192.168.24.188"
+  DEPLOY_SERVER: 192.168.24.188
 
 deploy:
    image: gitlab/dind
@@ -32,11 +32,11 @@ deploy:
    script:
       - |
          $DSSH /bin/bash -s << EOT
-         cd /home/oae-user/61-sec-search-app
+         cd /home/serveradmin/51-search-app
          echo $CI_REPOSITORY_URL 
          git pull origin development
          docker compose -f web/docker-compose.yml up -d
-         docker compose -f web/docker-compose.yml restart frontend frontend-vue
+         docker compose -f web/docker-compose.yml restart
          EOT
 
 

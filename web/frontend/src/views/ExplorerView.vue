@@ -133,8 +133,6 @@ const onSearch = async () => {
 };
 
 const onclickNode = async (id) => {
-  console.log(`[G6.onclickNode] id: ${id}`);
-  storeMain.getEntityDetail(id);
   selectResultID.value = id;
   selectResultData.value = await storeMain.getEntityDetail(id);
 };
@@ -253,10 +251,10 @@ watch(searchExposure.value, (newValue) => {
     <RightPanel v-model="panelRight" :result-data="selectResultData" />
 
     <DagreGraph 
-      :nodes="entityRelation.nodes"
-      :edges="entityRelation.edges"
       :data="entityRelation"
+      :node-explore="exploreRelation"
       @click-node="onclickNode"
+      @dblclick-node="onrightClickNode"
     />
 
     <!-- <sigma-graph

@@ -174,7 +174,11 @@ export const useMainStore = defineStore("main", {
           return {
             id: i.id,
             label: i.name,
-            color: COLOR_BY_NODE_LABEL[i.label],
+            style: {
+              fill: COLOR_BY_NODE_LABEL[i.label],
+              stroke: COLOR_BY_NODE_LABEL[i.label],
+              fontSize: 10
+            }
           };
         });
         edges = relations.map((i) => {
@@ -182,6 +186,7 @@ export const useMainStore = defineStore("main", {
             source: i.head,
             target: i.tail,
             relation: i.relation,
+            label: i.relation,
             color: "#666",
           };
         });

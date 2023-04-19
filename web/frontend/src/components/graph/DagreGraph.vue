@@ -5,35 +5,20 @@ import { defineProps, defineEmits, onMounted, watch, ref, toRaw } from "vue";
 const emit = defineEmits(["clickNode", "dblclickNode", "rightclickNode"]);
 
 const props = defineProps({
-  nodes: {
-    type: Array,
-    // required: true,
-    default: [],
-  },
-  edges: {
-    type: Array,
-    // required: true,
-    default: [],
+  nodeExplore: {
+    type: Object,
+    default: {}
   },
   data: {
     type: Object,
   },
 });
 
-// Antv G6 Graph (Dagre)
-const graph = ref();
-
-watch(
-  () => props.data,
-  (newValue, oldValue) => {
-    console.log(`watch props data`)
-    graph.value.data(newValue);
-    graph.value.render();
-  }
-);
+const graph = ref(null);
 
 onMounted(() => {
-  const graphElement = document.getElementById("dagre-graph")
+  // initialize graph
+  const graphElement = document.getElementById("dagre-graph");
   const containerElement = document.getElementById("container");
 
   graph.value = new G6.Graph({
@@ -87,13 +72,13 @@ onMounted(() => {
       },
     },
   });
-  // graph.container = document.getElementById("container");
 
+  // data from props.data in the first-time maybe empty
   const data = {
     nodes: props.data.nodes,
     edges: props.data.edges,
   };
-  console.log(props);
+  // data data, then render graph
   graph.value.data(data);
   graph.value.render();
 
@@ -106,50 +91,7 @@ onMounted(() => {
   graph.value.on("node:dblclick", (evt) => {
     const nodeModel = toRaw(evt.item._cfg.model);
     console.log("node has been double-clicked ", nodeModel);
-    const newData = {
-      nodes: [
-        {
-          original_name: "oral cavity cancer",
-          name: "oral cavity cancer",
-          id: "MONDO_5515_oral_cavity_cancer",
-          source: "MONDO",
-          label: "oral cavity cancer",
-        },
-        {
-          original_name: "AAA",
-          name: "AAA Entity",
-          id: "AAA_id",
-          source: "TEMP",
-          label: "AAA Entity",
-        },
-        {
-          original_name: "B",
-          name: "B Entity",
-          id: "B_id",
-          source: "TEMP",
-          label: "B Entity",
-        },
-      ],
-      edges: [
-        {
-          source: "MONDO_5515_oral_cavity_cancer",
-          target: "AAA_id",
-          label: "AAA parent of Disease"
-        },
-        {
-          source: "MONDO_5515_oral_cavity_cancer",
-          target: "B_id",
-          label: "B parent of Disease"
-        }
-      ]
-    };
-
-    newData.nodes.forEach( (node) => graph.value.addItem('node', node));
-    newData.edges.forEach( (edge) => graph.value.addItem('edge', edge));
-
-    // graph.value.changeData(newData, true)
-    // graph.value.render();
-    // emit("dblclickNode", nodeModel.id);
+    emit("dblclickNode", nodeModel.id);
   });
 
   graph.value.on("node:contextmenu", (evt) => {
@@ -157,6 +99,27 @@ onMounted(() => {
     console.log("node has been right-clicked (contextmenu) ", nodeModel);
   });
 });
+
+
+
+watch(
+  () => props.data,
+  (newValue, oldValue) => {
+    // after search
+    graph.value.data(newValue);
+    graph.value.render();
+  }
+);
+
+watch(
+  () => props.nodeExplore,
+  (newValue, oldValue) => {
+    // after double-click on node
+    newValue.nodes.forEach( (node) => graph.value.addItem('node', node));
+    newValue.edges.forEach( (edge) => graph.value.addItem('edge', edge));
+    graph.value.layout();
+  }
+);
 </script>
 
 <template>

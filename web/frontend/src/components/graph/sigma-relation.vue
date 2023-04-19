@@ -8,6 +8,12 @@ import ForceSupervisor from "graphology-layout-force/worker";
 import circleLoading from "../loading/circle-loading.vue";
 
 import { onMounted, onUpdated, ref, reactive, watch, watchEffect } from "vue";
+import { storeToRefs } from "pinia";
+import { useMainStore } from "../../stores/mainStore";
+
+const mainStore = useMainStore();
+// const overview_data = storeToRefs(mainStore)
+
 
 //  props
 const props = defineProps({
@@ -19,7 +25,7 @@ const props = defineProps({
 });
 
 // state
-const graphLoading = ref(true);
+const graphLoading = ref(false);
 let draggedNode = ref(null);
 let isDragging = ref(false);
 let isHovering = ref(false);
@@ -27,6 +33,11 @@ let hoveredNode = ref(null);
 let hoveredNeighbors = ref(null);
 let selectedNode = ref(null);
 
+const searchInputFocus = ref(false);
+const searchHightlightNode = ref('');
+const selectedNodeHightlight = ref({});
+const nodeFilter = ref([]);
+const sigmaRenderer = ref(null);
 /* 
   Configure graph
   Document https://graphology.github.io/standard-library/layout-force.html
@@ -35,11 +46,12 @@ const CONFIG_GRAPH = {
   maxIterations: 120,
   isNodeFixed: (_, attr) => attr.highlighted,
   settings: {
-    attraction: 0.00014, // default 0.0005
-    repulsion: 0.629, // default 0.1
-    gravity: 0.002, // default 0.0001
-    inertia: 0.5, // default 0.6
+    attraction: 0.0005, // default 0.0005
+    repulsion: 0.1, // default 0.1
+    gravity: 0.0001, // default 0.0001
+    inertia: 0.3, // default 0.6
     maxMove: 70, // default 200
+    draggedNode: true
   },
 };
 
@@ -67,15 +79,15 @@ watch(
       graph.addEdge(edge.source, edge.target, {
         type: "arrow",
         label: edge.relation,
-        size: 5,
+        size: 2,
       });
     });
     graph.nodes().forEach((node, i) => {
       const angle = (i * 2 * Math.PI) / graph.order;
-      graph.setNodeAttribute(node, "x", 100 * Math.cos(angle));
-      graph.setNodeAttribute(node, "y", 100 * Math.sin(angle));
-      // graph.setNodeAttribute(node, "x", Math.random(0, 100));
-      // graph.setNodeAttribute(node, "y", Math.random(0, 100));
+      // graph.setNodeAttribute(node, "x", 100 * Math.cos(angle));
+      // graph.setNodeAttribute(node, "y", 100 * Math.sin(angle));
+      graph.setNodeAttribute(node, "x", Math.random(0, 100));
+      graph.setNodeAttribute(node, "y", Math.random(0, 100));
     });
     refresh_Graph(graph);
   },
@@ -101,7 +113,7 @@ watch(
         graph.addEdge(edge.source, edge.target, {
           type: "arrow",
           label: edge.relation,
-          size: 5,
+          size: 2,
           weight: 100,
         });
       });
@@ -218,9 +230,52 @@ const create_Graph = async (graph) => {
     const { node } = e;
     emits("doubleClickNode", node);
   });
+
+  sigmaRenderer.value = renderer;
 };
 
-const refresh_Graph = (graph) => {
+const onBlur = () => {
+  setTimeout(() => {
+    searchInputFocus.value = false
+  }, 150);
+}
+
+const onSearch = (value) => {
+  searchInputFocus.value = true;
+  searchHightlightNode.value = value
+  console.log(value, searchHightlightNode.value);
+  nodeFilter.value = props.graphData.nodes.filter( (node) => node.label.includes(searchHightlightNode.value));
+  console.log(nodeFilter.value);
+}
+
+const onSelected = (node) => {
+  selectedNodeHightlight.value = node;
+  searchHightlightNode.value = node.label
+}
+
+const onNodeCameraHighlight = async () => {
+  // setCamera
+  const renderer = sigmaRenderer.value;
+  const node = selectedNodeHightlight.value;
+  // console.log(`set camera for `, node.id);
+  console.log(sigmaRenderer.value);
+  graph.setNodeAttribute(node.id, "cameraHightlightNode", true);
+  const cameraHightlightNode = renderer.getNodeDisplayData(node.id);
+
+  if (cameraHightlightNode)
+      renderer.getCamera().animate(
+        { ...cameraHightlightNode, ratio: 0.05 },
+        {
+          duration: 600,
+        },
+      );
+
+    return () => {
+      graph.setNodeAttribute(node.id, "cameraHightlightNode", false);
+    };
+}
+
+const refresh_Graph = async (graph) => {
   layout.value.kill();
   layout.value = new ForceSupervisor(graph, CONFIG_GRAPH);
   var g = document.querySelector("#sigma-container");
@@ -228,17 +283,94 @@ const refresh_Graph = (graph) => {
   p.removeChild(g);
   var c = document.createElement("div");
   c.setAttribute("id", "sigma-container");
-  c.setAttribute("class", "w-full h-full");
+  c.setAttribute("class", "w-full h-full relative");
   p.appendChild(c);
 
-  create_Graph(graph);
+  const renderer = await create_Graph(graph);
+  return renderer
 };
 </script>
 
 <template>
-  <circle-loading v-if="graphLoading" column />
+  <div class="relative z-50">
+    <circle-loading v-if="graphLoading" column />
+    <div class="search-node absolute w-4/12 m-auto left-0 right-0 top-20">
+      <form>
+        <label
+          for="default-search"
+          class="mb-2 text-xs font-medium text-gray-900 sr-only dark:text-white"
+        >
+          search in nodes
+        </label>
+        <div class="relative">
+          <div
+            class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+          >
+            <svg
+              aria-hidden="true"
+              class="w-5 h-5 text-gray-500 dark:text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+          </div>
+          <input
+            type="search"
+            @input="onSearch($event.target.value)"
+            @focus="searchInputFocus = true"
+            @blur="onBlur"
+            v-model="searchHightlightNode"
+            id="default-search"
+            :class="`block w-full p-2.5 pl-10 text-xs text-gray-900 border border-gray-300 bg-gray-50 focus:ring-secondary-light focus:border-secondary-light dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white ${!searchInputFocus ? 'rounded-lg' : 'rounded-t-lg'}`"
+            placeholder="search in nodes"
+            required
+          />
+          <button
+            @click="onNodeCameraHighlight"
+            type="button"
+            class="text-white absolute right-2.5 bottom-1.5 bg-secondary-light hover:bg-secondary focus:ring-4 focus:outline-none focus:ring-secondary-light font-light rounded-lg text-xs px-2 py-1"
+          >
+            Search
+          </button>
+        </div>
+      </form>
+    </div>
 
-  <div id="sigma-container" class="w-full h-full"></div>
+    <div
+      id="dropdown"
+      :class="`${
+        searchInputFocus ? 'block ' : 'hidden'
+      } absolute z-10 m-auto top-30 left-0 right-0 bg-white divide-y divide-gray-100 rounded-b-lg shadow w-4/12 max-h-80 overflow-scroll`"
+    >
+      <ul
+        v-for="(node, index) in nodeFilter" :key="node.id"
+        class="py-0 text-sm text-gray-700 dark:text-gray-200 divide-y divide-gray-200"
+        aria-labelledby="dropdown-button"
+      >
+        <li @click="onSelected(node)">
+          <button
+            type="button"
+            class="inline-flex content-center items-baseline gap-x-3 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          >
+            <span 
+              :style="{ backgroundColor: node.color}"
+              :class="`flex w-3 h-3 rounded-full`"></span>
+            {{ node.label }}
+          </button>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+  <div id="sigma-container"></div>
 </template>
 
 <style lang="scss" scoped>

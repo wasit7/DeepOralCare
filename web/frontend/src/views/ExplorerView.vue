@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, watchEffect, watch } from "vue";
+import { ref, reactive, onMounted, computed, watchEffect, watch } from "vue";
 import Logo from "../assets/imgs/CA-AppLogo.png";
 import navigationBar from "../components/Navigation/navigation-bar.vue";
 import { useRoute, useRouter } from "vue-router";
@@ -11,6 +11,13 @@ import inputMultiplechip from "../components/input/input-multiplechip.vue";
 import { trimpEllipsis } from "../resources/format";
 import RightPanel from "../components/Panel/RightPanel.vue";
 import circleLoading from "../components/loading/circle-loading.vue";
+
+// Components
+import SearchBox from "../components/input/SearchBox.vue";
+import DagreGraph from "../components/graph/DagreGraph.vue"
+
+// Icons
+import searchIcon from "../components/Icons/searchIcon.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -27,6 +34,19 @@ const itemsKey = ref([]);
 const pageLoading = ref(false);
 const selectResultID = ref(null);
 const selectResultData = ref(null);
+
+const searchDisease = ref({ id: "", name: "" });
+const searchExposure = ref({ id: "", name: "" });
+const resultDisease = ref(null);
+const resultExposure = ref(null);
+const searchLoading = reactive({
+  disease: false,
+  exposure: false,
+});
+const searchInputTimeout = reactive({
+  disease: null,
+  exposure: null,
+});
 
 const entityFilter = computed(() => {
   return storeMain.entity_result?.filter((item) => {
@@ -57,11 +77,6 @@ onMounted(() => {
 
     storeMain.getRelation(id_list);
   }
-  // const queryString = route.query.key_word;
-  // console.log(queryString);
-  // if (queryString) {
-  //   storeMain.getRelation(queryString.split(","));
-  // }
 });
 
 const getDetail = async (id) => {
@@ -95,7 +110,6 @@ const onSearch = async () => {
   storeMain.loading = true;
 
   // Remove focus from input after use search
-  // TODO: Refactor move it in to input-multiplechip component
   document.getElementById("input-chip").blur();
 
   if (searchQuery.value === "") {
@@ -118,24 +132,7 @@ const onSearch = async () => {
   pageLoading.value = false;
 };
 
-const addChip = (item) => {
-  if (item) {
-    const isExist = valueChip.value.find((i) => i.id === item.id);
-    if (!isExist) {
-      valueChip.value.push(item);
-      searchQuery.value = "";
-    }
-  }
-};
-
-const removeChip = () => {
-  if (!searchQuery.value && valueChip.value.length) {
-    valueChip.value.pop();
-  }
-};
-
 const onclickNode = async (id) => {
-  storeMain.getEntityDetail(id);
   selectResultID.value = id;
   selectResultData.value = await storeMain.getEntityDetail(id);
 };
@@ -147,10 +144,54 @@ const onrightClickNode = async (id) => {
     pageLoading.value = false;
   }, 240);
 };
+
+const onExplore = async () => {
+  const { id: diseaseId } = searchDisease.value;
+  const { id: exposureId } = searchExposure.value;
+  const ids = [diseaseId, exposureId].filter( (elem) => !!elem);
+  console.log(`searching relationship between ${diseaseId} and ${exposureId} (${ids.length})`);
+  await storeMain.getRelation(ids);
+};
+
+const onSelection = (entity, entitySelected) => {
+  entity.id = entitySelected.id;
+  entity.name = entitySelected.name;
+  console.log(entity);
+};
+
+const onSearchEntity = async (searchObj) => {
+  await storeMain.getSearch(searchObj.name);
+  const results = storeMain.search_result;
+  return results;
+};
+
+watch(searchDisease.value, (newValue) => {
+  clearTimeout(searchInputTimeout.disease);
+  searchLoading.disease = true;
+  searchInputTimeout.disease = setTimeout(async () => {
+    resultDisease.value = await onSearchEntity(searchDisease.value);
+    searchLoading.disease = false;
+  }, 700);
+});
+
+watch(searchExposure.value, (newValue) => {
+  clearTimeout(searchInputTimeout.exposure);
+  searchLoading.exposure = true;
+  searchInputTimeout.exposure = setTimeout(async () => {
+    resultExposure.value = await onSearchEntity(searchExposure.value);
+    searchLoading.exposure = false;
+  }, 700);
+});
 </script>
 
 <template>
-  <navigation-bar class="fixed w-full" search-able app-name="CA search" :app-logo="Logo">
+  <!-- Navigation -->
+  <navigation-bar
+    class="fixed w-full"
+    app-name="CA search"
+    :search-able="false"
+    :app-logo="Logo"
+  >
     <template v-slot:search>
       <input-multiplechip
         v-model="searchQuery"
@@ -162,7 +203,8 @@ const onrightClickNode = async (id) => {
       />
     </template>
   </navigation-bar>
-  <!-- TODO: Components relation Graph here -->
+
+  <!-- Graph Explorer -->
   <div class="w-full h-screen relative bg-slate-50">
     <div
       v-if="pageLoading"
@@ -170,112 +212,57 @@ const onrightClickNode = async (id) => {
     >
       <circle-loading column />
     </div>
-    <dsm-slide-overlay
-      :class="`${
-        panelLeft && panelRight
-          ? ' w-2/4 left-1/4'
-          : panelLeft
-          ? ' left-1/4 w-full'
-          : panelRight
-          ? ' w-full'
-          : 'left-0'
-      }  `"
-      v-model="panelBottom"
-      bottom
-    >
-      <template v-slot:content>
-        <div class="py-6 px-10">
-          <div class="pt-4 px-10 pb-3 sticky top-0 bg-white shadow-sm">
-            <p class="text-[22px]">
-              รายละเอียดความสัมพันธ์ ({{ storeMain.sumRelation_result?.length }}
-              ความสัมพันธ์)
-            </p>
-          </div>
-          <div
-            class="flex border-b w-full py-3"
-            v-for="(item, index) in storeMain.sumRelation_result"
-            :key="item"
+
+    <!-- Panel: Left -->
+    <dsm-slide-overlay v-model="panelLeft" class="pt-16 w-full h-full">
+      <template class="h-3/5" v-slot:content>
+        <div class="flex flex-col gap-3 px-5 pt-6 sticky top-0 bg-white w-full">
+          <SearchBox
+            label="Disease"
+            placeholder="touge cancer"
+            v-model="searchDisease"
+            :is-loading="searchLoading.disease"
+            @on-search="searchDisease.name = $event"
+            @on-select-result="onSelection(searchDisease, $event)"
+            :dropdowns="resultDisease"
+          />
+          <SearchBox
+            label="Exposure"
+            placeholder="tobacco tar"
+            v-model="searchExposure"
+            :is-loading="searchLoading.exposure"
+            @on-search="searchExposure.name = $event"
+            @on-select-result="onSelection(searchExposure, $event)"
+            :dropdowns="resultExposure"
+          />
+
+          <button
+            type="button"
+            @click="onExplore"
+            class="focus:outline-none text-white bg-primary-light hover:bg-primary font-medium rounded-md text-sm mt-1 px-5 py-1.5"
           >
-            <div class="text-center px-5">
-              {{ index + 1 }}
-            </div>
-            <p>
-              {{ item }}
-            </p>
-          </div>
+            Explore
+          </button>
         </div>
       </template>
     </dsm-slide-overlay>
 
-    <dsm-slide-overlay v-model="panelLeft" class="pt-16">
-      <template v-slot:content>
-        <div
-          class="flex flex-col gap-3 px-10 pt-6 sticky top-0 bg-white w-full"
-        >
-          <search-input v-model="searchEntity" :placeholder="'ค้นหารายการ'" />
-          <p class="text-[22px]">รายการที่พบ</p>
-        </div>
-        <div class="flex flex-col">
-          <ul
-            class="min-h-[75px] border-b px-10 py-2 hover:bg-gray-100"
-            :class="{ 'bg-gray-300': selectResultID === item.id }"
-            v-for="item in entityFilter"
-            :key="item.id"
-          >
-            <li @click="getDetail(item.id)">
-              <p>{{ item.name }}</p>
-              <p>{{ item.kind }}</p>
-              <!-- <p v-for="key in Object.keys(item.attribute)" :key="key">
-                {{ key }}
-                {{
-                  typeof item.attribute[key] === "object"
-                    ? trimpEllipsis(item.attribute[key].join(", "), 20)
-                    : item.attribute[key]
-                }}
-              </p> -->
-            </li>
-          </ul>
-        </div>
-      </template>
-    </dsm-slide-overlay>
-
-    <!-- Right panel -->
+    <!-- Panel: Right -->
     <RightPanel v-model="panelRight" :result-data="selectResultData" />
 
-    <sigma-graph
+    <DagreGraph 
+      :data="entityRelation"
+      :node-explore="exploreRelation"
+      @click-node="onclickNode"
+      @dblclick-node="onrightClickNode"
+    />
+
+    <!-- <sigma-graph
       :graph-data="entityRelation"
       :explore-data="exploreRelation"
       @click-node="onclickNode"
       @double-click-node="onrightClickNode"
-    />
-    <div
-      :class="`absolute duration-500 bg-white z-20 ${
-        panelRight && panelBottom
-          ? ' right-1/4 bottom-1/4'
-          : panelRight
-          ? 'right-1/4 bottom-4'
-          : panelBottom
-          ? ' bottom-1/4 right-4'
-          : ' right-4 bottom-4'
-      }`"
-    >
-      <span class="flex gap-2 items-center px-3 py-2"
-        ><div class="rounded-full w-5 h-5 bg-[#5879A3]" />
-        <p>Person</p></span
-      >
-      <span class="flex gap-2 items-center px-3 py-2"
-        ><div class="rounded-full w-5 h-5 bg-[#E49244]" />
-        <p>Organization</p></span
-      >
-      <span class="flex gap-2 items-center px-3 py-2"
-        ><div class="rounded-full w-5 h-5 bg-[#A77C9F]" />
-        <p>Evidence</p></span
-      >
-      <span class="flex gap-2 items-center px-3 py-2"
-        ><div class="rounded-full w-5 h-5 bg-[#6A9E58]" />
-        <p>Transaction</p></span
-      >
-    </div>
+    /> -->
   </div>
 </template>
 

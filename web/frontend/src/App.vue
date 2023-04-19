@@ -5,7 +5,7 @@ import webIcon from "./assets/imgs/CA-AppLogo.png";
 
 const favicon = document.getElementById("favicon");
 favicon.href = webIcon;
-document.title = "CA";
+document.title = "CA | SEARCH";
 </script>
 
 <template>

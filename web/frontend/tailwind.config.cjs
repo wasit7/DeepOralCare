@@ -1,7 +1,25 @@
 module.exports = {
-  content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
+  content: [
+    "./node_modules/flowbite/**/*.js",
+    "./index.html", 
+    "./src/**/*.{vue,js,ts,jsx,tsx}",
+  ],
   theme: {
-    extend: {},
+    colors: {
+      'primary': '#194456',
+      'primary-light': '#3b8f85',
+      'secondary': '#f28606',
+      'secondary-light': '#ffb11d',
+      'background': '#dde3e5',
+    },
+    extend: {
+      spacing: {
+        '30': '120px',
+        '38': '152px'
+      }
+    },
   },
-  plugins: [],
+  plugins: [
+    require("flowbite/plugin"),
+  ],
 };

@@ -34,13 +34,13 @@ const props = defineProps({
     } duration-500 z-30 `"
   >
     <div
-      :class="` px-2 py-5 shadow absolute bg-white -z-10 ${
-        bottom ? 'left-20 -top-10 w-16 h-10 ' : 'top-24'
-      }   cursor-pointer ${right ? ' -left-8' : '-right-8'}`"
+      :class="`px-1 py-2 shadow absolute bg-white -z-10 ${
+        bottom ? 'left-20 -top-10 w-16 h-10 ' : 'top-20'
+      }   cursor-pointer ${right ? ' -left-6 rounded-l-md' : '-right-6 rounded-r-md'}`"
       @click="$emit('update:modelValue', !modelValue)"
     >
       <div
-        :class="` flex items-center justify-center w-full h-full ${
+        :class="` flex items-center justify-center w-2/3 h-2/3 ${
           modelValue
             ? right
               ? 'rotate-180'
@@ -60,7 +60,7 @@ const props = defineProps({
     <div
       :class="`${
         modelValue ? ' ' : ' overflow-hidden'
-      } bg-white  max-h-full  overflow-auto relative  flex flex-col`"
+      } bg-white  h-full  overflow-auto relative  flex flex-col`"
     >
       <slot name="content"> content Here ! </slot>
     </div>

@@ -26,6 +26,10 @@ onMounted(() => {
     width: containerElement.scrollWidth || 1500,
     height: containerElement.scrollHeight || 1000,
     fitCenter: true,
+    animate: true,
+    animateCfg: {
+      duration: 1200
+    },
     modes: {
       default: [
         "drag-canvas",
@@ -47,13 +51,16 @@ onMounted(() => {
       type: "dagre",
       rankdir: "LR",
       align: undefined, // undefined means 'start-node' and 'end-node' position are 'center' by defaults
-      nodesepFunc: () => 10,
-      ranksepFunc: () => 50,
-      linkDistance: () => 100,
+      nodesepFunc: () => 5,
+      ranksepFunc: () => 40,
+      linkDistance: () => 50,
     },
     defaultNode: {
       size: [40, 40],
       type: "circle",
+      labelCfg: {
+        position: "top"
+      },
       style: {
         lineWidth: 1,
         stroke: "#5B8FF9",
@@ -63,7 +70,12 @@ onMounted(() => {
     defaultEdge: {
       size: 1,
       color: "lightgrey",
+      labelCfg: {
+        // position: "middle",
+        refY: 15,
+      },
       style: {
+        opacity: 1,
         lineWidth: 1,
         endArrow: {
           path: "M 0,0 L 8,4 L 8,-4 Z",

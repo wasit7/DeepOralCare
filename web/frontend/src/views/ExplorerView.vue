@@ -188,7 +188,7 @@ watch(searchExposure.value, (newValue) => {
   <!-- Navigation -->
   <navigation-bar
     class="fixed w-full"
-    app-name="CA search"
+    app-name="Knowledge Graph Explorer"
     :search-able="false"
     :app-logo="Logo"
   >

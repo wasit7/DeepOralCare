@@ -14,7 +14,7 @@ def _extract_value(elm):
 def get_spo(id, page=0, page_size=100):
     data = graph.query(f"""
         match r=(head)-[relation]->(tail) 
-        where head.id = "{id}" or tail.id = "{id}"
+        where head.id = "{id}"
         return head,relation,tail 
         order by head.id
         skip {page*page_size}
@@ -51,19 +51,19 @@ def get_relation(ids, hop=2):
         return get_spo(id=ids[0]), []
     
     cypher_query = f"""
-        MATCH path= allshortestpaths((n)-[r*..{hop}]->(m))
+        MATCH path=allshortestpaths((n)-[r*..{hop}]->(m))
         WHERE n.id = "{ids[0]}" and m.id ="{ids[1]}"
         RETURN path
     """
+    # cypher_query = f"""
+    #      MATCH (n) where n.id IN ["{'","'.join(ids)}"]
+    #      WITH collect(n) as nodes
+    #      UNWIND nodes as n
+    #      UNWIND nodes as m
+    #      WITH * WHERE id(n) < id(m)
+    #      MATCH path = allshortestpaths((n)-[r *..{hop}]->(m))
+    #      RETURN path
+    #  """
     query = graph.query(cypher_query)
-    # query = graph.query(f"""
-    #     MATCH (n) where n.id IN ["{'","'.join(ids)}"]
-    #     WITH collect(n) as nodes
-    #     UNWIND nodes as n
-    #     UNWIND nodes as m
-    #     WITH * WHERE id(n) < id(m)
-    #     MATCH path =(n)-[r *..{hop}]-(m)
-    #     RETURN path
-    # """)
     data = query.data()
     return _extract_path_1(data), serialize_path(data)

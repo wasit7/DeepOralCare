@@ -28,7 +28,7 @@ onMounted(() => {
     fitCenter: true,
     animate: true,
     animateCfg: {
-      duration: 1200
+      duration: 1200,
     },
     modes: {
       default: [
@@ -59,7 +59,7 @@ onMounted(() => {
       size: [40, 40],
       type: "circle",
       labelCfg: {
-        position: "top"
+        position: "top",
       },
       style: {
         lineWidth: 1,
@@ -80,6 +80,19 @@ onMounted(() => {
         endArrow: {
           path: "M 0,0 L 8,4 L 8,-4 Z",
           fill: "lightgrey",
+        },
+      },
+      nodeStateStyles: {
+        // The node style when the state 'hover' is true
+        hover: {
+          fill: "lightsteelblue",
+          stroke: '#000',
+            lineWidth: 3,
+        },
+        // The node style when the state 'click' is true
+        click: {
+          stroke: "#000",
+          lineWidth: 3,
         },
       },
     },
@@ -110,9 +123,19 @@ onMounted(() => {
     const nodeModel = toRaw(evt.item._cfg.model);
     console.log("node has been right-clicked (contextmenu) ", nodeModel);
   });
+
+  graph.value.on("node:mouseenter", (e) => {
+    const nodeItem = e.item; // Get the target item
+    console.log(`hover on `, nodeItem);
+    graph.value.setItemState(nodeItem, "hover", true); // Set the state 'hover' of the item to be true
+  });
+
+  // Mouse leave a node
+  graph.value.on("node:mouseleave", (e) => {
+    const nodeItem = e.item; // Get the target item
+    graph.value.setItemState(nodeItem, "hover", false); // Set the state 'hover' of the item to be false
+  });
 });
-
-
 
 watch(
   () => props.data,
@@ -127,8 +150,8 @@ watch(
   () => props.nodeExplore,
   (newValue, oldValue) => {
     // after double-click on node
-    newValue.nodes.forEach( (node) => graph.value.addItem('node', node));
-    newValue.edges.forEach( (edge) => graph.value.addItem('edge', edge));
+    newValue.nodes.forEach((node) => graph.value.addItem("node", node));
+    newValue.edges.forEach((edge) => graph.value.addItem("edge", edge));
     graph.value.layout();
   }
 );

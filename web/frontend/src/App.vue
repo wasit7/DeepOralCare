@@ -5,7 +5,7 @@ import webIcon from "./assets/imgs/CA-AppLogo.png";
 
 const favicon = document.getElementById("favicon");
 favicon.href = webIcon;
-document.title = "CA | SEARCH";
+document.title = "CA | Knowledge Graph Explorer";
 </script>
 
 <template>

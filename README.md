@@ -16,7 +16,7 @@ SYNTAX.
 ```bash
 docker cp ./data/<SOURCE_FLE>.csv <CONTAINER_ID_OR_NAME>:/var/lib/neo4j/import/<DEST_FILE>.csv
 ```
-EX.
+EX. 
 ```bash
 docker cp ./data/kg_nodes.csv 51_CA-search-neo4j:/var/lib/neo4j/import/primekg_nodes.csv
 docker cp ./data/kg_spo.csv 51_CA-search-neo4j:/var/lib/neo4j/import/primekg_spo.csv

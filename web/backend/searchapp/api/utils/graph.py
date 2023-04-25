@@ -53,7 +53,7 @@ def get_relation(ids, hop=2):
     
     cypher_query = f"""
         MATCH path=allshortestpaths((n)-[r*..{hop}]->(m))
-        WHERE n.id = "{ids[1]}" and m.id ="{ids[0]}"
+        WHERE n.id = "{ids[0]}" and m.id ="{ids[1]}"
         RETURN path
     """
     # cypher_query = f"""

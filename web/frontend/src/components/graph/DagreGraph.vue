@@ -51,9 +51,9 @@ onMounted(() => {
       type: "dagre",
       rankdir: "LR",
       align: undefined, // undefined means 'start-node' and 'end-node' position are 'center' by defaults
-      nodesepFunc: () => 5,
-      ranksepFunc: () => 40,
-      linkDistance: () => 50,
+      nodesepFunc: () => 1,
+      ranksepFunc: () => 50,
+      linkDistance: () => 20,
     },
     defaultNode: {
       size: [40, 40],
@@ -77,10 +77,11 @@ onMounted(() => {
       style: {
         opacity: 1,
         lineWidth: 1,
-        endArrow: {
+        startArrow: {
           path: "M 0,0 L 8,4 L 8,-4 Z",
           fill: "lightgrey",
         },
+        endArrow: false
       },
       nodeStateStyles: {
         // The node style when the state 'hover' is true

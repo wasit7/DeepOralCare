@@ -77,11 +77,11 @@ onMounted(() => {
       style: {
         opacity: 1,
         lineWidth: 1,
-        startArrow: {
+        endArrow: {
           path: "M 0,0 L 8,4 L 8,-4 Z",
           fill: "lightgrey",
         },
-        endArrow: false
+        startArrow: false
       },
       nodeStateStyles: {
         // The node style when the state 'hover' is true

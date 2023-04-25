@@ -20,12 +20,24 @@ onMounted(() => {
   // initialize graph
   const graphElement = document.getElementById("dagre-graph");
   const containerElement = document.getElementById("container");
+  const calPadding = (num, percent) => (num / 100) * percent;
+  const graphPaddingX = calPadding(containerElement.scrollWidth, 30);
+  const graphPaddingY = calPadding(containerElement.scrollHeight, 30);
+  const paddingDimension = [
+    graphPaddingX,
+    graphPaddingY,
+    graphPaddingY,
+    graphPaddingX,
+  ];
+  console.log(paddingDimension);
 
   graph.value = new G6.Graph({
     container: graphElement,
     width: containerElement.scrollWidth || 1500,
     height: containerElement.scrollHeight || 1000,
     fitCenter: true,
+    fitView: true,
+    fitViewPadding: paddingDimension,
     animate: true,
     animateCfg: {
       duration: 1200,
@@ -81,14 +93,14 @@ onMounted(() => {
           path: "M 0,0 L 8,4 L 8,-4 Z",
           fill: "lightgrey",
         },
-        startArrow: false
+        startArrow: false,
       },
       nodeStateStyles: {
         // The node style when the state 'hover' is true
         hover: {
           fill: "lightsteelblue",
-          stroke: '#000',
-            lineWidth: 3,
+          stroke: "#000",
+          lineWidth: 3,
         },
         // The node style when the state 'click' is true
         click: {

@@ -35,6 +35,11 @@ const pageLoading = ref(false);
 const selectResultID = ref(null);
 const selectResultData = ref(null);
 
+const buttonDisableComputed = computed(() => {
+  // const isDisabled = !(!!searchExposure.id || !!searchDisease.id);
+  console.log(`button is disabled : ${!(!!searchExposure.id || !!searchDisease.id)}`);
+  return !(!!searchExposure.id || !!searchDisease.id);
+})
 const searchDisease = ref({ id: "", name: "" });
 const searchExposure = ref({ id: "", name: "" });
 const resultDisease = ref(null);
@@ -155,7 +160,6 @@ const onExplore = async () => {
   console.log(`searching relationship between ${diseaseId} and ${exposureId} (${ids.length})`);
   await storeMain.getRelation(ids);
   searchLoading.result = false;
-
 };
 
 const onSelection = (entity, entitySelected) => {
@@ -178,6 +182,7 @@ const onSearchExposureEntity = async (searchObj) => {
 
 watch(searchDisease.value, (newValue) => {
   clearTimeout(searchInputTimeout.disease);
+  // console.log('update disease', newValue.name, newValue.name.length);
   searchLoading.disease = true;
   searchInputTimeout.disease = setTimeout(async () => {
     resultDisease.value = await onSearchDiseaseEntity(searchDisease.value);
@@ -248,12 +253,14 @@ watch(searchExposure.value, (newValue) => {
           />
 
           <button
+            :disabled="!(!!searchExposure.id || !!searchDisease.id)"
             id="btn-explore"
             type="button"
             @click="onExplore"
             class="focus:outline-none text-white bg-primary-light hover:bg-primary font-medium rounded-md text-sm mt-1 px-5 py-1.5"
             :class="{
               'opacity-75 cursor-wait': searchLoading.result,
+              'opacity-50 cursor-not-allowed': !(!!searchExposure.id || !!searchDisease.id)
             }"
           >
             <span v-if="!searchLoading.result">Explore</span>

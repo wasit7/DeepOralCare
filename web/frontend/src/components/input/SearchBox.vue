@@ -71,7 +71,7 @@ const onSelectResult = (result) => {
 const onBlur = () => {
   setTimeout(() => {
     inputFocus.value = false;
-  }, 200);
+  }, 300);
 };
 
 const onKeyup = () => setTimeout(() => (isTyping.value = false), 250);

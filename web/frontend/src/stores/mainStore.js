@@ -226,6 +226,28 @@ export const useMainStore = defineStore("main", {
 
       return res.data;
     },
+    async getSearchDisease(query) {
+      this.loading = true;
+      this.res_search = [];
+      const res = await axios_api.get(`/searchapp/api/search/disease/?q=${query}`);
+      this.res_search = res.data;
+      if (res.data) {
+        this.loading = false;
+      }
+
+      return res.data;
+    },
+    async getSearchExposure(query) {
+      this.loading = true;
+      this.res_search = [];
+      const res = await axios_api.get(`/searchapp/api/search/exposure/?q=${query}`);
+      this.res_search = res.data;
+      if (res.data) {
+        this.loading = false;
+      }
+
+      return res.data;
+    },
     async getRelation(ids) {
       const res = await axios_api.post(`/searchapp/api/entity/relation/`, {
         ids,

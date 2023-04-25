@@ -164,8 +164,14 @@ const onSelection = (entity, entitySelected) => {
   console.log(entity);
 };
 
-const onSearchEntity = async (searchObj) => {
-  await storeMain.getSearch(searchObj.name);
+const onSearchDiseaseEntity = async (searchObj) => {
+  await storeMain.getSearchDisease(searchObj.name);
+  const results = storeMain.search_result;
+  return results;
+};
+
+const onSearchExposureEntity = async (searchObj) => {
+  await storeMain.getSearchExposure(searchObj.name);
   const results = storeMain.search_result;
   return results;
 };
@@ -174,7 +180,7 @@ watch(searchDisease.value, (newValue) => {
   clearTimeout(searchInputTimeout.disease);
   searchLoading.disease = true;
   searchInputTimeout.disease = setTimeout(async () => {
-    resultDisease.value = await onSearchEntity(searchDisease.value);
+    resultDisease.value = await onSearchDiseaseEntity(searchDisease.value);
     searchLoading.disease = false;
   }, 700);
 });
@@ -183,7 +189,7 @@ watch(searchExposure.value, (newValue) => {
   clearTimeout(searchInputTimeout.exposure);
   searchLoading.exposure = true;
   searchInputTimeout.exposure = setTimeout(async () => {
-    resultExposure.value = await onSearchEntity(searchExposure.value);
+    resultExposure.value = await onSearchExposureEntity(searchExposure.value);
     searchLoading.exposure = false;
   }, 700);
 });

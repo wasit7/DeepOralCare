@@ -17,6 +17,16 @@ class SearchViewset(viewsets.GenericViewSet,
         objs = utils.pgsearch.search(word=request.GET.get('q', ""), model=models.Entity, fields=['name'])
         return Response(serializers.EntitySearchSerializer(objs, many=True).data, status=status.HTTP_200_OK)
     
+    @action(methods=['GET'], detail=False)
+    def disease(self, request, *args, **kwargs):
+        objs = utils.pgsearch.search_disease(word=request.GET.get('q', ""), model=models.Entity, fields=['name'])
+        return Response(serializers.EntitySearchSerializer(objs, many=True).data, status=status.HTTP_200_OK)
+    
+    @action(methods=['GET'], detail=False)
+    def exposure(self, request, *args, **kwargs):
+        objs = utils.pgsearch.search_exposure(word=request.GET.get('q', ""), model=models.Entity, fields=['name'])
+        return Response(serializers.EntitySearchSerializer(objs, many=True).data, status=status.HTTP_200_OK)
+    
 
 class EntityViewsets(viewsets.GenericViewSet,
                      mixins.ListModelMixin):

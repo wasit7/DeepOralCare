@@ -184,6 +184,9 @@ watch(searchDisease.value, (newValue) => {
   clearTimeout(searchInputTimeout.disease);
   // console.log('update disease', newValue.name, newValue.name.length);
   searchLoading.disease = true;
+  if (searchDisease.value.name.length === 0) {
+    searchDisease.value.id = null;
+  }
   searchInputTimeout.disease = setTimeout(async () => {
     resultDisease.value = await onSearchDiseaseEntity(searchDisease.value);
     searchLoading.disease = false;
@@ -193,6 +196,9 @@ watch(searchDisease.value, (newValue) => {
 watch(searchExposure.value, (newValue) => { 
   clearTimeout(searchInputTimeout.exposure);
   searchLoading.exposure = true;
+  if (searchExposure.value.name.length === 0) {
+    searchExposure.value.id = null;
+  }
   searchInputTimeout.exposure = setTimeout(async () => {
     resultExposure.value = await onSearchExposureEntity(searchExposure.value);
     searchLoading.exposure = false;

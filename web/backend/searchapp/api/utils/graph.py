@@ -11,16 +11,17 @@ def _extract_value(elm):
         for k,v in elm.items()
     }
 
-def get_spo(id, page=0, page_size=100):
+def get_spo(id, page=0, page_size=50):
     data = graph.query(f"""
-        match r=(head)-[relation]->(tail) 
+        match path=allshortestpaths((head)-[relation*..5]->(tail:Exposure) )
         where head.id = "{id}"
-        return head,relation,tail 
+        return path
         order by head.id
         skip {page*page_size}
         limit {page_size}
     """)
-    return [_extract_value(elm) for elm in data]
+    # return [_extract_path_1(elm) for elm in data]
+    return _extract_path_1(data)
 
 def _extract_path_1(data):
     output = []
@@ -52,7 +53,7 @@ def get_relation(ids, hop=2):
     
     cypher_query = f"""
         MATCH path=allshortestpaths((n)-[r*..{hop}]->(m))
-        WHERE n.id = "{ids[0]}" and m.id ="{ids[1]}"
+        WHERE n.id = "{ids[1]}" and m.id ="{ids[0]}"
         RETURN path
     """
     # cypher_query = f"""

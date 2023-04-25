@@ -27,14 +27,32 @@ const relationshipOverviews = computed(
   () => mainStore.overview_data.relationships
 );
 
-const resolveUpdateList = async (data) => {
-  await data.forEach((item, index) => {
-    updateList.value.push({
-      index: index,
-      label: item.hist_desc + ` (${item.last_upd_date})`,
-    });
-  });
-};
+const concateSourceUrl = ({id, source, source_url, other}) => {
+  const links = []
+  let link = `${source_url}${id}`
+  switch (source) {
+    case "MONDO_grouped":
+      const ids = id.split("_");
+      ids.map( id => links.push(`${source_url}${id.padStart(7, 0)}`))
+      break;
+  
+    default:
+      id = id.padStart(7, 0)
+      link = `${source_url}${id}`
+      links.push(link)
+      break;
+  }
+  return links
+}
+
+// const resolveUpdateList = async (data) => {
+//   await data.forEach((item, index) => {
+//     updateList.value.push({
+//       index: index,
+//       label: item.hist_desc + ` (${item.last_upd_date})`,
+//     });
+//   });
+// };
 
 watch(
   store,
@@ -49,11 +67,11 @@ watch(
 watch(
   () => props.resultData,
   async (newValue, oldValue) => {
-    updateList.value = [];
-    selectUpdate.value = 0;
+    // updateList.value = [];
+    // selectUpdate.value = 0;
     if (newValue) {
       isLoading.value = true;
-      await resolveUpdateList(newValue.update_profile);
+      // await resolveUpdateList(newValue.update_profile);
       setTimeout(() => {
         isLoading.value = false;
       }, 240);
@@ -84,28 +102,39 @@ watch(
         <div v-else class="py-3 px-5 flex flex-col gap-3">
           <div class="flex flex-col pb-6">
             <div v-if="resultData" class="flex flex-col">
-              <div class="relative overflow-x-auto">
+              <div class="relative overflow-x-hidden">
                 <table
-                  class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+                  class="w-full text-ellipsis text-sm text-left text-gray-500 dark:text-gray-400"
                 >
                   <tbody
                     class="text-xs text-gray-900 uppercase dark:text-gray-400"
                   >
                     <tr>
-                      <th scope="col" class="-px-1 py-2">ID : </th>
-                      <td scope="col" class="px-1 py-2">{{ resultData.id }}</td>
+                      <th scope="col" class="truncate -px-1 py-2">ID : </th>
+                      <td scope="col" class="hover:overflow-x-visible px-1 py-2">{{ resultData.id }}</td>
                     </tr>
                     <tr>
-                      <th scope="col" class="-px-1 py-2">Name : </th>
-                      <td scope="col" class="px-1 py-2">{{ resultData.name }}</td>
+                      <th scope="col" class="truncate -px-1 py-2">Name : </th>
+                      <td scope="col" class="truncate px-1 py-2">{{ resultData.name }}</td>
                     </tr>
                     <tr>
-                      <th scope="col" class="-px-1 py-2">Label : </th>
-                      <td scope="col" class="px-1 py-2">{{ resultData.label }}</td>
+                      <th scope="col" class="truncate -px-1 py-2">Label : </th>
+                      <td scope="col" class="truncate px-1 py-2">{{ resultData.label }}</td>
                     </tr>
                     <tr>
-                      <th scope="col" class="-px-1 py-2">Source : </th>
-                      <td scope="col" class="px-1 py-2">{{ resultData.attribute?.source }}</td>
+                      <th scope="col" class="truncate -px-1 py-2">Source : </th>
+                      <td scope="col" class="truncate px-1 py-2">{{ resultData.attribute?.source }}</td>
+                    </tr>
+                    <tr>
+                      <th scope="col" class="truncate -px-1 py-2 align-text-top">Detail : </th>
+                      <td scope="col" class="truncate px-1 py-2">
+                        <a v-for="link in concateSourceUrl({...resultData.attribute})" :key="link"
+                          class="lowercase text-blue-500 hover:text-blue-700 active:text-blue-400 block" 
+                          :href="link"
+                          target="_blank">
+                          {{ link }}
+                        </a>
+                      </td>
                     </tr>
                   </tbody>
                 </table>

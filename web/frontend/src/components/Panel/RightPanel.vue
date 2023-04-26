@@ -159,7 +159,7 @@ watch(
                   :style="{ backgroundColor: label.color }"
                   :class="`inline-block text-xs text-white font-medium mr-2 py-1 px-3 rounded-full`"
                 >
-                  {{ label.name }} ({{ label.count }})
+                  {{ label.name }}
                 </div>
               </div>
             </div>

@@ -7,7 +7,7 @@ const emit = defineEmits(["clickNode", "dblclickNode", "rightclickNode"]);
 const props = defineProps({
   nodeExplore: {
     type: Object,
-    default: {}
+    default: {},
   },
   data: {
     type: Object,
@@ -26,17 +26,20 @@ onMounted(() => {
   const paddingDimension = [
     graphPaddingX,
     graphPaddingY,
-    graphPaddingY,
     graphPaddingX,
+    graphPaddingY,
   ];
-  console.log(paddingDimension);
+  const width = containerElement.scrollWidth || 1600;
+  const height = containerElement.scrollHeight || 1200;
+
+  // console.log(paddingDimension, [width, height]);
 
   graph.value = new G6.Graph({
     container: graphElement,
-    width: containerElement.scrollWidth || 1500,
-    height: containerElement.scrollHeight || 1000,
+    width: width,
+    height: height,
     fitCenter: true,
-    fitView: true,
+    // fitView: true,
     fitViewPadding: paddingDimension,
     animate: true,
     animateCfg: {

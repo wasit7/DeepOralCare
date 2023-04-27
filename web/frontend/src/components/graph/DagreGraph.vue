@@ -135,6 +135,12 @@ onMounted(() => {
     emit("dblclickNode", nodeModel.id);
   });
 
+  graph.value.on("node:touchstart", (event) => {
+    const nodeItem = toRaw(event.item._cfg.model);
+    console.log(nodeItem);
+    emit("clickNode", nodeItem.id);
+  })
+
   graph.value.on("node:contextmenu", (evt) => {
     const nodeModel = toRaw(evt.item._cfg.model);
     console.log("node has been right-clicked (contextmenu) ", nodeModel);
@@ -151,6 +157,7 @@ onMounted(() => {
     const nodeItem = e.item; // Get the target item
     graph.value.setItemState(nodeItem, "hover", false); // Set the state 'hover' of the item to be false
   });
+
 });
 
 watch(

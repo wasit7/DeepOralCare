@@ -8,8 +8,14 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-  right: Boolean,
-  bottom: Boolean,
+  right: {
+    type: Boolean,
+    default: false
+  },
+  bottom: {
+    type: Boolean,
+    default: false
+  },
 });
 
 // const overlay = ref(true);
@@ -17,6 +23,37 @@ const props = defineProps({
 // const toggleOverlay = () => {
 //   overlay.value = !overlay.value;
 // };
+
+// modelValue 
+//       ? 
+//         bottom
+//           ? 'h-1/4 w-full'
+//           : 'w-5/6 md:w-1/3 lg:w-1/4 h-full'
+//       : bottom
+//           ? 'h-0 w-full '
+//           : 'w-0  h-full'
+// if (modelValue) {
+//   if (bottom) {
+//     return 'h-1/4 w-full'
+//   } else {
+//     return 'w-5/6 md:w-1/3 lg:w-1/4 h-full'
+//   }
+// } else {
+//   if (bottom) {
+//     return 'h-0 w-full '
+//   } else {
+//     return 'w-0  h-full'
+//   }
+// }
+
+    const classObject = {
+      'w-5/6 md:w-1/3 lg:w-1/4 h-full': props.modelValue,
+      'h-1/4 w-full ' : props.bottom && props.modelValue,
+      'bottom-0 h-0 w-full' : props.bottom,
+      'right-0 h-full': props.right,
+
+    }
+    console.log(classObject);
 </script>
 
 <template>
@@ -25,7 +62,7 @@ const props = defineProps({
       modelValue
         ? bottom
           ? 'h-1/4 w-full'
-          : 'w-1/3 md:w-1/4 h-full'
+          : 'w-3/4 md:w-1/4 h-full'
         : bottom
         ? 'h-0 w-full '
         : 'w-0  h-full'

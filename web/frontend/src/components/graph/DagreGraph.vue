@@ -1,6 +1,6 @@
 <script setup>
 import G6 from "@antv/g6";
-import { defineProps, defineEmits, onMounted, watch, ref, toRaw } from "vue";
+import { defineProps, defineEmits, onMounted, watch, ref, toRaw, computed } from "vue";
 
 const emit = defineEmits(["clickNode", "dblclickNode", "rightclickNode"]);
 
@@ -32,7 +32,7 @@ onMounted(() => {
   const width = containerElement.scrollWidth || 1600;
   const height = containerElement.scrollHeight || 1200;
 
-  // console.log(paddingDimension, [width, height]);
+  const dagreDirection = computed(() => height > width ? "TB" : "LR")
 
   graph.value = new G6.Graph({
     container: graphElement,

@@ -304,7 +304,18 @@ watch(searchExposure.value, (newValue) => {
     </dsm-slide-overlay>
 
     <!-- Panel: Right -->
-    <RightPanel v-model="slideState.right" :result-data="selectResultData" />
+    <RightPanel 
+      v-model="slideState.right"
+      :right-panel="true"
+      :result-data="selectResultData" 
+    />
+
+    <!-- Panel: Bottom -->
+    <RightPanel 
+      v-model="slideState.bottom" 
+      :bottom-panel="true"
+      :result-data="selectResultData" 
+    />
 
     <DagreGraph 
       :data="entityRelation"

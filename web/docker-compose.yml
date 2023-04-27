@@ -4,6 +4,7 @@ volumes:
     media: {}
     static: {}
     graph_db: {}
+    db: {}
 
 services: 
     db:
@@ -11,6 +12,8 @@ services:
         image: postgres:11.3-alpine
         env_file:
             - .env
+        volumes:
+            - db:/var/lib/postgresql/data
             
     neo4j:
         container_name: ${PROJECT_NAME}-neo4j

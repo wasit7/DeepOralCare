@@ -26,9 +26,6 @@ const storeMain = useMainStore();
 const searchQuery = ref("");
 const searchEntity = ref("");
 const valueChip = ref([]);
-const panelLeft = ref(true);
-const panelRight = ref(true);
-const panelBottom = ref(true);
 const searchTimeout = ref(null);
 const itemsKey = ref([]);
 const pageLoading = ref(false);
@@ -44,6 +41,11 @@ const searchDisease = ref({ id: "", name: "" });
 const searchExposure = ref({ id: "", name: "" });
 const resultDisease = ref(null);
 const resultExposure = ref(null);
+const slideState = ref({
+  left: true,
+  right: false,
+  bottom: false
+});
 const searchLoading = reactive({
   disease: false,
   exposure: false,
@@ -142,6 +144,8 @@ const onSearch = async () => {
 const onclickNode = async (id) => {
   selectResultID.value = id;
   selectResultData.value = await storeMain.getEntityDetail(id);
+  slideState.value.right = true;
+  slideState.value.bottom = true;
 };
 
 const onrightClickNode = async (id) => {
@@ -236,7 +240,7 @@ watch(searchExposure.value, (newValue) => {
     </div>
 
     <!-- Panel: Left -->
-    <dsm-slide-overlay v-model="panelLeft" class="pt-16 w-full h-full">
+    <dsm-slide-overlay v-model="slideState.left" class="pt-16 w-full h-full">
       <template class="h-3/5" v-slot:content>
         <div class="flex flex-col gap-3 px-5 pt-6 sticky top-0 bg-white w-full">
           <SearchBox
@@ -300,7 +304,7 @@ watch(searchExposure.value, (newValue) => {
     </dsm-slide-overlay>
 
     <!-- Panel: Right -->
-    <RightPanel v-model="panelRight" :result-data="selectResultData" />
+    <RightPanel v-model="slideState.right" :result-data="selectResultData" />
 
     <DagreGraph 
       :data="entityRelation"

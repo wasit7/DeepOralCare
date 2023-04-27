@@ -135,9 +135,19 @@ onMounted(() => {
     emit("dblclickNode", nodeModel.id);
   });
 
+  const doubleTouchEventDelay = 300; // ms
+  let lastTabTimestamp = 0;
   graph.value.on("node:touchstart", (event) => {
     const nodeItem = toRaw(event.item._cfg.model);
     console.log(nodeItem);
+
+    const currentTimeMs = new Date().getTime();
+    const tabDelay = currentTimeMs - lastTabTimestamp;
+    if (tabDelay < doubleTouchEventDelay ) {
+      console.log('double tab event emits');
+      emit("dblclickNode", nodeItem.id);
+    }
+    lastTabTimestamp = tabDelay;
     emit("clickNode", nodeItem.id);
   })
 

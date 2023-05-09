@@ -240,7 +240,7 @@ watch(searchExposure.value, (newValue) => {
     </div>
 
     <!-- Panel: Left -->
-    <dsm-slide-overlay v-model="slideState.left" class="pt-16 w-full h-full">
+    <dsm-slide-overlay left v-model="slideState.left" >
       <template class="h-3/5" v-slot:content>
         <div class="flex flex-col gap-3 px-5 pt-6 sticky top-0 bg-white w-full">
           <SearchBox
@@ -304,11 +304,11 @@ watch(searchExposure.value, (newValue) => {
     </dsm-slide-overlay>
 
     <!-- Panel: Right -->
-    <RightPanel 
+    <!-- <RightPanel 
       v-model="slideState.right"
       :right-panel="true"
       :result-data="selectResultData" 
-    />
+    /> -->
 
     <!-- Panel: Bottom -->
     <RightPanel 

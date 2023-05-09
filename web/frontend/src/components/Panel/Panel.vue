@@ -1,12 +1,9 @@
 <script setup>
-import { storeToRefs } from "pinia";
 import { ref, watch, computed } from "vue";
-
 import { useMainStore } from "../../stores/mainStore";
 
 import circleLoading from "../loading/circle-loading.vue";
 import dsmSlideOverlay from "../SlideOverlay/dsm-slideOverlay.vue";
-import findMatchLabel from "../../utils/matchLabelName.js";
 
 const mainStore = useMainStore();
 const props = defineProps({
@@ -14,14 +11,19 @@ const props = defineProps({
     type: Object || null,
     default: null,
   },
+  rightPanel: {
+    type: Boolean,
+    default: false
+  },
+  bottomPanel: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const panelState = ref(true);
 const isLoading = ref(false);
-const updateList = ref([]);
-const selectUpdate = ref(0);
 
-const store = storeToRefs(mainStore);
 const labelOverviews = computed(() => mainStore.overview_data.labels);
 const relationshipOverviews = computed(
   () => mainStore.overview_data.relationships
@@ -45,33 +47,11 @@ const concateSourceUrl = ({id, source, source_url, other}) => {
   return links
 }
 
-// const resolveUpdateList = async (data) => {
-//   await data.forEach((item, index) => {
-//     updateList.value.push({
-//       index: index,
-//       label: item.hist_desc + ` (${item.last_upd_date})`,
-//     });
-//   });
-// };
-
-watch(
-  store,
-  () => {
-    console.log("M1:", store.value);
-    // console.log('M1.3:', mainStore.label_overview);
-    // console.log('M1.4:', mainStore.overview_data);
-  },
-  { deep: true }
-);
-
 watch(
   () => props.resultData,
   async (newValue, oldValue) => {
-    // updateList.value = [];
-    // selectUpdate.value = 0;
     if (newValue) {
       isLoading.value = true;
-      // await resolveUpdateList(newValue.update_profile);
       setTimeout(() => {
         isLoading.value = false;
       }, 240);
@@ -85,8 +65,12 @@ watch(
   <dsm-slide-overlay
     v-model="panelState"
     @update:model-value="$emit('update:modelValue', panelState)"
-    class="pt-16"
-    right
+    :right="props.rightPanel"
+    :bottom="props.bottomPanel"
+    :class="{
+      'hidden pt-0 md:block md:pt-16': props.rightPanel,
+      'block pt-14 md:hidden': props.bottomPanel
+    }"
   >
     <template v-slot:content>
       <div class="w-full h-full overflow-auto">

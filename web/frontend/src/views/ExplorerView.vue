@@ -9,7 +9,7 @@ import { useMainStore } from "../stores/mainStore";
 import sigmaGraph from "../components/graph/sigma-relation.vue";
 import inputMultiplechip from "../components/input/input-multiplechip.vue";
 import { trimpEllipsis } from "../resources/format";
-import RightPanel from "../components/Panel/RightPanel.vue";
+import Panel from "../components/Panel/Panel.vue";
 import circleLoading from "../components/loading/circle-loading.vue";
 
 // Components
@@ -242,7 +242,7 @@ watch(searchExposure.value, (newValue) => {
     <!-- Panel: Left -->
     <dsm-slide-overlay left v-model="slideState.left" >
       <template class="h-3/5" v-slot:content>
-        <div class="flex flex-col gap-3 px-5 pt-6 sticky top-0 bg-white w-full">
+        <div class="z-30 flex flex-col gap-3 px-5 pt-16 sticky top-0 bg-white w-full">
           <SearchBox
             label="Disease"
             placeholder="touge cancer"
@@ -304,14 +304,14 @@ watch(searchExposure.value, (newValue) => {
     </dsm-slide-overlay>
 
     <!-- Panel: Right -->
-    <!-- <RightPanel 
+    <Panel 
       v-model="slideState.right"
       :right-panel="true"
       :result-data="selectResultData" 
-    /> -->
+    />
 
     <!-- Panel: Bottom -->
-    <RightPanel 
+    <Panel 
       v-model="slideState.bottom" 
       :bottom-panel="true"
       :result-data="selectResultData" 
@@ -323,13 +323,6 @@ watch(searchExposure.value, (newValue) => {
       @click-node="onclickNode"
       @dblclick-node="onrightClickNode"
     />
-
-    <!-- <sigma-graph
-      :graph-data="entityRelation"
-      :explore-data="exploreRelation"
-      @click-node="onclickNode"
-      @double-click-node="onrightClickNode"
-    /> -->
   </div>
 </template>
 

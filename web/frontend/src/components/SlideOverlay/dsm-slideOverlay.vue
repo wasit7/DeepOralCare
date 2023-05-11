@@ -10,7 +10,7 @@ const props = defineProps({
   },
   left: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   right: {
     type: Boolean,
@@ -23,24 +23,30 @@ const props = defineProps({
 });
 
 const slideClass = computed(() => {
-  let classDefault = "bg-white shadow-lg fixed duration-500 z-30";
+  let classDefault = "bg-white shadow-lg fixed duration-500";
 
   if (props.right) {
-    classDefault = `${classDefault} right-0 w-full`;
+    classDefault = `${classDefault} hidden md:block z-20 right-0 md:h-full`;
+
+    if (props.modelValue) {
+      classDefault = `${classDefault} md:h-full md:w-2/5 lg:w-2/6 xl:w-1/5`
+    } else {
+      classDefault = `${classDefault} pt-0 md:h-full md:w-0 lg:w-0 xl:w-0`;
+    }
   }
 
   if (props.bottom) {
-    classDefault = `${classDefault} bottom-0`;
+    classDefault = `${classDefault} z-20 border-2 bottom-0`;
 
     if (props.modelValue) {
-      classDefault = `${classDefault} h-2/4 w-full`
+      classDefault = `${classDefault} h-3/5 w-full`
     } else {
-      (classDefault = `${classDefault} h-0 w-full`)
+      (classDefault = `${classDefault} pt-0 h-0 w-full`)
     }
   }
 
   if (props.left) {
-    classDefault = `${classDefault} bottom-0`;
+    classDefault = `${classDefault} z-30 bottom-0 pt-16`;
 
     if (props.modelValue) {
       classDefault = `${classDefault} pt-4 w-5/6 h-full md:w-2/5 lg:w-2/6 xl:w-1/5 `;
@@ -48,80 +54,47 @@ const slideClass = computed(() => {
       classDefault = `${classDefault} pt-4 w-0 h-full md:w-0 `;
     }
   }
-
-  // //
-  // props.modelValue & props.bottom
-  //   ? classDefault = `${classDefault} h-2/4 w-full`
-  //   : classDefault = `${classDefault} w-3/4 md:w-1/4 h-full`
-
-  // !props.modelValue & props.bottom
-  //       ? (classDefault = `${classDefault} h-0 w-full`)
-  //       : (classDefault = `${classDefault} w-0 h-full`)
-
-  // console.log(classDefault);
   return classDefault
 });
 
-console.log(slideClass.value);
+const toggleSlideClass = computed(() => {
+  // let classOption = "cursor-pointer bg-white shadow-lg fixed duration-500 z-30";
+  let classOption = "";
 
-watch(() => props.modelValue, () => {
-  // let classDefault = "bg-white shadow-lg fixed duration-500 z-30";
+  if (props.bottom) {
+    classOption = `${classOption} -top-10 w-full rounded-t-lg border-t flex justify-center`;
+  } else {
+    classOption = `${classOption} top-20`;
+  }
 
-  // // if (modelValue & bottom) {
-  // //   classDefault = `${classDefault} h-1/4 w-full`;
-  // // } else {
-  // //   classDefault = `${classDefault} w-3/4 md:w-1/4 h-full`;
-  // // }
+  if (props.right) {
+    classOption = `${classOption} pl-2 -left-6 rounded-l-md`;
+  } else if (!props.right & !props.bottom) {
+    classOption = `${classOption} -right-6 rounded-r-md`;
+  }
 
-  // if (props.right) {
-  //   classDefault = `${classDefault} right-0 w-full`;
-  // }
+  if (props.left) {
+    classOption = `${classOption} pl-2`; 
+  }
 
-  // if (props.bottom) {
-  //   classDefault = `${classDefault} bottom-0`;
-  // }
-
-  // //
-  // props.modelValue & props.bottom
-  //   ? classDefault = `${classDefault} h-1/4 w-full`
-  //   : classDefault = `${classDefault} w-3/4 md:w-1/4 h-full`
-
-  // !props.modelValue & props.bottom
-  //       ? (classDefault = `${classDefault} h-0 w-full`)
-  //       : (classDefault = `${classDefault} w-0 h-full`)
-
-  // console.log(classDefault);
-   console.log(slideClass.value);
+  return classOption;
 });
+
+watch(() => props.modelValue, () => console.log(slideClass.value, toggleSlideClass.value));
 </script>
 
-<!-- 
-  modelValue = panel-toggle (ON of OFF)
-
-  default:
-    bg-white shadow-lg fixed duration-500 z-30
-
-
-  if On & Bottom = 'h-1/4 w-full' else = 'w-3/4 md:w-1/4 h-full'
-  if Off & Bottom = 'h-0 w-full' else 'w-0 h-full'
-  if Right ? 'right-0 h-full' : ''
-  if Bottom ? 'bottom-0'
- -->
 
 <template>
-  <div
-    :class="slideClass"
-  >
+  <div :class="slideClass">
     <div
-      :class="`px-1 py-2 shadow absolute bg-white -z-10 ${
-        bottom ? 'left-20 -top-10 w-16 h-10 ' : 'top-20'
-      }   cursor-pointer ${
-        right ? ' -left-6 rounded-l-md' : '-right-6 rounded-r-md'
-      }`"
+      id="toggleSlide"
+      class="absolute cursor-pointer py-2 shadow bg-white -z-10"
+      :class="toggleSlideClass"
       @click="$emit('update:modelValue', !modelValue)"
     >
       <div
-        :class="` flex items-center justify-center w-2/3 h-2/3 ${
+        class="flex items-center justify-center w-2/3 h-2/3"
+        :class="`  ${
           modelValue
             ? right
               ? 'rotate-180'
@@ -139,11 +112,11 @@ watch(() => props.modelValue, () => {
       </div>
     </div>
     <div
-      :class="`${
-        modelValue ? ' ' : ' overflow-hidden'
-      } bg-white  h-full  overflow-auto relative  flex flex-col`"
+      class="bg-white duration-300 h-full  overflow-auto relative  flex flex-col"
+      :class="{
+        // 'overflow-hidden': !modelValue
+      }"
     >
-      <p>{{ slideClass }}</p>
       <slot name="content"> content Here ! </slot>
     </div>
   </div>

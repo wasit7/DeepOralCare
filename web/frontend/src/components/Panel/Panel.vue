@@ -68,13 +68,13 @@ watch(
     :right="props.rightPanel"
     :bottom="props.bottomPanel"
     :class="{
-      'hidden pt-0 md:block md:pt-16': props.rightPanel,
-      'block pt-14 md:hidden': props.bottomPanel
+      'block md:hidden': props.bottomPanel,
+      'pt-0 md:block md:pt-16': props.rightPanel,
     }"
   >
     <template v-slot:content>
       <div class="w-full h-full overflow-auto">
-        <div class="pt-8 px-4 pb-3 sticky top-0 bg-white shadow-sm">
+        <div class="pt-4 md:pt-8 px-4 pb-3 sticky top-0 bg-white shadow-sm">
           <p class="text-xl">Description</p>
         </div>
         <div
@@ -86,7 +86,7 @@ watch(
         <div v-else class="py-3 px-5 flex flex-col gap-3">
           <div class="flex flex-col pb-6">
             <div v-if="resultData" class="flex flex-col">
-              <div class="relative overflow-x-hidden">
+              <div class="relative overflow-x-hidden overflow-y-scroll">
                 <table
                   class="w-full text-ellipsis text-sm text-left text-gray-500 dark:text-gray-400"
                 >

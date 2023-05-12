@@ -66,7 +66,7 @@ const onSearch = (value) => {
 };
 
 const onSelectResult = (result) => {
-  console.log(result);
+  // console.log(result);
   emit("onSelectResult", result);
   isTouched.value = false;
   inputFocus.value = false;

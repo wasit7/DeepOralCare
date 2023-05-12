@@ -252,11 +252,11 @@ export const useMainStore = defineStore("main", {
       const res = await axios_api.post(`/searchapp/api/entity/relation/`, {
         ids,
       });
-      console.log('C1:', res.data);
+      // console.log('C1:', res.data);
       this.res_relation = res.data;
     },
     async getEntityDetail(id) {
-      console.log("call");
+      // console.log("call");
       const res = await axios_api
         .post(`/searchapp/api/entity/getDetail/`, {
           id,
@@ -269,7 +269,14 @@ export const useMainStore = defineStore("main", {
     async getExplore(id) {
       const res = await axios_api.get(
         `/searchapp/api/entity/?id=${id}&page_size=20&page=0`
-      );
+      ).then((res) => res)
+        .catch((err) => {
+          console.log(err);
+          return {
+            entitys: [],
+            relations: []
+          };
+        });
       this.res_explore = res.data;
     },
   },

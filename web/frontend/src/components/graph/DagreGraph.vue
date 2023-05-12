@@ -146,9 +146,10 @@ onMounted(() => {
     if (tabDelay < doubleTouchEventDelay ) {
       console.log('double tab event emits');
       emit("dblclickNode", nodeItem.id);
+    } else {
+      emit("clickNode", nodeItem.id);
     }
     lastTabTimestamp = tabDelay;
-    emit("clickNode", nodeItem.id);
   })
 
   graph.value.on("node:contextmenu", (evt) => {

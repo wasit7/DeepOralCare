@@ -138,6 +138,8 @@ const onrightClickNode = async (id) => {
   await storeMain.getExplore(id);
   setTimeout(() => {
     pageLoading.value = false;
+    slideState.value.right = false;
+    slideState.value.bottom = false;
   }, 240);
 };
 

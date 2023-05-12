@@ -42,7 +42,7 @@ const goHome = () =>
 <template>
   <Disclosure as="nav" class="bg-white shadow z-50" v-slot="{}">
     <div class="mx-auto px-2 sm:px-6 lg:px-8">
-      <div class="relative flex h-16 items-center justify-between">
+      <div class="relative flex h-12 md:h-14 lg:h-16 items-center justify-between">
         <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
         </div>
         <div
@@ -55,11 +55,11 @@ const goHome = () =>
             @click="goHome"
           >
             <img
-              class="block  h-8 w-auto lg:hidden"
+              class="block  h-6 md:h-8 w-auto lg:hidden"
               :src="appLogo"
               alt="Your Company"
             />
-            <p class="block h-13 w-auto lg:hidden text-xl font-bold  text-[#163168]">
+            <p class="block h-13 w-auto lg:hidden text-md md:text-lg font-bold  text-[#163168]">
               {{ appName }}
             </p>
             <img

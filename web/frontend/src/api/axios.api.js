@@ -38,7 +38,7 @@ const axios_api = {
     return new Promise((resolve, reject) => {
       Axios_Instance.get(url, body)
         .then((res) => {
-          console.log("get Response: ", res);
+          // console.log("get Response: ", res);
           resolve(res);
         })
         .catch((err) => {
@@ -50,7 +50,7 @@ const axios_api = {
     return new Promise((resolve, reject) => {
       Axios_Instance.post(url, body)
         .then((res) => {
-          console.log("post Response: ", res);
+          // console.log("post Response: ", res);
           resolve(res);
         })
         .catch((err) => {

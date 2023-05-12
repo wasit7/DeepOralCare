@@ -32,13 +32,27 @@ const pageLoading = ref(false);
 const selectResultID = ref(null);
 const selectResultData = ref(null);
 
-const buttonDisableComputed = computed(() => {
-  // const isDisabled = !(!!searchExposure.id || !!searchDisease.id);
-  console.log(`button is disabled : ${!(!!searchExposure.id || !!searchDisease.id)}`);
-  return !(!!searchExposure.id || !!searchDisease.id);
+const inputIsValid  = computed(() => {
+  const isValid = {
+    disease: true,
+    exposure: true,
+    enableExploreButton: false
+  }
+  if (searchDisease.value.touched) {
+    isValid.disease = searchDisease.value.name.length > 0 && !!searchDisease.value.id;
+    // console.log(`[disease-valid]: ${isValid.disease} (${searchDisease.value.name.length > 0 && !!searchDisease.value.id})`);
+  }
+
+  if (searchExposure.value.touched) {
+    isValid.exposure = searchExposure.value.name.length > 0 && !!searchExposure.value.id;
+    // console.log(`[exposure-valid]: ${isValid.exposure} (${searchExposure.value.name.length > 0 && !!searchDisease.value.id})`);
+  }
+  // console.log(`[input-valid]: `, isValid);
+
+  return { ...isValid, enableExploreButton: !!isValid.disease && !!isValid.exposure };
 })
-const searchDisease = ref({ id: "", name: "" });
-const searchExposure = ref({ id: "", name: "" });
+const searchDisease = ref({ id: null, name: "", touched: false });
+const searchExposure = ref({ id: null, name: "", touched: false });
 const resultDisease = ref(null);
 const resultExposure = ref(null);
 const slideState = ref({
@@ -70,29 +84,6 @@ const entityRelation = computed(() => {
 const exploreRelation = computed(() => {
   return storeMain.explore_result;
 });
-
-const entityDetail = computed(() => {
-  return storeMain.entity_detail;
-});
-
-onMounted(() => {
-  console.log("mounted");
-  const params = JSON.parse(sessionStorage.getItem("item_search"));
-  console.log("params: " + params);
-  if (params) {
-    // searchQuery.value = params;
-    valueChip.value = params;
-    const id_list = params.map((i) => i.id);
-
-    storeMain.getRelation(id_list);
-  }
-});
-
-const getDetail = async (id) => {
-  selectResultID.value = id;
-  selectResultData.value = await storeMain.getEntityDetail(id);
-  console.log("Select:", selectResultData.value);
-};
 
 const getPredict = (queryString) => {
   storeMain.getSearch(queryString);
@@ -161,7 +152,7 @@ const onExplore = async () => {
   const { id: diseaseId } = searchDisease.value;
   const { id: exposureId } = searchExposure.value;
   const ids = [diseaseId, exposureId].filter( (elem) => !!elem);
-  console.log(`searching relationship between ${diseaseId} and ${exposureId} (${ids.length})`);
+  // console.log(`searching relationship between ${diseaseId} and ${exposureId} (${ids.length})`);
   await storeMain.getRelation(ids);
   searchLoading.result = false;
 };
@@ -169,7 +160,8 @@ const onExplore = async () => {
 const onSelection = (entity, entitySelected) => {
   entity.id = entitySelected.id;
   entity.name = entitySelected.name;
-  console.log(entity);
+  entity.touched = false;
+  // console.log(entity);
 };
 
 const onSearchDiseaseEntity = async (searchObj) => {
@@ -185,16 +177,23 @@ const onSearchExposureEntity = async (searchObj) => {
 };
 
 watch(searchDisease.value, (newValue) => {
+  // console.log(searchDisease.value);
   clearTimeout(searchInputTimeout.disease);
-  // console.log('update disease', newValue.name, newValue.name.length);
   searchLoading.disease = true;
   if (searchDisease.value.name.length === 0) {
     searchDisease.value.id = null;
+    searchDisease.value.touched = false;
   }
-  searchInputTimeout.disease = setTimeout(async () => {
-    resultDisease.value = await onSearchDiseaseEntity(searchDisease.value);
-    searchLoading.disease = false;
-  }, 700);
+  
+  if (searchDisease.value.name.length > 0) {
+    // console.log("search entity .... ");
+    searchInputTimeout.disease = setTimeout(async () => {
+      resultDisease.value = await onSearchDiseaseEntity(searchDisease.value);
+      searchDisease.value.touched = true;
+    
+    }, 700);
+  }
+  searchLoading.disease = false;
 });
 
 watch(searchExposure.value, (newValue) => { 
@@ -202,11 +201,16 @@ watch(searchExposure.value, (newValue) => {
   searchLoading.exposure = true;
   if (searchExposure.value.name.length === 0) {
     searchExposure.value.id = null;
+    searchExposure.value.touched = false;
   }
-  searchInputTimeout.exposure = setTimeout(async () => {
-    resultExposure.value = await onSearchExposureEntity(searchExposure.value);
-    searchLoading.exposure = false;
-  }, 700);
+  
+  if (searchExposure.value.name.length > 0) {
+    searchInputTimeout.exposure = setTimeout(async () => {
+      resultExposure.value = await onSearchExposureEntity(searchExposure.value);
+      searchExposure.value.touched = true;
+    }, 700);
+  }
+  searchLoading.exposure = false;
 });
 </script>
 
@@ -244,33 +248,38 @@ watch(searchExposure.value, (newValue) => {
       <template class="h-3/5" v-slot:content>
         <div class="z-30 flex flex-col gap-3 px-5 pt-16 sticky top-0 bg-white w-full">
           <SearchBox
+            v-model="searchDisease"
             label="Disease"
             placeholder="touge cancer"
-            v-model="searchDisease"
+            text-invalid="please, select entity from dropdown list only"
+            :input-invalid="!inputIsValid.disease"
             :is-loading="searchLoading.disease"
+            :dropdowns="resultDisease"
             @on-search="searchDisease.name = $event"
             @on-select-result="onSelection(searchDisease, $event)"
-            :dropdowns="resultDisease"
           />
           <SearchBox
+            v-model="searchExposure"
             label="Exposure"
             placeholder="tobacco tar"
-            v-model="searchExposure"
+            text-invalid="please, select entity from dropdown list only"
+            :input-invalid="!inputIsValid.exposure"
             :is-loading="searchLoading.exposure"
             @on-search="searchExposure.name = $event"
             @on-select-result="onSelection(searchExposure, $event)"
             :dropdowns="resultExposure"
           />
 
+          <!-- :disabled="!(!!searchExposure.id || !!searchDisease.id) && inputIsValid.enableExploreButton" -->
           <button
-            :disabled="!(!!searchExposure.id || !!searchDisease.id)"
+            :disabled="!((searchExposure.id || searchDisease.id) && inputIsValid.enableExploreButton)"
             id="btn-explore"
             type="button"
             @click="onExplore"
             class="focus:outline-none text-white bg-primary-light hover:bg-primary font-medium rounded-md text-sm mt-1 px-5 py-1.5"
             :class="{
               'opacity-75 cursor-wait': searchLoading.result,
-              'opacity-50 cursor-not-allowed': !(!!searchExposure.id || !!searchDisease.id)
+              'opacity-50 cursor-not-allowed': !((searchExposure.id || searchDisease.id) && inputIsValid.enableExploreButton)
             }"
           >
             <span v-if="!searchLoading.result">Explore</span>

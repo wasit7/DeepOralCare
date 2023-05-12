@@ -1,9 +1,9 @@
 <script setup>
-import { onMounted, ref, watchEffect } from "vue";
+import { onMounted, reactive, ref, watchEffect } from "vue";
 import { NODE_LABEL_COLOR } from "../../utils";
 
 // import SearchIcon from "../Icons/searchIcon.vue";
-const emit = defineEmits(["onSearch", "onSelectResult"]);
+const emit = defineEmits(["onSearch", "onSelectResult", "onBlur"]);
 const props = defineProps({
   label: {
     type: String,
@@ -12,6 +12,14 @@ const props = defineProps({
   placeholder: {
     type: String,
     default: "placeholder",
+  },
+  textInvalid: {
+    type: String,
+    default: "field errors"
+  },
+  inputInvalid: {
+    type: Boolean,
+    default: false
   },
   modelValue: {
     type: Object,
@@ -47,17 +55,12 @@ const props = defineProps({
 
 const inputFocus = ref(false);
 const isTyping = ref(false);
-
-const onSearchDisease = async () => {
-  console.log(`onSearchDiseaseWork`);
-  const temp = await storeMain.getSearch(searchDisease);
-  resultDisease.value = await storeMain.search_result;
-  console.log(temp);
-  console.log(resultDisease);
-};
+const isTouched = ref(false);
+const isBlurTimeout = ref(null);
 
 const onSearch = (value) => {
   inputFocus.value = true;
+  isTouched.value = false;
   // console.log(value);
   emit("onSearch", value);
 };
@@ -65,16 +68,20 @@ const onSearch = (value) => {
 const onSelectResult = (result) => {
   console.log(result);
   emit("onSelectResult", result);
+  isTouched.value = false;
   inputFocus.value = false;
 };
 
 const onBlur = () => {
-  setTimeout(() => {
+  clearTimeout(isBlurTimeout.value);
+  isBlurTimeout.value =  setTimeout(() => {
     inputFocus.value = false;
+    isTouched.value = true;
+    emit("onBlur", inputFocus.value);
   }, 300);
 };
 
-const onKeyup = () => setTimeout(() => (isTyping.value = false), 250);
+const onKeyup = () => setTimeout(() => (isTyping.value = false), 800);
 </script>
 
 <template>
@@ -113,6 +120,11 @@ const onKeyup = () => setTimeout(() => (isTyping.value = false), 250);
         :placeholder="props.placeholder"
       />
     </div>
+    <p 
+      v-if="inputInvalid && isTouched" 
+      class="text-xs text-red-500 pb-1 px-1">
+        {{ textInvalid }}
+    </p>
     <div
       id="dropdown"
       :class="`${

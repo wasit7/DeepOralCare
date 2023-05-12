@@ -80,7 +80,7 @@ const toggleSlideClass = computed(() => {
   return classOption;
 });
 
-watch(() => props.modelValue, () => console.log(slideClass.value, toggleSlideClass.value));
+// watch(() => props.modelValue, () => console.log(slideClass.value, toggleSlideClass.value));
 </script>
 
 

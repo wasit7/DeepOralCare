@@ -71,12 +71,6 @@ const searchInputTimeout = reactive({
   exposure: null,
 });
 
-const entityFilter = computed(() => {
-  return storeMain.entity_result?.filter((item) => {
-    return item.name.toLowerCase().includes(searchEntity.value.toLowerCase());
-  });
-});
-
 const entityRelation = computed(() => {
   return storeMain.relation_result;
 });

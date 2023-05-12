@@ -3,7 +3,7 @@ import { onMounted, reactive, ref, watchEffect } from "vue";
 import { NODE_LABEL_COLOR } from "../../utils";
 
 // import SearchIcon from "../Icons/searchIcon.vue";
-const emit = defineEmits(["onSearch", "onSelectResult", "onBlur"]);
+const emit = defineEmits(["onSearch", "onSelectResult", "onBlur", "onKeyBackspace"]);
 const props = defineProps({
   label: {
     type: String,
@@ -82,6 +82,18 @@ const onBlur = () => {
 };
 
 const onKeyup = () => setTimeout(() => (isTyping.value = false), 800);
+
+const onKeydown = (event) => {
+  isTyping.value = true;
+  const keyName = event.key.toLowerCase();
+  // console.log(`[on-keydown]: ${keyName}`);
+
+  if (keyName === 'backspace') {
+    // console.log(`[keyname]: ${keyName} has pressed to set-id to null ${props.modelValue.id}`);
+    props.modelValue.id = null;
+  }
+  
+}
 </script>
 
 <template>
@@ -110,7 +122,7 @@ const onKeyup = () => setTimeout(() => (isTyping.value = false), 800);
       <input
         @input="onSearch($event.target.value)"
         @blur="onBlur"
-        @keydown="isTyping = true"
+        @keydown="onKeydown"
         @keyup="onKeyup"
         :value="modelValue.name"
         required

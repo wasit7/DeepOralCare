@@ -141,6 +141,7 @@ const onrightClickNode = async (id) => {
   }, 240);
 };
 
+
 const onExplore = async () => {
   searchLoading.result = true;
   const { id: diseaseId } = searchDisease.value;
@@ -149,6 +150,14 @@ const onExplore = async () => {
   // console.log(`searching relationship between ${diseaseId} and ${exposureId} (${ids.length})`);
   await storeMain.getRelation(ids);
   searchLoading.result = false;
+
+  const navbarElement = document.getElementById("navbar");
+  console.log(navbarElement.clientWidth);
+  if (navbarElement.clientWidth < 800) {
+    slideState.value.left = false;
+    slideState.value.right = false;
+  }
+
 };
 
 const onSelection = (entity, entitySelected) => {
@@ -211,6 +220,7 @@ watch(searchExposure.value, (newValue) => {
 <template>
   <!-- Navigation -->
   <navigation-bar
+    id="navbar"
     class="fixed w-full"
     app-name="Knowledge Graph Explorer"
     :search-able="false"
@@ -264,9 +274,8 @@ watch(searchExposure.value, (newValue) => {
             :dropdowns="resultExposure"
           />
 
-          <!-- :disabled="!(!!searchExposure.id || !!searchDisease.id) && inputIsValid.enableExploreButton" -->
+          <!-- :disabled="!((searchExposure.id || searchDisease.id) && inputIsValid.enableExploreButton)" -->
           <button
-            :disabled="!((searchExposure.id || searchDisease.id) && inputIsValid.enableExploreButton)"
             id="btn-explore"
             type="button"
             @click="onExplore"

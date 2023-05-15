@@ -2,7 +2,7 @@
 import G6 from "@antv/g6";
 import { defineProps, defineEmits, onMounted, watch, ref, toRaw, computed } from "vue";
 
-const emit = defineEmits(["clickNode", "dblclickNode", "rightclickNode"]);
+const emit = defineEmits(["clickNode", "dblclickNode", "rightclickNode", "unselectNode"]);
 
 const props = defineProps({
   nodeExplore: {
@@ -20,15 +20,34 @@ onMounted(() => {
   // initialize graph
   const graphElement = document.getElementById("dagre-graph");
   const containerElement = document.getElementById("container");
-  const calPadding = (num, percent) => (num / 100) * percent;
-  const graphPaddingX = calPadding(containerElement.scrollWidth, 30);
-  const graphPaddingY = calPadding(containerElement.scrollHeight, 30);
+  containerElement.addEventListener("touchstart", () => emit("unselectNode"))
+  containerElement.addEventListener("click", () => emit("unselectNode"))
+  const calPadding = (num) => {
+    let percent = 5;
+    if (num > 500) {
+      percent = 15;
+    } 
+
+    if (num > 1000) {
+      percent = 20;
+    }
+
+    if (num > 1200) {
+      percent = 30;
+    }
+
+    return (num / 100) * percent;
+  };
+
+  const graphPaddingX = calPadding(containerElement.clientWidth);
+  const graphPaddingY = calPadding(containerElement.clientHeight);
   const paddingDimension = [
     graphPaddingX,
     graphPaddingY,
     graphPaddingX,
     graphPaddingY,
   ];
+  // console.log(paddingDimension);
   const width = containerElement.scrollWidth || 1600;
   const height = containerElement.scrollHeight || 1200;
 
@@ -38,8 +57,8 @@ onMounted(() => {
     container: graphElement,
     width: width,
     height: height,
-    fitCenter: true,
-    // fitView: true,
+    // fitCenter: true,
+    fitView: true,
     fitViewPadding: paddingDimension,
     animate: true,
     animateCfg: {
@@ -131,7 +150,7 @@ onMounted(() => {
 
   graph.value.on("node:dblclick", (evt) => {
     const nodeModel = toRaw(evt.item._cfg.model);
-    console.log("node has been double-clicked ", nodeModel);
+    // console.log("node has been double-clicked ", nodeModel);
     emit("dblclickNode", nodeModel.id);
   });
 
@@ -139,12 +158,12 @@ onMounted(() => {
   let lastTabTimestamp = 0;
   graph.value.on("node:touchstart", (event) => {
     const nodeItem = toRaw(event.item._cfg.model);
-    console.log(nodeItem);
+    // console.log(nodeItem);
 
     const currentTimeMs = new Date().getTime();
     const tabDelay = currentTimeMs - lastTabTimestamp;
     if (tabDelay < doubleTouchEventDelay ) {
-      console.log('double tab event emits');
+      // console.log('double tab event emits');
       emit("dblclickNode", nodeItem.id);
     } else {
       emit("clickNode", nodeItem.id);
@@ -154,12 +173,12 @@ onMounted(() => {
 
   graph.value.on("node:contextmenu", (evt) => {
     const nodeModel = toRaw(evt.item._cfg.model);
-    console.log("node has been right-clicked (contextmenu) ", nodeModel);
+    // console.log("node has been right-clicked (contextmenu) ", nodeModel);
   });
 
   graph.value.on("node:mouseenter", (e) => {
     const nodeItem = e.item; // Get the target item
-    console.log(`hover on `, nodeItem);
+    // console.log(`hover on `, nodeItem);
     graph.value.setItemState(nodeItem, "hover", true); // Set the state 'hover' of the item to be true
   });
 

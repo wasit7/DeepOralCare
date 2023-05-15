@@ -143,6 +143,14 @@ const onrightClickNode = async (id) => {
   }, 240);
 };
 
+const onCollapsePanel = () => {
+  slideState.value = {
+    left: false,
+    right: false,
+    bottom: false
+  }
+}
+
 
 const onExplore = async () => {
   searchLoading.result = true;
@@ -154,7 +162,7 @@ const onExplore = async () => {
   searchLoading.result = false;
 
   const navbarElement = document.getElementById("navbar");
-  console.log(navbarElement.clientWidth);
+  // console.log(navbarElement.clientWidth);
   if (navbarElement.clientWidth < 800) {
     slideState.value.left = false;
     slideState.value.right = false;
@@ -336,6 +344,7 @@ watch(searchExposure.value, (newValue) => {
       :node-explore="exploreRelation"
       @click-node="onclickNode"
       @dblclick-node="onrightClickNode"
+      @unselect-node="onCollapsePanel"
     />
   </div>
 </template>

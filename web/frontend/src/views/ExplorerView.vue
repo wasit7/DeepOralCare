@@ -276,8 +276,8 @@ watch(searchExposure.value, (newValue) => {
             :dropdowns="resultExposure"
           />
 
-          <!-- :disabled="!((searchExposure.id || searchDisease.id) && inputIsValid.enableExploreButton)" -->
           <button
+            :disabled="!((searchExposure.id || searchDisease.id) && inputIsValid.enableExploreButton)"
             id="btn-explore"
             type="button"
             @click="onExplore"

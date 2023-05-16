@@ -57,8 +57,7 @@ onMounted(() => {
     container: graphElement,
     width: width,
     height: height,
-    // fitCenter: true,
-    fitView: true,
+    fitCenter: true,
     fitViewPadding: paddingDimension,
     animate: true,
     animateCfg: {

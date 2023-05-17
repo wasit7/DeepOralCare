@@ -210,7 +210,7 @@ watch(
 </script>
 
 <template>
-  <div id="container" class="w-full h-full p-5">
+  <div id="container" class="w-full h-full">
     <div id="dagre-graph"></div>
   </div>
 </template>

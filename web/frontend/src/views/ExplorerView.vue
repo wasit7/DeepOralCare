@@ -233,7 +233,6 @@ watch(searchExposure.value, (newValue) => {
     id="navbar"
     class="fixed w-full"
     app-name="Knowledge Graph Explorer"
-    :search-able="false"
     :app-logo="Logo"
   >
     <template v-slot:search>

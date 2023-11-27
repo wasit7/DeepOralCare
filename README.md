@@ -73,4 +73,3 @@ This project is licensed under the [MIT License](LICENSE).
 - The [Health Systems Research Institute (HSRI)](https://www.hsri.or.th/) for providing research grant HSRI-65-025.
 - The PrimeKG development team for their invaluable knowledge graph resource.
 - Our research participants who provided valuable feedback during the evaluation.
-You can use this corrected Markdown content as your project's README.md file on GitHub, with all code sections formatted using triple backticks ().

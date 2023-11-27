@@ -1,6 +1,6 @@
 # OralCancerAI: Deep Learning and Knowledge Graph-Based Application
 
-![DeepOralCare Logo](logo.png)
+![DeepOralCare Logo](DeepOralCareLogo.png)
 
 ## About
 
